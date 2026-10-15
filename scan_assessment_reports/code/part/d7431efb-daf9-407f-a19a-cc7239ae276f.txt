@@ -1,0 +1,11 @@
+Private Sub btnPreviewNextBarcode_Click(sender As Object, e As EventArgs) Handles btnPreviewNextBarcode.Click
+        Dim curInx = cbBarcode.SelectedIndex
+
+        If curInx = cbBarcode.Items.Count - 1 Then
+            cbBarcode.SelectedIndex = 0
+        Else
+            cbBarcode.SelectedIndex = curInx + 1
+        End If
+
+        GetPreview()
+    End Sub

@@ -1,0 +1,9 @@
+Private Sub dgvCurrentInventory_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles dgvCurrentInventory.CellFormatting
+        If e.ColumnIndex = dgvCurrentInventory.Columns("Return").Index Then
+            If Not IsDBNull(e.Value) AndAlso CDate(e.Value) < Today Then
+                dgvCurrentInventory.Rows(e.RowIndex).DefaultCellStyle.ForeColor = Color.Red
+            Else
+                dgvCurrentInventory.Rows(e.RowIndex).DefaultCellStyle.ForeColor = SystemColors.ControlText
+            End If
+        End If
+    End Sub

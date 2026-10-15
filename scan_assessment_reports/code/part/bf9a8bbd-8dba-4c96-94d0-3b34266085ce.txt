@@ -1,0 +1,35 @@
+Private Sub InitializeMenuStripMessage()
+        Dim panel As New FlowLayoutPanel()
+        panel.FlowDirection = FlowDirection.LeftToRight
+        panel.AutoSize = True
+        panel.WrapContents = False
+        panel.Margin = Padding.Empty
+        panel.Padding = Padding.Empty
+
+        panel.BackColor = UltraGridMenuStrip.BackColor
+
+        AddHandler panel.Click, AddressOf menuItemSendMessage_Click
+
+        Dim newLabel As New Label()
+        newLabel.Text = "Send Msg w/Qty:"
+        newLabel.AutoSize = True
+        newLabel.TextAlign = ContentAlignment.MiddleLeft
+        newLabel.Margin = New Padding(0, 3, 5, 0)
+        newLabel.BackColor = UltraGridMenuStrip.BackColor
+
+        AddHandler newLabel.Click, AddressOf menuItemSendMessage_Click
+
+        Dim textBox As New TextBox()
+        textBox.Width = 100
+        txtQuantityMessage = textBox
+        panel.Controls.Add(newLabel)
+        panel.Controls.Add(txtQuantityMessage)
+
+
+        Dim tsHost As New ToolStripControlHost(panel)
+        tsHost.Margin = Padding.Empty
+        menuItemSendMessage = tsHost
+
+
+        UltraGridMenuStrip.Items.Add(menuItemSendMessage)
+    End Sub

@@ -1,0 +1,4 @@
+Private Sub tsbPartMaintenance_Click(ByVal sender As Object, ByVal e As EventArgs) Handles tsbPartMaintenance.Click
+        Dim commandArgs As String = "partno=" & Selected_PartNo
+        StartFinesseProcess("Part Maintenance.exe", commandArgs)
+    End Sub

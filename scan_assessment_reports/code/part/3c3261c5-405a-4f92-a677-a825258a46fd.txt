@@ -1,0 +1,18 @@
+Function ItemsForImportQtyUpdating()
+        Dim totalItemsAddedQty As Integer = 0
+        Dim selectedItemsAddedQty As Integer = 0
+
+        If dgvItemsForImport.Rows.Count <> 0 Then
+            Dim t = From r As DataGridViewRow In dgvItemsForImport.Rows
+                    Select total = r.DataBoundItem("onhand")
+            totalItemsAddedQty = t.Sum(Function(r) r)
+
+            Dim s = From r As DataGridViewRow In dgvItemsForImport.SelectedRows
+                    Select total = r.DataBoundItem("onhand")
+            selectedItemsAddedQty = s.Sum(Function(r) r)
+        End If
+
+        tsslItemsForImportTotalQty.Text = $"Total Qty: {totalItemsAddedQty}"
+        tsslItemsForImportSelectedRowQty.Text = $"Selected Qty: {selectedItemsAddedQty}"
+        Return True
+    End Function

@@ -1,0 +1,30 @@
+Private Sub EquipmentLocationsToolStripMenuItem1_Click(ByVal sender As Object, ByVal e As EventArgs) Handles _
+        EquipmentLocationsToolStripMenuItem1.Click _
+        , TransactionsToolStripMenuItem1.Click _
+        , PhaseHistoryToolStripMenuItem1.Click _
+        , LateReturnsToolStripMenuItem1.Click _
+        , BatchLocationSummaryToolStripMenuItem1.Click
+
+        Dim commandArgs As String = ""
+        Dim selectedMenuItem = TryCast(sender, ToolStripMenuItem)
+
+        Select Case selectedMenuItem.Name
+            Case EquipmentLocationsToolStripMenuItem1.Name
+                commandArgs += "target:Locations"
+            Case TransactionsToolStripMenuItem1.Name
+                commandArgs += "target:Transactions"
+            Case PhaseHistoryToolStripMenuItem1.Name
+                commandArgs += "target:PhaseHistory"
+            Case LateReturnsToolStripMenuItem1.Name
+                commandArgs += "target:LateReturns"
+            Case BatchLocationSummaryToolStripMenuItem1.Name
+                commandArgs += "target:BatchLocationSummary"
+        End Select
+
+        If Not String.IsNullOrEmpty(txtPartNo.Text) Then commandArgs += " partno:" & txtPartNo.Text
+        If Not String.IsNullOrEmpty(Selected_Barcode) Then commandArgs += " barcode:" & Selected_Barcode
+        If Not String.IsNullOrEmpty(cboWarehouse.SelectedValue) Then commandArgs += " bld:" & cboWarehouse.SelectedValue
+        If Not String.IsNullOrEmpty(cboOwner.SelectedValue) Then commandArgs += " dept:" & cboOwner.SelectedValue
+
+        StartFinesseProcess("Query Tools.exe", commandArgs)
+    End Sub

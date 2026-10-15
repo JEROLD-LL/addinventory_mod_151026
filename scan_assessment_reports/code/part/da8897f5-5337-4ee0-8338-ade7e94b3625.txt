@@ -1,0 +1,3 @@
+Public Sub New(ByVal ParamArray grids() As DataGridView)
+            _gridInfo = grids.ToList.ConvertAll(Function(grid) New GridInfo(grid))
+        End Sub

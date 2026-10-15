@@ -1,0 +1,60 @@
+Private Async Function FillERPGrid() As Task
+        If (IsGridLoading) Then
+            Return
+        End If
+        Try
+            IsGridLoading = True
+            With ultraGridERPPurchaseOrders.DisplayLayout.Override
+                .AllowUpdate = DefaultableBoolean.False
+                .CellClickAction = CellClickAction.RowSelect
+                .SelectTypeRow = SelectType.Single
+                .SelectTypeCell = SelectType.None
+                .RowSelectors = DefaultableBoolean.True
+            End With
+
+            Me.Cursor = Cursors.WaitCursor
+            Dim result = Await IFSDAL.GetReceivedPOLinesQuickReport(Nothing)
+            Me.Cursor = Cursors.Default
+
+            If (result IsNot Nothing) Then
+                lblPoExistance.Visible = result.Count <= 0
+
+                _ifs_data = result
+                Dim data = GetErpBaseData()
+
+                ultraGridERPPurchaseOrders.DataSource = data.ToList()
+                ultraGridERPPurchaseOrders.Selected.Rows.Clear()
+                ultraGridERPPurchaseOrders.ActiveRow = Nothing
+
+                ultraGridERPPurchaseOrders.Rows.ExpandAll(True)
+                With ultraGridERPPurchaseOrders.DisplayLayout.Bands(0)
+                    .Columns("FinesseDescription").Width = 200
+                    .Columns("SupplierName").Width = 200
+                    .Columns("DateEntered").Width = 70
+                End With
+
+                ultraGridERPPurchaseOrders.DisplayLayout.Bands(1).Columns("ChildPartDescription").Width = 200
+
+                filter_ERP_DataGrid(txtERPPoNumber.Text)
+            End If
+            If (Not {UserAccess.RECIEVED_PO_MANDATORY, UserAccess.NO_ACCESS, UserAccess.GENERAL_USER}.Contains(UserPermission)) Then
+                Dim unused = Task.Run(Async Function()
+                                          Await GetAllIFSPOsData() 'This is way much slower than GetReceivedPOLinesQuickReport, loading first the received only to show something and load the rest of the data on the background.
+                                          'Me.Invoke(New Action(Sub()
+                                          '                         filter_ERP_DataGrid(txtERPPoNumber.Text)
+                                          '                     End Sub))
+                                      End Function)
+            End If
+
+
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            Console.WriteLine("Error loading PO Data")
+            MsgBox(ex.Message, MsgBoxStyle.Critical)
+        Finally
+            IsGridLoading = False
+            Me.Cursor = Cursors.Default
+        End Try
+
+
+    End Function

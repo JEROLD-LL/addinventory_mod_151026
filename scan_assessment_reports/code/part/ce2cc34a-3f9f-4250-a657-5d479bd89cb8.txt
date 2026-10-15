@@ -1,0 +1,28 @@
+Private Sub PrintDocument1_PrintPage(ByVal sender As Object, ByVal e As PrintPageEventArgs) Handles PrintDocument1.PrintPage
+
+        Dim Margin As Integer = 50
+        Dim paddingInfoBox As Integer = 25
+        Dim paddingText As Integer = 5
+        Dim paddingSmallText As Integer = 2
+        Dim r_uHeight = 25
+        Dim r_uWidth = r_uHeight * (19 / 1.75)
+        Dim Point As New Point
+        Point.X = 0
+        Point.Y = 0
+
+        Dim bcWidth2D As Integer = pb2Dbarcode.Image.Width * 0.5
+        Dim bcHeight2D As Integer = pb2Dbarcode.Image.Height * 0.5
+
+        Dim font2Dbarcode As New Font(FontFamily.GenericSansSerif, 5)
+
+        Dim font1Dbarcode As New Font("IDAutomationHC39M", 10)
+        'Dim bcWidth1D As Integer = e.Graphics.MeasureString(lblBarcodePrint.Text, font1Dbarcode).Width
+        'Dim bcHeight1D As Integer = e.Graphics.MeasureString(lblBarcodePrint.Text, font1Dbarcode).Height
+
+        For i = 0 To 5
+            e.Graphics.DrawImage(pb2Dbarcode.Image, Margin + (bcWidth2D * 2) * i, Margin, bcWidth2D, bcHeight2D)
+            e.Graphics.DrawString(txtBarcode.Text, font2Dbarcode, Brushes.Black, Margin + (bcWidth2D * 2) * i + (bcWidth2D - e.Graphics.MeasureString(txtBarcode.Text, font2Dbarcode).Width) * 0.5, Margin + bcHeight2D + 2)
+            'e.Graphics.DrawString(lblBarcodePrint.Text, font1Dbarcode, Brushes.Black, Margin + (bcWidth1D + 20) * i, Margin + bcHeight2D * 2)
+        Next
+
+    End Sub

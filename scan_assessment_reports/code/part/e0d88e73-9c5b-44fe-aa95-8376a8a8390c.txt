@@ -1,0 +1,14 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property ParentPartNo() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableDisassemblyParts.ParentPartNoColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'ParentPartNo' in table 'DisassemblyParts' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableDisassemblyParts.ParentPartNoColumn) = value
+            End Set
+        End Property

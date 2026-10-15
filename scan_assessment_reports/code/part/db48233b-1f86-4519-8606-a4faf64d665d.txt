@@ -1,0 +1,3 @@
+Private Sub btnAddItemToList_UnHover(ByVal sender As Object, ByVal e As EventArgs) Handles btnAddItemToList.MouseDown
+        ToolTip1.Hide(btnAddItemToList)
+    End Sub

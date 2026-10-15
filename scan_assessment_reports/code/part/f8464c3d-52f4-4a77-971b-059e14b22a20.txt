@@ -1,0 +1,22 @@
+Private Sub LoadPrintData()
+        If _dtItemsToPrint.Rows.Count = 0 Then
+            MsgBox("No barcode data to print.", MsgBoxStyle.OkOnly)
+            Me.Close()
+        Else
+            Dim bs As New BindingSource
+            Dim items As New List(Of ItemsToPrintRow)
+
+            For Each item As ItemsToPrintRow In _dtItemsToPrint
+                items.Add(item)
+            Next
+
+            bs.DataSource = items
+
+            cbBarcode.DataSource = bs
+            cbBarcode.DisplayMember = "Barcode"
+            cbBarcode.ValueMember = "Barcode"
+            lbSerialNumberValue.DataBindings.Add("Text", bs, "SerialNumber", False, DataSourceUpdateMode.OnPropertyChanged)
+
+            'cbBarcode.SelectedIndex = 0
+        End If
+    End Sub

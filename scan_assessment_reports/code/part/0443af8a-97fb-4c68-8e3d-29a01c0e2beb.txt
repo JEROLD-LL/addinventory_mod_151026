@@ -1,0 +1,40 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+    Protected Sub New(ByVal info As Global.System.Runtime.Serialization.SerializationInfo, ByVal context As Global.System.Runtime.Serialization.StreamingContext)
+        MyBase.New(info, context, false)
+        If (Me.IsBinarySerialized(info, context) = true) Then
+            Me.InitVars(false)
+            Dim schemaChangedHandler1 As Global.System.ComponentModel.CollectionChangeEventHandler = AddressOf Me.SchemaChanged
+            AddHandler Me.Tables.CollectionChanged, schemaChangedHandler1
+            AddHandler Me.Relations.CollectionChanged, schemaChangedHandler1
+            Return
+        End If
+        Dim strSchema As String = CType(info.GetValue("XmlSchema", GetType(String)),String)
+        If (Me.DetermineSchemaSerializationMode(info, context) = Global.System.Data.SchemaSerializationMode.IncludeSchema) Then
+            Dim ds As Global.System.Data.DataSet = New Global.System.Data.DataSet()
+            ds.ReadXmlSchema(New Global.System.Xml.XmlTextReader(New Global.System.IO.StringReader(strSchema)))
+            If (Not (ds.Tables("inpartsub")) Is Nothing) Then
+                MyBase.Tables.Add(New inpartsubDataTable(ds.Tables("inpartsub")))
+            End If
+            If (Not (ds.Tables("ClairNewSerialNos")) Is Nothing) Then
+                MyBase.Tables.Add(New ClairNewSerialNosDataTable(ds.Tables("ClairNewSerialNos")))
+            End If
+            If (Not (ds.Tables("DisassemblyParts")) Is Nothing) Then
+                MyBase.Tables.Add(New DisassemblyPartsDataTable(ds.Tables("DisassemblyParts")))
+            End If
+            Me.DataSetName = ds.DataSetName
+            Me.Prefix = ds.Prefix
+            Me.Namespace = ds.Namespace
+            Me.Locale = ds.Locale
+            Me.CaseSensitive = ds.CaseSensitive
+            Me.EnforceConstraints = ds.EnforceConstraints
+            Me.Merge(ds, false, Global.System.Data.MissingSchemaAction.Add)
+            Me.InitVars
+        Else
+            Me.ReadXmlSchema(New Global.System.Xml.XmlTextReader(New Global.System.IO.StringReader(strSchema)))
+        End If
+        Me.GetSerializationData(info, context)
+        Dim schemaChangedHandler As Global.System.ComponentModel.CollectionChangeEventHandler = AddressOf Me.SchemaChanged
+        AddHandler MyBase.Tables.CollectionChanged, schemaChangedHandler
+        AddHandler Me.Relations.CollectionChanged, schemaChangedHandler
+    End Sub

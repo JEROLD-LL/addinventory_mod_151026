@@ -1,0 +1,5 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOQtyArrivedNull()
+            Me(Me.tableinpartsub.POQtyArrivedColumn) = Global.System.Convert.DBNull
+        End Sub

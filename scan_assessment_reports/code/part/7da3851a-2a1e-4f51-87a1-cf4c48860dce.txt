@@ -1,0 +1,6 @@
+Private Sub ExitToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ExitToolStripMenuItem.Click
+        Dim lShouldReturn As Boolean
+        DoYouWantToSave(lShouldReturn)
+        If lShouldReturn Then Return
+        End
+    End Sub

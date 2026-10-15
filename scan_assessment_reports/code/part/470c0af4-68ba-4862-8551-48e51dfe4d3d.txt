@@ -1,0 +1,8 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Sub OnRowChanged(ByVal e As Global.System.Data.DataRowChangeEventArgs)
+            MyBase.OnRowChanged(e)
+            If (Not (Me.inpartsubRowChangedEvent) Is Nothing) Then
+                RaiseEvent inpartsubRowChanged(Me, New inpartsubRowChangeEvent(CType(e.Row,inpartsubRow), e.Action))
+            End If
+        End Sub

@@ -1,0 +1,602 @@
+
+==================================================
+Part: GetPreview (UI-011)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmPrintZPLDialog.vb
+==================================================
+Private Sub GetPreview()
+        Dim selectedItemToPrint As ItemsToPrintRow = cbBarcode.SelectedItem
+        Dim selectedBarcodeTemplate As BarcodeTemplate = cbBarcodeType.SelectedItem
+        Dim ZPLData = selectedBarcodeTemplate.GetZPLData(selectedItemToPrint.Barcode, selectedItemToPrint.SerialNumber)
+
+        If ZPLData = "" Then
+            Throw New ArgumentNullException("ZPLData", "This barcode type has no template file or data. Select another barcode type and contact IT for help." + vbCrLf + "Expected template file: " + selectedBarcodeTemplate.Path)
+        End If
+
+        Dim zpl() As Byte = Encoding.UTF8.GetBytes(ZPLData)
+
+        ' adjust print density (8dpmm), label width (4 inches), label height (6 inches), and label index (0) as necessary
+        Dim request As HttpWebRequest = WebRequest.Create("http://api.labelary.com/v1/printers/12dpmm/labels/1x.5/0/")
+        request.Method = "POST"
+        request.ContentType = "application/x-www-form-urlencoded"
+        request.ContentLength = zpl.Length
+
+        Dim requestStream As Stream = request.GetRequestStream()
+        requestStream.Write(zpl, 0, zpl.Length)
+        requestStream.Close()
+
+        Try
+            Dim response As HttpWebResponse = request.GetResponse()
+            Dim responseStream As Stream = response.GetResponseStream()
+            Dim bm As New Bitmap(responseStream)
+            picBarcodePreview.Image = bm
+            responseStream.Close()
+        Catch ex As WebException
+            MsgBox("Failed to get preview." + vbCrLf + "Error: " + ex.Message, MsgBoxStyle.Critical)
+        End Try
+
+    End Sub
+
+==================================================
+Part: btnPreviewBarcode_Click (UI-012)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmPrintZPLDialog.vb
+==================================================
+Private Sub btnPreviewBarcode_Click(sender As Object, e As EventArgs) Handles btnPreviewBarcode.Click
+        GetPreview()
+    End Sub
+
+==================================================
+Part: btnPreviewNextBarcode_Click (UI-017)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmPrintZPLDialog.vb
+==================================================
+Private Sub btnPreviewNextBarcode_Click(sender As Object, e As EventArgs) Handles btnPreviewNextBarcode.Click
+        Dim curInx = cbBarcode.SelectedIndex
+
+        If curInx = cbBarcode.Items.Count - 1 Then
+            cbBarcode.SelectedIndex = 0
+        Else
+            cbBarcode.SelectedIndex = curInx + 1
+        End If
+
+        GetPreview()
+    End Sub
+
+==================================================
+Part: btnPreviewPrevBarcode_Click (UI-018)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmPrintZPLDialog.vb
+==================================================
+Private Sub btnPreviewPrevBarcode_Click(sender As Object, e As EventArgs) Handles btnPreviewPrevBarcode.Click
+        Dim curIndex = cbBarcode.SelectedIndex
+
+        If curIndex = 0 Then
+            cbBarcode.SelectedIndex = cbBarcode.Items.Count - 1
+        Else
+            cbBarcode.SelectedIndex = curIndex - 1
+        End If
+
+        GetPreview()
+    End Sub
+
+==================================================
+Part: IsFormClosing (UI-025)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Public Function IsFormClosing() As Boolean
+        Dim stackTrace As StackTrace = New StackTrace
+        For Each sf As StackFrame In stackTrace.GetFrames
+            If (sf.GetMethod.Name = WMCLOSE) Then Return True
+        Next
+        Return False
+    End Function
+
+==================================================
+Part: getPartGUID (UI-041)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Function getPartGUID(partno As String) As String
+        If (String.IsNullOrEmpty(partno)) Then
+            Return ""
+        End If
+
+        Dim partGUID As String = String.Empty
+        Try
+            Dim jammer As New SQLJammer(GetOpenedFinesseConnection())
+            jammer.Add($"
+                SELECT TOP 1 GUID FROM dbo.inpart
+                WHERE partno =  {SQLQuote(partno)}",
+                     Sub(result)
+                         If result.Rows.Count > 0 Then
+                             partGUID = result.Rows(0).Item("GUID").ToString()
+                         End If
+                     End Sub)
+            jammer.Execute()
+        Catch ex As Exception
+            MessageBox.Show("Error Getting File Storage GUID: " & ex.Message)
+        End Try
+        Return partGUID
+    End Function
+
+==================================================
+Part: menuItemSendMessage_Click (UI-049)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub menuItemSendMessage_Click(sender As Object, e As EventArgs)
+        SendIFSToFinesseMessage()
+    End Sub
+
+==================================================
+Part: frmAddInventory_FormClosing (UI-055)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub frmAddInventory_FormClosing(ByVal sender As Object, ByVal e As FormClosingEventArgs) Handles Me.FormClosing
+        Dim sw As New Stopwatch
+        sw.Start()
+
+        Debug.Print(sw.ElapsedMilliseconds & " Before DoYouWantToSave")
+
+        Dim lShouldReturn As Boolean
+        DoYouWantToSave(lShouldReturn)
+        If lShouldReturn Then Return
+
+        Debug.Print(sw.ElapsedMilliseconds & " After DoYouWantToSave")
+
+        Try
+            Debug.Print(sw.ElapsedMilliseconds & " Before OpenConnection")
+
+            Dim newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+
+            Debug.Print(sw.ElapsedMilliseconds & " After OpenConnection")
+
+            Dim SettingsToSave As New List(Of AppConfigState) From {
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormSize", .Rvalue = Me.Size.ToString},
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormLocation", .Rvalue = Me.Location.ToString},
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormWindowState", .Rvalue = Me.WindowState.ToString}
+            }
+
+            If (Not String.IsNullOrEmpty(cboOwner.SelectedValue)) Then
+                SettingsToSave.Add(New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "LastOwnerCode", .Rvalue = cboOwner.SelectedValue})
+            End If
+
+            If (Not String.IsNullOrEmpty(cboWarehouse.SelectedValue)) Then
+                SettingsToSave.Add(New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "LastSelectedWarehouse", .Rvalue = cboWarehouse.SelectedValue})
+            End If
+
+            Debug.Print(sw.ElapsedMilliseconds & " After array of settings")
+
+            SettingsToSave.SaveConfig()
+
+            newConn.Close()
+            newConn.Dispose()
+
+            Debug.Print(sw.ElapsedMilliseconds & " After Close Connection")
+
+        Catch ex As Exception
+            Console.WriteLine("Error saving App Configs: ")
+            Console.WriteLine(ex.Message)
+        End Try
+
+    End Sub
+
+==================================================
+Part: SaveToolStripMenuItem_Click (UI-062)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub SaveToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles SaveToolStripMenuItem.Click, btnCommit.Click
+        If dgvItemsForImport.Rows.Count = 0 Then
+            Beep_Fail()
+            MsgBox("You do not have any items in your list to add into inventory." & vbCrLf & vbCrLf & "Commit has been aborted.", vbOKOnly)
+            Return
+        Else
+            'If (Not IsValidEntry) Then
+            '    Beep_Fail()
+            '    MsgBox("Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order." & vbCrLf & vbCrLf & "Commit has been aborted.", vbOKOnly)
+            '    Return
+            'End If
+            Dim uniqueRows = DataSetAddInventory.inpartsub.AsEnumerable() _
+                                .GroupBy(Function(row) New With {
+                                    Key .PartNo = row.Field(Of String)("partno"),
+                                    Key .PONumber = row.Field(Of String)("PONumber"),
+                                    Key .POLineNo = row.Field(Of String)("POLineNo"),
+                                    Key .POReleaseNo = row.Field(Of String)("POReleaseNo")
+                                }) _
+                                .Select(Function(g) g.First()) _
+                                .CopyToDataTable()
+            SaveData()
+            ReloadSavedPOs(uniqueRows)
+
+            RefreshCurrentInventory()
+            ItemsForImportQtyUpdating()
+        End If
+    End Sub
+
+==================================================
+Part: ExitToolStripMenuItem_Click (UI-065)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub ExitToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ExitToolStripMenuItem.Click
+        Dim lShouldReturn As Boolean
+        DoYouWantToSave(lShouldReturn)
+        If lShouldReturn Then Return
+        End
+    End Sub
+
+==================================================
+Part: TransferToolsToolStripMenuItem_Click (UI-066)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub TransferToolsToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles TransferToolsToolStripMenuItem.Click
+        StartFinesseProcess("TransferInquiryTools.exe")
+    End Sub
+
+==================================================
+Part: PartAttachmentMaintenanceToolStripMenuItem_Click (UI-067)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub PartAttachmentMaintenanceToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles PartAttachmentMaintenanceToolStripMenuItem.Click
+        Dim commandArgs As String = Selected_PartNo
+        StartFinesseProcess("Part Attachments Maintenance.exe", commandArgs)
+    End Sub
+
+==================================================
+Part: PrintDocument1_PrintPage (UI-072)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub PrintDocument1_PrintPage(ByVal sender As Object, ByVal e As PrintPageEventArgs) Handles PrintDocument1.PrintPage
+
+        Dim Margin As Integer = 50
+        Dim paddingInfoBox As Integer = 25
+        Dim paddingText As Integer = 5
+        Dim paddingSmallText As Integer = 2
+        Dim r_uHeight = 25
+        Dim r_uWidth = r_uHeight * (19 / 1.75)
+        Dim Point As New Point
+        Point.X = 0
+        Point.Y = 0
+
+        Dim bcWidth2D As Integer = pb2Dbarcode.Image.Width * 0.5
+        Dim bcHeight2D As Integer = pb2Dbarcode.Image.Height * 0.5
+
+        Dim font2Dbarcode As New Font(FontFamily.GenericSansSerif, 5)
+
+        Dim font1Dbarcode As New Font("IDAutomationHC39M", 10)
+        'Dim bcWidth1D As Integer = e.Graphics.MeasureString(lblBarcodePrint.Text, font1Dbarcode).Width
+        'Dim bcHeight1D As Integer = e.Graphics.MeasureString(lblBarcodePrint.Text, font1Dbarcode).Height
+
+        For i = 0 To 5
+            e.Graphics.DrawImage(pb2Dbarcode.Image, Margin + (bcWidth2D * 2) * i, Margin, bcWidth2D, bcHeight2D)
+            e.Graphics.DrawString(txtBarcode.Text, font2Dbarcode, Brushes.Black, Margin + (bcWidth2D * 2) * i + (bcWidth2D - e.Graphics.MeasureString(txtBarcode.Text, font2Dbarcode).Width) * 0.5, Margin + bcHeight2D + 2)
+            'e.Graphics.DrawString(lblBarcodePrint.Text, font1Dbarcode, Brushes.Black, Margin + (bcWidth1D + 20) * i, Margin + bcHeight2D * 2)
+        Next
+
+    End Sub
+
+==================================================
+Part: PrintBArcodesSelectedItemsToolStripMenuItem_Click (UI-076)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub PrintBArcodesSelectedItemsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PrintBArcodesSelectedItemsToolStripMenuItem.Click
+        Dim itemsToImport = dgvItemsForImport.SelectedRows
+        If (itemsToImport Is Nothing Or itemsToImport?.Count = 0) Then
+            MessageBox.Show("There is not selected items to print.")
+            Exit Sub
+        End If
+        'bsAddInventory.GetDataRows(Of inpartsubRow)()
+        Dim dtPrintItems As New List(Of ItemsToPrintRow)
+
+        For Each item In itemsToImport
+            Dim uniqueId = item.Cells("dgcAddItemsBarcode").Value.ToString
+            Dim serialNo = item.Cells("dgcAddItemsSerialNo").Value.ToString
+            Dim owner = item.Cells("dgcAddItemsDept").Value.ToString
+
+            dtPrintItems.Add(New ItemsToPrintRow(serialNo, uniqueId))
+        Next
+
+        PrintBarcodes(dtPrintItems)
+    End Sub
+
+==================================================
+Part: PrintPreviewToolStripMenuItem_Click (UI-078)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub PrintPreviewToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles PrintPreviewToolStripMenuItem.Click
+        Try
+            PrintPreviewDialog1.Document = PreparePrintDocument()
+            PrintPreviewDialog1.Document.DefaultPageSettings.Landscape = True
+            PrintPreviewDialog1.WindowState = FormWindowState.Maximized
+            PrintPreviewDialog1.ShowDialog()
+        Catch ex As Exception
+            MsgBox("Nothing has been selected to be printed.")
+        End Try
+    End Sub
+
+==================================================
+Part: CopyPONumberToolStripMenuItem_Click (UI-087)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub CopyPONumberToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopyPONumberToolStripMenuItem.Click, CopyPartNumberToolStripMenuItem.Click
+        Dim clickedItem = CType(sender, ToolStripMenuItem)
+
+        Dim partno As String
+        Dim ponumber As String
+
+
+        If (clickedRow.HasParent) Then
+            Dim row = TryCast(clickedRow.ListObject, DisassemblyPart)
+            partno = row.ChildPartNo
+            ponumber = row.OrderNo
+        Else
+            Dim row = TryCast(clickedRow.ListObject, QuickReportSchema)
+            partno = row.PartNo
+            ponumber = row.OrderNo
+        End If
+
+        Dim copiedText As String
+        If clickedItem Is CopyPONumberToolStripMenuItem Then
+            copiedText = ponumber
+        ElseIf clickedItem Is CopyPartNumberToolStripMenuItem Then
+            copiedText = partno
+        End If
+        Clipboard.SetText(copiedText)
+
+        Dim toast As New ToastNotification($"{copiedText} Copied to clipboard!", Color.Green)
+        toast.Show()
+    End Sub
+
+==================================================
+Part: ClearSelectedRowsToolStripMenuItem_Click (UI-098)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub ClearSelectedRowsToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ClearSelectedRowsToolStripMenuItem.Click
+        For Each r As DataGridViewRow In dgvItemsForImport.SelectedRows
+            bsAddInventory.Remove(r.DataBoundItem)
+        Next
+        ItemsForImportQtyUpdating()
+    End Sub
+
+==================================================
+Part: ClearAllToolStripMenuItem_Click (UI-099)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub ClearAllToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ClearAllToolStripMenuItem.Click
+        For Each r As DataGridViewRow In dgvItemsForImport.Rows
+            bsAddInventory.Remove(r.DataBoundItem)
+        Next
+        ItemsForImportQtyUpdating()
+    End Sub
+
+==================================================
+Part: AvailabilityCalendarToolStripMenuItem_Click (UI-104)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub AvailabilityCalendarToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles AvailabilityCalendarToolStripMenuItem.Click, tsbAvailability.Click
+        Dim commandArgs As String = ""
+        If Not String.IsNullOrEmpty(Selected_PartNo) Then commandArgs = "partno=" + Selected_PartNo
+
+        StartFinesseProcess("prjpjinvcal.exe", commandArgs)
+    End Sub
+
+==================================================
+Part: CycleCountUtilityToolStripMenuItem_Click (UI-105)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub CycleCountUtilityToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles CycleCountUtilityToolStripMenuItem.Click
+        StartFinesseProcess("Cycle Count.exe")
+    End Sub
+
+==================================================
+Part: UtilizationToolStripMenuItem_Click (UI-106)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub UtilizationToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles UtilizationToolStripMenuItem.Click, tsbUtilization.Click
+        Dim commandArgs As String = ""
+        If Not String.IsNullOrEmpty(Selected_PartNo) Then commandArgs = "bld=" + GetUserWarehouse() + " partno=" + Selected_PartNo
+
+        StartFinesseProcess("utilization.exe", commandArgs)
+    End Sub
+
+==================================================
+Part: dgvCurrentInventory_CellFormatting (UI-111)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub dgvCurrentInventory_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles dgvCurrentInventory.CellFormatting
+        If e.ColumnIndex = dgvCurrentInventory.Columns("Return").Index Then
+            If Not IsDBNull(e.Value) AndAlso CDate(e.Value) < Today Then
+                dgvCurrentInventory.Rows(e.RowIndex).DefaultCellStyle.ForeColor = Color.Red
+            Else
+                dgvCurrentInventory.Rows(e.RowIndex).DefaultCellStyle.ForeColor = SystemColors.ControlText
+            End If
+        End If
+    End Sub
+
+==================================================
+Part: LAMEToolStripMenuItem_Click (UI-112)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub LAMEToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LAMEToolStripMenuItem.Click
+        Dim sqlStr As New StringBuilder
+        sqlStr.AppendLine("select value")
+        sqlStr.AppendLine("from dbo.SysConfig sc")
+        sqlStr.AppendLine("where tag = 'PODIO_PUBLIC_ISSUE_TRACKING_URL'")
+
+        Dim lameURL As String = ""
+
+        Using conn As New SqlConnection(FinesseConnectionString)
+            conn.Open()
+            lameURL = conn.ExecuteScalar(sqlStr)
+        End Using
+
+        Process.Start(lameURL)
+    End Sub
+
+==================================================
+Part: EquipmentLocationsToolStripMenuItem1_Click (UI-113)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub EquipmentLocationsToolStripMenuItem1_Click(ByVal sender As Object, ByVal e As EventArgs) Handles _
+        EquipmentLocationsToolStripMenuItem1.Click _
+        , TransactionsToolStripMenuItem1.Click _
+        , PhaseHistoryToolStripMenuItem1.Click _
+        , LateReturnsToolStripMenuItem1.Click _
+        , BatchLocationSummaryToolStripMenuItem1.Click
+
+        Dim commandArgs As String = ""
+        Dim selectedMenuItem = TryCast(sender, ToolStripMenuItem)
+
+        Select Case selectedMenuItem.Name
+            Case EquipmentLocationsToolStripMenuItem1.Name
+                commandArgs += "target:Locations"
+            Case TransactionsToolStripMenuItem1.Name
+                commandArgs += "target:Transactions"
+            Case PhaseHistoryToolStripMenuItem1.Name
+                commandArgs += "target:PhaseHistory"
+            Case LateReturnsToolStripMenuItem1.Name
+                commandArgs += "target:LateReturns"
+            Case BatchLocationSummaryToolStripMenuItem1.Name
+                commandArgs += "target:BatchLocationSummary"
+        End Select
+
+        If Not String.IsNullOrEmpty(txtPartNo.Text) Then commandArgs += " partno:" & txtPartNo.Text
+        If Not String.IsNullOrEmpty(Selected_Barcode) Then commandArgs += " barcode:" & Selected_Barcode
+        If Not String.IsNullOrEmpty(cboWarehouse.SelectedValue) Then commandArgs += " bld:" & cboWarehouse.SelectedValue
+        If Not String.IsNullOrEmpty(cboOwner.SelectedValue) Then commandArgs += " dept:" & cboOwner.SelectedValue
+
+        StartFinesseProcess("Query Tools.exe", commandArgs)
+    End Sub
+
+==================================================
+Part: HandlePartImageGUI (UI-127)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub HandlePartImageGUI()
+        PartImageViewerControl1.PartNumberChangeAsync(txtPartNo.Text)
+    End Sub
+
+==================================================
+Part: MainSubpartMaintenanceToolStripMenuItem_Click (UI-134)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub MainSubpartMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles MainSubpartMaintenanceToolStripMenuItem.Click
+        Dim mainPartMaintenance = New frmMainPartMaintenance()
+        mainPartMaintenance.Show()
+
+    End Sub
+
+==================================================
+Part: NewRowFromBuilder (UI-193)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Function NewRowFromBuilder(ByVal builder As Global.System.Data.DataRowBuilder) As Global.System.Data.DataRow
+            Return New inpartsubRow(builder)
+        End Function
+
+==================================================
+Part: NewRowFromBuilder (UI-248)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Function NewRowFromBuilder(ByVal builder As Global.System.Data.DataRowBuilder) As Global.System.Data.DataRow
+            Return New ClairNewSerialNosRow(builder)
+        End Function
+
+==================================================
+Part: NewRowFromBuilder (UI-276)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Function NewRowFromBuilder(ByVal builder As Global.System.Data.DataRowBuilder) As Global.System.Data.DataRow
+            Return New DisassemblyPartsRow(builder)
+        End Function
+
+==================================================
+Part: OnCreateMainForm (UI-446)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/My Project/Application.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
+        Protected Overrides Sub OnCreateMainForm()
+            Me.MainForm = Global.Add_Inventory.frmAddInventory
+        End Sub
+
+==================================================
+Part: MainFormSize (UI-451)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/My Project/Settings.Designer.vb
+==================================================
+<Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("1024, 768")>  _
+        Public Property MainFormSize() As Global.System.Drawing.Size
+            Get
+                Return CType(Me("MainFormSize"),Global.System.Drawing.Size)
+            End Get
+            Set
+                Me("MainFormSize") = value
+            End Set
+        End Property
+
+==================================================
+Part: MainFormLocation (UI-452)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/My Project/Settings.Designer.vb
+==================================================
+<Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("0, 0")>  _
+        Public Property MainFormLocation() As Global.System.Drawing.Point
+            Get
+                Return CType(Me("MainFormLocation"),Global.System.Drawing.Point)
+            End Get
+            Set
+                Me("MainFormLocation") = value
+            End Set
+        End Property
+
+==================================================
+Part: MainFormWindowState (UI-453)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/My Project/Settings.Designer.vb
+==================================================
+<Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+        Public Property MainFormWindowState() As Integer
+            Get
+                Return CType(Me("MainFormWindowState"),Integer)
+            End Get
+            Set
+                Me("MainFormWindowState") = value
+            End Set
+        End Property

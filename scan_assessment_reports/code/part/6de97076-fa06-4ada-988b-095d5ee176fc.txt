@@ -1,0 +1,14 @@
+Private Function getNextAvailableIPAddress(partno As String) As String
+
+        Dim IPAddress As String
+
+        Dim sqlComm As SqlCommand = New SqlCommand("dbo.Get_next_available_IPAddress", gConn)
+        sqlComm.CommandType = CommandType.StoredProcedure
+        sqlComm.Parameters.Add("@partno", SqlDbType.VarChar, 50).Value = txtPartNo.Text
+        sqlComm.Parameters.Add("@nextIPAddress", SqlDbType.VarChar, 15)
+        sqlComm.Parameters("@nextIPAddress").Direction = ParameterDirection.Output
+        sqlComm.ExecuteNonQuery()
+        IPAddress = sqlComm.Parameters.Item("@nextIPAddress").Value
+
+        Return IPAddress
+    End Function

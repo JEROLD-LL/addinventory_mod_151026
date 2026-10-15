@@ -1,0 +1,16 @@
+Private Sub txtBarcode_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtBarcode.Validating
+        If IsFormClosing() = True Then Exit Sub
+        If String.IsNullOrEmpty(txtBarcode.Text) Then Exit Sub
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+
+            Dim exists = newConn.ExecuteScalar("select top 1 unique_no from inpartsub where unique_no = " & SQLQuote(txtBarcode.Text) & " and (onhand > 0 or parentunique_no <> '')")
+            If Not exists Is Nothing Then
+                Beep_Fail()
+                MsgBox("This barcode is already in use.  Please enter a valid barcode.", vbOKOnly)
+                txtBarcode.Clear()
+                txtBarcode.Focus()
+                txtBarcode.SelectAll()
+            End If
+        End Using
+    End Sub

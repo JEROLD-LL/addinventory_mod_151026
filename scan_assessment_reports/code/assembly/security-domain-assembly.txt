@@ -1,0 +1,68 @@
+
+==================================================
+Part: ReloadPermissions (PRT-052)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub ReloadPermissions()
+        If (UserPermission = UserAccess.FULL_ACCESS OrElse
+                    (UserPermission <> UserAccess.NO_ACCESS AndAlso cboRef4.SelectedValue <> "PURCADD") OrElse
+                    (UserPermission = UserAccess.PO_MANDATORY AndAlso _selected_ifs_po IsNot Nothing) OrElse
+                    (UserPermission = UserAccess.RECIEVED_PO_MANDATORY AndAlso _selected_ifs_po IsNot Nothing AndAlso _selected_ifs_po.IsRecieved)) Then
+            SaveToolStripMenuItem.Enabled = True
+            btnCommit.Enabled = True
+            btnAddItemToList.Enabled = True
+            txtPONumber.Enabled = cboRef4.SelectedValue = "MANFADD" OrElse (UserPermission = UserAccess.FULL_ACCESS)
+            LblPermissionMsg.Text = ""
+            If (cboRef4.SelectedValue <> "PURCADD" OrElse (_selected_ifs_po IsNot Nothing AndAlso txtPartNo.Text <> _selected_ifs_po.PartNo)) Then
+                _selected_ifs_po = Nothing
+                txtPONumber.Text = ""
+                txtQty.Text = ""
+            ElseIf (_selected_ifs_po IsNot Nothing) Then
+                txtPONumber.Text = _selected_ifs_po.OrderNo
+            End If
+        Else
+            SaveToolStripMenuItem.Enabled = False
+            btnCommit.Enabled = False
+            btnAddItemToList.Enabled = False
+            txtPONumber.Enabled = False
+
+            If (cboRef4.SelectedValue = "PURCADD") Then
+                If ((_selected_ifs_po Is Nothing OrElse ultraGridERPPurchaseOrders.ActiveRow Is Nothing) OrElse _selected_ifs_po IsNot Nothing AndAlso _selected_ifs_po.PartNo <> txtPartNo.Text) Then
+                    LblPermissionMsg.Text = "You need to select a PO"
+                Else
+
+                    If ({UserAccess.NO_ACCESS, UserAccess.GENERAL_USER}.Contains(UserPermission) OrElse
+                    UserPermission <> UserAccess.FULL_ACCESS AndAlso _selected_ifs_po Is Nothing OrElse
+                    UserPermission = UserAccess.RECIEVED_PO_MANDATORY AndAlso _selected_ifs_po IsNot Nothing AndAlso Not _selected_ifs_po.IsRecieved) Then
+                        LblPermissionMsg.Text = "You don't have permission to perform this operation"
+
+                    End If
+                End If
+            End If
+
+            '    If ((cboRef4.SelectedValue = "PURCADD" AndAlso Not {UserAccess.NO_ACCESS, UserAccess.GENERAL_USER}.Contains(UserPermission) AndAlso Not String.IsNullOrEmpty(txtPartNo.Text)) _
+            '        AndAlso (UserPermission = UserAccess.RECIEVED_PO_MANDATORY AndAlso _selected_ifs_po IsNot Nothing AndAlso _selected_ifs_po.IsRecieved) _
+            '        OrElse _selected_ifs_po IsNot Nothing AndAlso _selected_ifs_po.PartNo <> txtPartNo.Text) Then
+            '    LblPermissionMsg.Text = "You need to select a PO"
+            'Else
+            '    LblPermissionMsg.Text = "You don't have permission to perform this operation"
+            'End If
+
+            LblPermissionMsg.Location = New Point(btnAddItemToList.Location.X - LblPermissionMsg.Width - 10, btnAddItemToList.Location.Y)
+        End If
+    End Sub
+
+==================================================
+Part: UserPermission (PRT-141)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Public Property UserPermission() As UserAccess
+        Get
+            Return _userPermission
+        End Get
+        Set(value As UserAccess)
+            _userPermission = value
+        End Set
+    End Property

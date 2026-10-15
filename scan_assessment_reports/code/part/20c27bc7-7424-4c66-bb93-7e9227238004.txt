@@ -1,0 +1,12 @@
+Public Sub New()
+        ' This call is required by the designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+        gConn.Open()
+        'DgvERPPurchaseOrders.AutoGenerateColumns = False
+        DgvInventoryInStock.AutoGenerateColumns = False
+        dgvIFSMessages.AutoGenerateColumns = True
+
+        Me.Text = $"{Me.Text} ({GetEnvironmentVariable("ESSDB")})"
+    End Sub

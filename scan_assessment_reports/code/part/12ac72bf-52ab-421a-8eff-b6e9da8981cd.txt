@@ -1,0 +1,3 @@
+Private Function isValidMACAddress(MACAddress As String) As Boolean
+        Return Regex.IsMatch(MACAddress, "^[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}$")
+    End Function

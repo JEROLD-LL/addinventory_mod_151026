@@ -1,0 +1,10 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property row() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.rowColumn),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.rowColumn) = value
+            End Set
+        End Property

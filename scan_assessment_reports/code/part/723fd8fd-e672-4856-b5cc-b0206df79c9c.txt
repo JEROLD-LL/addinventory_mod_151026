@@ -1,0 +1,15 @@
+Private Sub txtSerialNo_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtSerialNo.Validating
+        If IsFormClosing() = True Then Exit Sub
+        If String.IsNullOrEmpty(txtSerialNo.Text) Then Exit Sub
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+            Dim exists = newConn.ExecuteScalar("select top 1 serial_no from inpartsub where serial_no = " & SQLQuote(txtSerialNo.Text) & " and partno = " & SQLQuote(txtPartNo.Text) & " and (onhand > 0 or parentunique_no <> '')")
+            If Not exists Is Nothing Then
+                Beep_Fail()
+                MsgBox("This serial number is already in use for this part.  Please enter a valid serial number.", vbOKOnly)
+                txtSerialNo.Clear()
+                txtSerialNo.Focus()
+                txtSerialNo.SelectAll()
+            End If
+        End Using
+    End Sub

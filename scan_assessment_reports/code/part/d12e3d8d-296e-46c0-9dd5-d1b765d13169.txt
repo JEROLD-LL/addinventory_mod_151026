@@ -1,0 +1,17 @@
+Private Function GetParentchildSelectedRow() As (QuickReportSchema, DisassemblyPart)
+        Dim Selected = ultraGridERPPurchaseOrders.ActiveRow
+        If (Selected Is Nothing) Then
+            Return (Nothing, Nothing)
+        End If
+        Dim IsChild = Selected.HasParent
+        Dim parent
+        Dim child
+        If (IsChild) Then
+            parent = TryCast(Selected.ParentRow.ListObject, QuickReportSchema)
+            child = TryCast(Selected.ListObject, DisassemblyPart)
+        Else
+            parent = TryCast(Selected.ListObject, QuickReportSchema)
+        End If
+
+        Return (parent, child)
+    End Function

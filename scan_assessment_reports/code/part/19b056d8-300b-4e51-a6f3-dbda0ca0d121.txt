@@ -1,0 +1,8 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0"),  _
+     Global.System.ComponentModel.DesignerSerializationVisibilityAttribute(Global.System.ComponentModel.DesignerSerializationVisibility.Hidden)>  _
+    Public Shadows ReadOnly Property Tables() As Global.System.Data.DataTableCollection
+        Get
+            Return MyBase.Tables
+        End Get
+    End Property

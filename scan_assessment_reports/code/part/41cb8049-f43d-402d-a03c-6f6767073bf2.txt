@@ -1,0 +1,13 @@
+Private Sub btnPrintBarcode_Click(sender As Object, e As EventArgs) Handles btnPrintBarcode.Click
+        'set _dtItemsToPrint
+
+        Dim blPrintSuccess = Print()
+
+        'users requested the dialog stay open 
+        'If Not blPrintSuccess Then
+        'Exit Sub
+        'Else
+        'Me.Close()
+        'End If
+
+    End Sub

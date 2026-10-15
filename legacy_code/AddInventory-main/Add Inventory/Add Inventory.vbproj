@@ -1,0 +1,477 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{97E57900-AAA6-4FF5-9E20-E6270492F84D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>Add_Inventory.My.MyApplication</StartupObject>
+    <RootNamespace>Add_Inventory</RootNamespace>
+    <AssemblyName>Add Inventory</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>WindowsForms</MyType>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>Add Inventory.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DefineConstants>NET40_OR_GREATER</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>Add Inventory.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DefineConstants>NET40_OR_GREATER</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>Off</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>Off</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>MISC05.ICO</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DataMatrix.net">
+      <HintPath>\\clair.lcl\s\Finesse\BarcodeReader\DataMatrix.net\DataMatrix.net.dll</HintPath>
+    </Reference>
+    <!-- <Reference Include="Infragistics4.Shared.v23.1, Version=23.1.20231.111, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.Misc.v23.1, Version=23.1.20231.111, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinGrid.v23.1, Version=23.1.20231.111, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.v23.1, Version=23.1.20231.111, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb" /> -->
+    <Reference Include="Infragistics2.Shared.v11.1, Version=11.1.20111.1003, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\Infragistics\NetAdvantage 2011.1\Windows Forms\Bin\Infragistics2.Shared.v11.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1, Version=11.1.20111.1003, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\Infragistics\NetAdvantage 2011.1\Windows Forms\Bin\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Win.UltraWinTabControl.v11.1, Version=11.1.20111.1003, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\Infragistics\NetAdvantage 2011.1\Windows Forms\Bin\Infragistics2.Win.UltraWinTabControl.v11.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Win.v11.1, Version=11.1.20111.1003, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\Infragistics\NetAdvantage 2011.1\Windows Forms\Bin\Infragistics2.Win.v11.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Office.Interop.Outlook\15.0.0.0__71e9bce111e9429c\Microsoft.Office.Interop.Outlook.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="DataMatrix" />
+    <Import Include="DataMatrix.net" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Windows.Forms" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApplicationEvents.vb" />
+    <Compile Include="ClairUtilities\Classes\AppUtilities.vb" />
+    <Compile Include="ClairUtilities\Classes\DoubleBufferedTableLayoutPanel.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Classes\FileExplorer\PartFileExplorer.vb" />
+    <Compile Include="ClairUtilities\Classes\FinesseConnectionFactory.vb" />
+    <Compile Include="ClairUtilities\Classes\Generic Picker\frmGenericPicker.Designer.vb">
+      <DependentUpon>frmGenericPicker.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClairUtilities\Classes\Generic Picker\frmGenericPicker.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Classes\Generic Picker\GenericPicker.vb" />
+    <Compile Include="ClairUtilities\Classes\IFSClient.vb" />
+    <Compile Include="ClairUtilities\Classes\IFSCredentialManager.vb" />
+    <Compile Include="ClairUtilities\Classes\IFS\IFSConnector.vb" />
+    <Compile Include="ClairUtilities\Classes\ListViewColumnSorter.vb" />
+    <Compile Include="ClairUtilities\Classes\LoggingToLocalFile.vb" />
+    <Compile Include="ClairUtilities\Classes\MultiLevelTaskHelper.vb" />
+    <Compile Include="ClairUtilities\Classes\PartTransferStatus.vb" />
+    <Compile Include="ClairUtilities\Classes\SortableBindingList.vb" />
+    <Compile Include="ClairUtilities\Classes\SortColumnManager.vb" />
+    <Compile Include="ClairUtilities\Classes\SQLJammer.vb" />
+    <Compile Include="ClairUtilities\Classes\StateTracker.vb" />
+    <Compile Include="ClairUtilities\Classes\SysproSupplierPicker\SysproSupplierPicker.Designer.vb">
+      <DependentUpon>SysproSupplierPicker.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClairUtilities\Classes\SysproSupplierPicker\SysproSupplierPicker.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Classes\TemporarilyRemoveExpressionColumns.vb" />
+    <Compile Include="ClairUtilities\Classes\ToastNotification.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\CameraCapture.Designer.vb">
+      <DependentUpon>CameraCapture.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\CameraCapture.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\CameraCaptureHandler.vb" />
+    <Compile Include="ClairUtilities\Controls\FileExplorer.Designer.vb">
+      <DependentUpon>FileExplorer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\FileExplorer.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\frmPrintZPLDialog.Designer.vb">
+      <DependentUpon>frmPrintZPLDialog.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\frmPrintZPLDialog.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\HighlightTextbox.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\PartImagesPanel.Designer.vb">
+      <DependentUpon>PartImagesPanel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\PartImagesPanel.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\PartImageViewerControl.Designer.vb">
+      <DependentUpon>PartImageViewerControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\PartImageViewerControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Controls\SearchTextBox.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Data\Currency.vb" />
+    <Compile Include="ClairUtilities\Data\DeviceOwner.vb" />
+    <Compile Include="ClairUtilities\Data\FinessePOLine.vb" />
+    <Compile Include="ClairUtilities\Data\IFSDAL.vb" />
+    <Compile Include="ClairUtilities\Data\models\BasePartInfo.vb" />
+    <Compile Include="ClairUtilities\Data\models\CurrencyRate.vb" />
+    <Compile Include="ClairUtilities\Data\models\DisassemblyPart.vb" />
+    <Compile Include="ClairUtilities\Data\models\FinessePart.vb" />
+    <Compile Include="ClairUtilities\Data\models\IFSInventoryReceiptMessages.vb" />
+    <Compile Include="ClairUtilities\Data\models\IFSInventoryStock.vb" />
+    <Compile Include="ClairUtilities\Data\models\IFSPurchaseOrder.vb" />
+    <Compile Include="ClairUtilities\Data\models\IFSPurchaseOrderLine.vb" />
+    <Compile Include="ClairUtilities\Data\models\IFSPurchaseOrderSchema.vb" />
+    <Compile Include="ClairUtilities\Data\models\IFSReceiptInfo.vb" />
+    <Compile Include="ClairUtilities\Data\models\ODataResult.vb" />
+    <Compile Include="ClairUtilities\Data\models\PartCatalog.vb" />
+    <Compile Include="ClairUtilities\Data\models\PriceList.vb" />
+    <Compile Include="ClairUtilities\Data\models\PurchasePartPriceList.vb" />
+    <Compile Include="ClairUtilities\Data\models\QuickReportSchema.vb" />
+    <Compile Include="ClairUtilities\Data\models\ReceivedInventory.vb" />
+    <Compile Include="ClairUtilities\Modules\AppConfig.vb" />
+    <Compile Include="ClairUtilities\Modules\BindingSourceUtilities.vb" />
+    <Compile Include="ClairUtilities\Modules\ColorPalette.vb" />
+    <Compile Include="ClairUtilities\Modules\ControlLocation.vb" />
+    <Compile Include="ClairUtilities\Modules\DataTableUtilities.vb" />
+    <Compile Include="ClairUtilities\Modules\ExceptionHandlers.vb" />
+    <Compile Include="ClairUtilities\Modules\FinesseUtilities.vb" />
+    <Compile Include="ClairUtilities\Modules\Grammar.vb" />
+    <Compile Include="ClairUtilities\Modules\LINQUtilities.vb" />
+    <Compile Include="ClairUtilities\Modules\Outlook.vb" />
+    <Compile Include="ClairUtilities\Modules\SQL.vb" />
+    <Compile Include="ClairUtilities\Modules\SQLObject.vb" />
+    <Compile Include="ClairUtilities\Modules\StringUtilities.vb" />
+    <Compile Include="ClairUtilities\PartSearch\PartPicker.vb" />
+    <Compile Include="ClairUtilities\PartSearch\PartSearch.Designer.vb">
+      <DependentUpon>PartSearch.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClairUtilities\PartSearch\PartSearch.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\ProjectSearch\ProjectPicker.vb" />
+    <Compile Include="ClairUtilities\ProjectSearch\ProjectSearch.designer.vb">
+      <DependentUpon>ProjectSearch.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClairUtilities\ProjectSearch\ProjectSearch.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Data\DataSetAddInventory.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DataSetAddInventory.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Data\DataSetAddInventory.vb">
+      <DependentUpon>DataSetAddInventory.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmAddInventory.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmAddInventory.Designer.vb">
+      <DependentUpon>frmAddInventory.vb</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClairUtilities\Modules\BarcodeTemplate.vb" />
+    <Compile Include="ClairUtilities\Modules\PrintDialogState.vb" />
+    <Compile Include="ClairUtilities\Modules\ZPrinter.vb" />
+    <Compile Include="Forms\frmMainPartMaintenance.Designer.vb">
+      <DependentUpon>frmMainPartMaintenance.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmMainPartMaintenance.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ClairUtilities\Classes\Generic Picker\frmGenericPicker.resx">
+      <DependentUpon>frmGenericPicker.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClairUtilities\Classes\SysproSupplierPicker\SysproSupplierPicker.resx">
+      <DependentUpon>SysproSupplierPicker.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClairUtilities\Controls\CameraCapture.resx">
+      <DependentUpon>CameraCapture.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClairUtilities\Controls\FileExplorer.resx">
+      <DependentUpon>FileExplorer.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClairUtilities\Controls\frmPrintZPLDialog.resx">
+      <DependentUpon>frmPrintZPLDialog.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClairUtilities\Controls\PartImagesPanel.resx">
+      <DependentUpon>PartImagesPanel.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClairUtilities\Controls\PartImageViewerControl.resx">
+      <DependentUpon>PartImageViewerControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClairUtilities\PartSearch\PartSearch.resx">
+      <DependentUpon>PartSearch.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClairUtilities\ProjectSearch\ProjectSearch.resx">
+      <DependentUpon>ProjectSearch.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmAddInventory.resx">
+      <DependentUpon>frmAddInventory.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmMainPartMaintenance.resx">
+      <DependentUpon>frmMainPartMaintenance.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\licenses.licx" />
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Data\DataSetAddInventory.xsc">
+      <DependentUpon>DataSetAddInventory.xsd</DependentUpon>
+    </None>
+    <None Include="Data\DataSetAddInventory.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSetAddInventory.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="Data\DataSetAddInventory.xss">
+      <DependentUpon>DataSetAddInventory.xsd</DependentUpon>
+    </None>
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Resources\Add_New_Row.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\addin.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\availability.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\btn_search_up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CALC.ICO" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\calculator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\calculator1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CLAIM016.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cube.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cube1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Deleting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\excel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\EXPEDIA.ICO" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Filtering.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ForestGreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MOVE.ICO" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MSPAINT2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\OBarCreateNew.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Payment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\save_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\save_16x161.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\utilization.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+    <Content Include="MISC05.ICO" />
+    <None Include="Resources\CheckmarkBox.ico" />
+    <None Include="Resources\OrderDetails48.ICO" />
+    <None Include="Resources\Print.ico" />
+    <None Include="Resources\arrow_right_blue.png" />
+    <None Include="Resources\arrow_down_blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Modules\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,44 @@
+Private Sub hideOrDisplayAutoIPAddressForPart(partno As String)
+
+        Dim controls = {Label5, txtSerialNo, pb2Dbarcode, lblBarcode, txtBarcode, btnGetNextBarcode, btnPrintSingleBarcode, lblQty, txtQty}
+
+        If checkIfPartHasIPRangeSet(partno) Then
+
+            If Not txtMACAddress.Visible Then
+                For Each c As Control In controls
+                    c.Top = c.Top + txtMACAddress.Height
+                Next
+            End If
+
+
+
+            chkAutoAssignIPAddress.Checked = True
+            chkAutoAssignIPAddress.Visible = True
+            lblMACAddress.Visible = True
+            txtMACAddress.Visible = True
+            chkDeferEnteringMacAddress.Visible = True
+            chkDeferEnteringMacAddress.Checked = False
+
+
+        Else
+
+            If txtMACAddress.Visible Then
+                For Each c As Control In controls
+                    c.Top = c.Top - txtMACAddress.Height
+                Next
+            End If
+
+            chkAutoAssignIPAddress.Checked = False
+            chkAutoAssignIPAddress.Visible = False
+            lblMACAddress.Visible = False
+            txtMACAddress.Visible = False
+            txtMACAddress.Text = String.Empty
+
+            'force focus to the serial number after entering an item
+            chkDeferEnteringMacAddress.Checked = True
+            chkDeferEnteringMacAddress.Visible = False
+
+        End If
+
+
+    End Sub

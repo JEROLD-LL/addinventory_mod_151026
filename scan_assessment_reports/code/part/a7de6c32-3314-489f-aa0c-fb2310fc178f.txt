@@ -1,0 +1,24 @@
+#Region "Public Definitions"
+
+    Public Enum UserAccess
+        ''' <summary>
+        ''' User that can add inventory without a PO or restrictions
+        ''' </summary>
+        FULL_ACCESS
+        ''' <summary>
+        ''' User that can add inventory with an existing PO for the selected part
+        ''' </summary>
+        PO_MANDATORY
+        ''' <summary>
+        ''' User that can add inventory with a recieved PO for the selected part
+        ''' </summary>
+        RECIEVED_PO_MANDATORY
+        ''' <summary>
+        ''' User that can saved inventory with reasons diffrents than PURCADD
+        ''' </summary>
+        GENERAL_USER
+        ''' <summary>
+        ''' User that does not have access to save inventory
+        ''' </summary>
+        NO_ACCESS
+    End Enum

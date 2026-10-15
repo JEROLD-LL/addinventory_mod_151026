@@ -1,0 +1,10 @@
+Protected Overridable Sub Dispose(ByVal disposing As Boolean)
+            If Not Me._disposedValue Then
+                If disposing Then
+                    _gridInfo.ForEach(Sub(gi) gi.ReapplySettings())
+                End If
+
+                _gridInfo = Nothing
+            End If
+            Me._disposedValue = True
+        End Sub

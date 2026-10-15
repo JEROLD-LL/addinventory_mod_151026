@@ -1,0 +1,28 @@
+Private Function attemptParseMACAddress(MACAddress As String) As String
+        Dim parsedMacAddress = txtMACAddress.Text.ToUpper
+
+        'get rid of all separators
+        parsedMacAddress = parsedMacAddress.Replace(".", "")
+        parsedMacAddress = parsedMacAddress.Replace("-", "")
+        parsedMacAddress = parsedMacAddress.Replace(":", "")
+        parsedMacAddress = parsedMacAddress.Replace(" ", "")
+
+        'if not 12 hexidecimal characters without separators then we cannot parse
+        If parsedMacAddress.Length = 12 Then
+            Dim i = parsedMacAddress.Length - 1
+            While i > 0
+
+                If i Mod 2 = 0 AndAlso i <> 0 Then
+                    parsedMacAddress = parsedMacAddress.Insert(i, ":")
+                End If
+
+                i -= 1
+            End While
+
+
+        Else
+            Return parsedMacAddress
+        End If
+
+        Return parsedMacAddress
+    End Function

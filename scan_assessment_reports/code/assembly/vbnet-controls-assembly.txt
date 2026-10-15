@@ -1,0 +1,11 @@
+
+==================================================
+Part: tabControl1_SelectedIndexChanged (PRT-123)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub tabControl1_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles TabControl1.SelectedIndexChanged
+        If TabControl1.SelectedTab?.Name = ImagesTab.Name Then
+            InitPartImages()
+        End If
+    End Sub

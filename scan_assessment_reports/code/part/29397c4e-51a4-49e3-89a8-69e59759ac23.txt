@@ -1,0 +1,14 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POInternalDestinationId() As String
+            Get
+                If Me.IsPOInternalDestinationIdNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POInternalDestinationIdColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POInternalDestinationIdColumn) = value
+            End Set
+        End Property

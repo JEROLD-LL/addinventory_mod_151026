@@ -1,0 +1,99 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Private Sub InitClass()
+            Me.columnpartno = New Global.System.Data.DataColumn("partno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnpartno)
+            Me.columnpartdesc = New Global.System.Data.DataColumn("partdesc", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnpartdesc)
+            Me.columnunique_no = New Global.System.Data.DataColumn("unique_no", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnunique_no)
+            Me.columnbatchno = New Global.System.Data.DataColumn("batchno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnbatchno)
+            Me.columndept = New Global.System.Data.DataColumn("dept", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columndept)
+            Me.columnbld = New Global.System.Data.DataColumn("bld", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnbld)
+            Me.columnrow = New Global.System.Data.DataColumn("row", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnrow)
+            Me.columnserial_no = New Global.System.Data.DataColumn("serial_no", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnserial_no)
+            Me.columnonhand = New Global.System.Data.DataColumn("onhand", GetType(Double), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnonhand)
+            Me.columnreceipt = New Global.System.Data.DataColumn("receipt", GetType(Date), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnreceipt)
+            Me.columnacctno = New Global.System.Data.DataColumn("acctno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnacctno)
+            Me.columnref4 = New Global.System.Data.DataColumn("ref4", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnref4)
+            Me.columnref5 = New Global.System.Data.DataColumn("ref5", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnref5)
+            Me.columnRemoveNonCoded = New Global.System.Data.DataColumn("RemoveNonCoded", GetType(Boolean), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnRemoveNonCoded)
+            Me.columnPONumber = New Global.System.Data.DataColumn("PONumber", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPONumber)
+            Me.columnShouldLinkChildParts = New Global.System.Data.DataColumn("ShouldLinkChildParts", GetType(Boolean), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnShouldLinkChildParts)
+            Me.columnIPAddress = New Global.System.Data.DataColumn("IPAddress", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnIPAddress)
+            Me.columnMACAddress = New Global.System.Data.DataColumn("MacAddress", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_ColumnPropNameInRow", "MACAddress")
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_ColumnPropNameInTable", "MACAddressColumn")
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_ColumnVarNameInTable", "columnMACAddress")
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_UserColumnName", "MacAddress")
+            MyBase.Columns.Add(Me.columnMACAddress)
+            Me.columnPODateEntered = New Global.System.Data.DataColumn("PODateEntered", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPODateEntered)
+            Me.columnPOSite = New Global.System.Data.DataColumn("POSite", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOSite)
+            Me.columnPOInternalCustomer = New Global.System.Data.DataColumn("POInternalCustomer", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOInternalCustomer)
+            Me.columnPOInternalDestination = New Global.System.Data.DataColumn("POInternalDestination", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOInternalDestination)
+            Me.columnPOLineNo = New Global.System.Data.DataColumn("POLineNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOLineNo)
+            Me.columnPOReleaseNo = New Global.System.Data.DataColumn("POReleaseNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOReleaseNo)
+            Me.columnPOLocationNo = New Global.System.Data.DataColumn("POLocationNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOLocationNo)
+            Me.columnPOLotBatchNo = New Global.System.Data.DataColumn("POLotBatchNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOLotBatchNo)
+            Me.columnPONoteText = New Global.System.Data.DataColumn("PONoteText", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPONoteText)
+            Me.columnPOInternalDestinationId = New Global.System.Data.DataColumn("POInternalDestinationId", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOInternalDestinationId)
+            Me.columnPOIsSerialized = New Global.System.Data.DataColumn("POIsSerialized", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOIsSerialized)
+            Me.columnIsDisassembly = New Global.System.Data.DataColumn("IsDisassembly", GetType(Boolean), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnIsDisassembly)
+            Me.columnParentPartNo = New Global.System.Data.DataColumn("ParentPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnParentPartNo)
+            Me.columnPOPartNo = New Global.System.Data.DataColumn("POPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOPartNo)
+            Me.columnPOQtyArrived = New Global.System.Data.DataColumn("POQtyArrived", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOQtyArrived)
+            Me.columnPOBuyUnitPrice = New Global.System.Data.DataColumn("POBuyUnitPrice", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOBuyUnitPrice)
+            Me.Constraints.Add(New Global.System.Data.UniqueConstraint("Constraint1", New Global.System.Data.DataColumn() {Me.columnpartno, Me.columnunique_no, Me.columnbatchno, Me.columndept, Me.columnbld, Me.columnrow, Me.columnserial_no}, true))
+            Me.columnpartno.AllowDBNull = false
+            Me.columnpartno.MaxLength = 50
+            Me.columnpartdesc.ReadOnly = true
+            Me.columnunique_no.AllowDBNull = false
+            Me.columnunique_no.MaxLength = 20
+            Me.columnbatchno.AllowDBNull = false
+            Me.columnbatchno.MaxLength = 50
+            Me.columndept.AllowDBNull = false
+            Me.columndept.MaxLength = 10
+            Me.columnbld.AllowDBNull = false
+            Me.columnbld.MaxLength = 10
+            Me.columnrow.AllowDBNull = false
+            Me.columnrow.MaxLength = 20
+            Me.columnserial_no.AllowDBNull = false
+            Me.columnserial_no.MaxLength = 35
+            Me.columnonhand.AllowDBNull = false
+            Me.columnreceipt.AllowDBNull = false
+            Me.columnreceipt.ReadOnly = true
+            Me.columnacctno.AllowDBNull = false
+            Me.columnref4.AllowDBNull = false
+            Me.columnRemoveNonCoded.DefaultValue = CType(false,Boolean)
+            Me.columnIPAddress.MaxLength = 15
+        End Sub

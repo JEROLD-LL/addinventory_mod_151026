@@ -1,0 +1,4 @@
+Private Sub btnClearItemsForImportList_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnClearItemsForImportList.Click
+        DataSetAddInventory.inpartsub.Clear()
+        ItemsForImportQtyUpdating()
+    End Sub

@@ -1,0 +1,893 @@
+
+==================================================
+Part: dgvItemsForImport_CellEndEdit (PRT-096)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub dgvItemsForImport_CellEndEdit(sender As Object, e As DataGridViewCellEventArgs) Handles dgvItemsForImport.CellEndEdit
+        Dim index = 0 'Replacing the usage of this from old clair new usage: PartdescDataGridViewTextBoxColumn.Index
+        Select Case e.ColumnIndex
+            Case dgcAddItemsQty.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) And String.IsNullOrEmpty(dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value) <> 1 Then
+                    Beep_Fail()
+                    MsgBox("Only quantities of 1 can be entered for barcoded items.", vbOKOnly)
+                    dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value = 1
+                    ItemsForImportQtyUpdating()
+                End If
+                Dim orderNo = dgvItemsForImport.Item(PONumber.Index, e.RowIndex).Value
+                Dim partNumber = dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value
+                Dim POLimit = _ifs_data.Where(Function(item) item.OrderNo = orderNo AndAlso item.PartNo = partNumber).FirstOrDefault()
+                If String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) AndAlso POLimit IsNot Nothing AndAlso POLimit.UnrecievedQty < dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value Then
+                    Beep_Fail()
+                    MsgBox("Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order.", vbOKOnly)
+                    dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value = POLimit.UnrecievedQty
+                    ItemsForImportQtyUpdating()
+                End If
+
+            Case dgcAddItemsBarcode.Index, dgcAddItemsSerialNo.Index
+                If String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) And String.IsNullOrEmpty(dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value) <> 1 Then
+                    MsgBox("Only quantities of 1 can be entered for barcoded items.", vbOKOnly)
+                End If
+
+            Case dgcAddItemRef4.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) Then
+                    If dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False Then
+                        Dim result = MsgBox("You have changed your reason for adding inventory to '" & _dtReasonRef4.Select("ref4='NONTOBAR'")(0)("description") & "'" & vbCrLf & vbCrLf & "Would you like to attempt to remove a related non-barcoded item from " & dgvItemsForImport.Item(dgcAddItemsBld.Index, e.RowIndex).FormattedValue & " INSTOCK (Owner: " & dgvItemsForImport.Item(dgcAddItemsDept.Index, e.RowIndex).FormattedValue & ")?", vbYesNo)
+                        If result = MsgBoxResult.Yes Then
+                            dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True
+                            ValidateAddToInventoryItems()
+                        Else
+                            MsgBox("Select a different reason for adding inventory.", vbOKOnly)
+                        End If
+                    End If
+                    If Not dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True Then
+                        MsgBox("You have changed your reason for adding inventory from '" & _dtReasonRef4.Select("ref4='NONTOBAR'")(0)("description") & "'." & vbCrLf & vbCrLf & "The 'Remove Non-Coded' checkbox will be unchecked.", vbOKOnly)
+                        dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False
+                    End If
+                End If
+
+            Case dgcAddItemsDept.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) Then
+                    If dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" Then
+                        Dim result = MsgBox("You have changed the owner of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "Would you like to attempt to remove a related non-barcoded item from " & dgvItemsForImport.Item(dgcAddItemsBld.Index, e.RowIndex).FormattedValue & " INSTOCK (Owner: " & dgvItemsForImport.Item(dgcAddItemsDept.Index, e.RowIndex).FormattedValue & ")?", vbYesNo)
+                        If result = MsgBoxResult.Yes Then
+                            dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True
+                            ValidateAddToInventoryItems()
+                        End If
+                    End If
+                    If Not dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True Then
+                        MsgBox("You have changed the owner of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "The 'Remove Non-Coded' checkbox will be unchecked.", vbOKOnly)
+                        dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False
+                    End If
+                End If
+
+            Case dgcAddItemsBld.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) Then
+                    If dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False Then
+                        Dim result = MsgBox("You have changed the warehouse of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "Would you like to attempt to remove a related non-barcoded item from " & dgvItemsForImport.Item(dgcAddItemsBld.Index, e.RowIndex).FormattedValue & " INSTOCK (Owner: " & dgvItemsForImport.Item(dgcAddItemsDept.Index, e.RowIndex).FormattedValue & ")?", vbYesNo)
+                        If result = MsgBoxResult.Yes Then
+                            dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True
+                            ValidateAddToInventoryItems()
+                        End If
+                    End If
+                    If Not dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True Then
+                        MsgBox("You have changed the warehouse of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "The 'Remove Non-Coded' checkbox will be unchecked.", vbOKOnly)
+                        dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False
+                    End If
+                End If
+        End Select
+    End Sub
+
+==================================================
+Part: dgvCurrentInventory_CellFormatting (UI-111)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub dgvCurrentInventory_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles dgvCurrentInventory.CellFormatting
+        If e.ColumnIndex = dgvCurrentInventory.Columns("Return").Index Then
+            If Not IsDBNull(e.Value) AndAlso CDate(e.Value) < Today Then
+                dgvCurrentInventory.Rows(e.RowIndex).DefaultCellStyle.ForeColor = Color.Red
+            Else
+                dgvCurrentInventory.Rows(e.RowIndex).DefaultCellStyle.ForeColor = SystemColors.ControlText
+            End If
+        End If
+    End Sub
+
+==================================================
+Part: dgvDisassemblies_CellClick (PRT-159)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmMainPartMaintenance.vb
+==================================================
+Private Sub dgvDisassemblies_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgvDisassemblies.CellClick
+        Select Case e.ColumnIndex
+            Case BtnPartPicker.Index
+                PickPartOnCurrentRow()
+            Case BtnDeleteRow.Index
+                DeleteCurrentRow()
+        End Select
+    End Sub
+
+==================================================
+Part: InitClass (CFG-177)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+    Private Sub InitClass()
+        Me.DataSetName = "DataSetAddInventory"
+        Me.Prefix = ""
+        Me.Namespace = "http://tempuri.org/DataSetAddInventory.xsd"
+        Me.EnforceConstraints = true
+        Me.SchemaSerializationMode = Global.System.Data.SchemaSerializationMode.IncludeSchema
+        Me.tableinpartsub = New inpartsubDataTable()
+        MyBase.Tables.Add(Me.tableinpartsub)
+        Me.tableClairNewSerialNos = New ClairNewSerialNosDataTable()
+        MyBase.Tables.Add(Me.tableClairNewSerialNos)
+        Me.tableDisassemblyParts = New DisassemblyPartsDataTable()
+        MyBase.Tables.Add(Me.tableDisassemblyParts)
+    End Sub
+
+==================================================
+Part: InitClass (CFG-198)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Private Sub InitClass()
+            Me.columnpartno = New Global.System.Data.DataColumn("partno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnpartno)
+            Me.columnpartdesc = New Global.System.Data.DataColumn("partdesc", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnpartdesc)
+            Me.columnunique_no = New Global.System.Data.DataColumn("unique_no", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnunique_no)
+            Me.columnbatchno = New Global.System.Data.DataColumn("batchno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnbatchno)
+            Me.columndept = New Global.System.Data.DataColumn("dept", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columndept)
+            Me.columnbld = New Global.System.Data.DataColumn("bld", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnbld)
+            Me.columnrow = New Global.System.Data.DataColumn("row", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnrow)
+            Me.columnserial_no = New Global.System.Data.DataColumn("serial_no", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnserial_no)
+            Me.columnonhand = New Global.System.Data.DataColumn("onhand", GetType(Double), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnonhand)
+            Me.columnreceipt = New Global.System.Data.DataColumn("receipt", GetType(Date), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnreceipt)
+            Me.columnacctno = New Global.System.Data.DataColumn("acctno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnacctno)
+            Me.columnref4 = New Global.System.Data.DataColumn("ref4", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnref4)
+            Me.columnref5 = New Global.System.Data.DataColumn("ref5", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnref5)
+            Me.columnRemoveNonCoded = New Global.System.Data.DataColumn("RemoveNonCoded", GetType(Boolean), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnRemoveNonCoded)
+            Me.columnPONumber = New Global.System.Data.DataColumn("PONumber", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPONumber)
+            Me.columnShouldLinkChildParts = New Global.System.Data.DataColumn("ShouldLinkChildParts", GetType(Boolean), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnShouldLinkChildParts)
+            Me.columnIPAddress = New Global.System.Data.DataColumn("IPAddress", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnIPAddress)
+            Me.columnMACAddress = New Global.System.Data.DataColumn("MacAddress", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_ColumnPropNameInRow", "MACAddress")
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_ColumnPropNameInTable", "MACAddressColumn")
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_ColumnVarNameInTable", "columnMACAddress")
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_UserColumnName", "MacAddress")
+            MyBase.Columns.Add(Me.columnMACAddress)
+            Me.columnPODateEntered = New Global.System.Data.DataColumn("PODateEntered", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPODateEntered)
+            Me.columnPOSite = New Global.System.Data.DataColumn("POSite", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOSite)
+            Me.columnPOInternalCustomer = New Global.System.Data.DataColumn("POInternalCustomer", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOInternalCustomer)
+            Me.columnPOInternalDestination = New Global.System.Data.DataColumn("POInternalDestination", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOInternalDestination)
+            Me.columnPOLineNo = New Global.System.Data.DataColumn("POLineNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOLineNo)
+            Me.columnPOReleaseNo = New Global.System.Data.DataColumn("POReleaseNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOReleaseNo)
+            Me.columnPOLocationNo = New Global.System.Data.DataColumn("POLocationNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOLocationNo)
+            Me.columnPOLotBatchNo = New Global.System.Data.DataColumn("POLotBatchNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOLotBatchNo)
+            Me.columnPONoteText = New Global.System.Data.DataColumn("PONoteText", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPONoteText)
+            Me.columnPOInternalDestinationId = New Global.System.Data.DataColumn("POInternalDestinationId", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOInternalDestinationId)
+            Me.columnPOIsSerialized = New Global.System.Data.DataColumn("POIsSerialized", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOIsSerialized)
+            Me.columnIsDisassembly = New Global.System.Data.DataColumn("IsDisassembly", GetType(Boolean), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnIsDisassembly)
+            Me.columnParentPartNo = New Global.System.Data.DataColumn("ParentPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnParentPartNo)
+            Me.columnPOPartNo = New Global.System.Data.DataColumn("POPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOPartNo)
+            Me.columnPOQtyArrived = New Global.System.Data.DataColumn("POQtyArrived", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOQtyArrived)
+            Me.columnPOBuyUnitPrice = New Global.System.Data.DataColumn("POBuyUnitPrice", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOBuyUnitPrice)
+            Me.Constraints.Add(New Global.System.Data.UniqueConstraint("Constraint1", New Global.System.Data.DataColumn() {Me.columnpartno, Me.columnunique_no, Me.columnbatchno, Me.columndept, Me.columnbld, Me.columnrow, Me.columnserial_no}, true))
+            Me.columnpartno.AllowDBNull = false
+            Me.columnpartno.MaxLength = 50
+            Me.columnpartdesc.ReadOnly = true
+            Me.columnunique_no.AllowDBNull = false
+            Me.columnunique_no.MaxLength = 20
+            Me.columnbatchno.AllowDBNull = false
+            Me.columnbatchno.MaxLength = 50
+            Me.columndept.AllowDBNull = false
+            Me.columndept.MaxLength = 10
+            Me.columnbld.AllowDBNull = false
+            Me.columnbld.MaxLength = 10
+            Me.columnrow.AllowDBNull = false
+            Me.columnrow.MaxLength = 20
+            Me.columnserial_no.AllowDBNull = false
+            Me.columnserial_no.MaxLength = 35
+            Me.columnonhand.AllowDBNull = false
+            Me.columnreceipt.AllowDBNull = false
+            Me.columnreceipt.ReadOnly = true
+            Me.columnacctno.AllowDBNull = false
+            Me.columnref4.AllowDBNull = false
+            Me.columnRemoveNonCoded.DefaultValue = CType(false,Boolean)
+            Me.columnIPAddress.MaxLength = 15
+        End Sub
+
+==================================================
+Part: partnoColumn (CFG-207)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property partnoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnpartno
+            End Get
+        End Property
+
+==================================================
+Part: partdescColumn (CFG-208)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property partdescColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnpartdesc
+            End Get
+        End Property
+
+==================================================
+Part: unique_noColumn (CFG-209)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property unique_noColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnunique_no
+            End Get
+        End Property
+
+==================================================
+Part: batchnoColumn (CFG-210)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property batchnoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnbatchno
+            End Get
+        End Property
+
+==================================================
+Part: deptColumn (CFG-211)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property deptColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columndept
+            End Get
+        End Property
+
+==================================================
+Part: bldColumn (CFG-212)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property bldColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnbld
+            End Get
+        End Property
+
+==================================================
+Part: rowColumn (CFG-213)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property rowColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnrow
+            End Get
+        End Property
+
+==================================================
+Part: serial_noColumn (CFG-214)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property serial_noColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnserial_no
+            End Get
+        End Property
+
+==================================================
+Part: onhandColumn (CFG-215)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property onhandColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnonhand
+            End Get
+        End Property
+
+==================================================
+Part: receiptColumn (CFG-216)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property receiptColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnreceipt
+            End Get
+        End Property
+
+==================================================
+Part: acctnoColumn (CFG-217)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property acctnoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnacctno
+            End Get
+        End Property
+
+==================================================
+Part: ref4Column (CFG-218)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ref4Column() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnref4
+            End Get
+        End Property
+
+==================================================
+Part: ref5Column (CFG-219)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ref5Column() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnref5
+            End Get
+        End Property
+
+==================================================
+Part: RemoveNonCodedColumn (CFG-220)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property RemoveNonCodedColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnRemoveNonCoded
+            End Get
+        End Property
+
+==================================================
+Part: PONumberColumn (CFG-221)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property PONumberColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPONumber
+            End Get
+        End Property
+
+==================================================
+Part: ShouldLinkChildPartsColumn (CFG-222)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ShouldLinkChildPartsColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnShouldLinkChildParts
+            End Get
+        End Property
+
+==================================================
+Part: IPAddressColumn (CFG-223)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property IPAddressColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnIPAddress
+            End Get
+        End Property
+
+==================================================
+Part: MACAddressColumn (CFG-224)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property MACAddressColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnMACAddress
+            End Get
+        End Property
+
+==================================================
+Part: PODateEnteredColumn (CFG-225)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property PODateEnteredColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPODateEntered
+            End Get
+        End Property
+
+==================================================
+Part: POSiteColumn (CFG-226)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POSiteColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOSite
+            End Get
+        End Property
+
+==================================================
+Part: POInternalCustomerColumn (CFG-227)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POInternalCustomerColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOInternalCustomer
+            End Get
+        End Property
+
+==================================================
+Part: POInternalDestinationColumn (CFG-228)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POInternalDestinationColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOInternalDestination
+            End Get
+        End Property
+
+==================================================
+Part: POLineNoColumn (CFG-229)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POLineNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOLineNo
+            End Get
+        End Property
+
+==================================================
+Part: POReleaseNoColumn (CFG-230)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POReleaseNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOReleaseNo
+            End Get
+        End Property
+
+==================================================
+Part: POLocationNoColumn (CFG-231)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POLocationNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOLocationNo
+            End Get
+        End Property
+
+==================================================
+Part: POLotBatchNoColumn (CFG-232)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POLotBatchNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOLotBatchNo
+            End Get
+        End Property
+
+==================================================
+Part: PONoteTextColumn (CFG-233)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property PONoteTextColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPONoteText
+            End Get
+        End Property
+
+==================================================
+Part: POInternalDestinationIdColumn (CFG-234)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POInternalDestinationIdColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOInternalDestinationId
+            End Get
+        End Property
+
+==================================================
+Part: POIsSerializedColumn (CFG-235)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POIsSerializedColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOIsSerialized
+            End Get
+        End Property
+
+==================================================
+Part: IsDisassemblyColumn (CFG-236)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property IsDisassemblyColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnIsDisassembly
+            End Get
+        End Property
+
+==================================================
+Part: ParentPartNoColumn (CFG-237)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ParentPartNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnParentPartNo
+            End Get
+        End Property
+
+==================================================
+Part: POPartNoColumn (CFG-238)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POPartNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOPartNo
+            End Get
+        End Property
+
+==================================================
+Part: POQtyArrivedColumn (CFG-239)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POQtyArrivedColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOQtyArrived
+            End Get
+        End Property
+
+==================================================
+Part: POBuyUnitPriceColumn (CFG-240)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POBuyUnitPriceColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOBuyUnitPrice
+            End Get
+        End Property
+
+==================================================
+Part: InitClass (CFG-253)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Private Sub InitClass()
+            Me.columnpartno = New Global.System.Data.DataColumn("partno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnpartno)
+            Me.columnpartdesc = New Global.System.Data.DataColumn("partdesc", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnpartdesc)
+            Me.columnserial_no = New Global.System.Data.DataColumn("serial_no", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnserial_no)
+            Me.columnonhand = New Global.System.Data.DataColumn("onhand", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnonhand)
+            Me.columnpartentityno = New Global.System.Data.DataColumn("partentityno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnpartentityno)
+            Me.columnreceipt = New Global.System.Data.DataColumn("receipt", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnreceipt)
+            Me.columnorderno = New Global.System.Data.DataColumn("orderno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnorderno)
+            Me.columnorderno.MaxLength = 20
+        End Sub
+
+==================================================
+Part: partnoColumn (CFG-262)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property partnoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnpartno
+            End Get
+        End Property
+
+==================================================
+Part: partdescColumn (CFG-263)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property partdescColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnpartdesc
+            End Get
+        End Property
+
+==================================================
+Part: serial_noColumn (CFG-264)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property serial_noColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnserial_no
+            End Get
+        End Property
+
+==================================================
+Part: onhandColumn (CFG-265)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property onhandColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnonhand
+            End Get
+        End Property
+
+==================================================
+Part: partentitynoColumn (CFG-266)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property partentitynoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnpartentityno
+            End Get
+        End Property
+
+==================================================
+Part: receiptColumn (CFG-267)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property receiptColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnreceipt
+            End Get
+        End Property
+
+==================================================
+Part: ordernoColumn (CFG-268)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ordernoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnorderno
+            End Get
+        End Property
+
+==================================================
+Part: InitClass (CFG-281)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Private Sub InitClass()
+            Me.columnParentPartNo = New Global.System.Data.DataColumn("ParentPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnParentPartNo)
+            Me.columnChildPartNo = New Global.System.Data.DataColumn("ChildPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnChildPartNo)
+            Me.columnQuantity = New Global.System.Data.DataColumn("Quantity", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnQuantity)
+            Me.columnPricePercentage = New Global.System.Data.DataColumn("PricePercentage", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPricePercentage)
+            Me.columnChildPartDescription = New Global.System.Data.DataColumn("ChildPartDescription", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnChildPartDescription)
+            Me.columnOld_ChildPartNo = New Global.System.Data.DataColumn("Old_ChildPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnOld_ChildPartNo)
+            Me.columnChildPartDescription.ReadOnly = true
+        End Sub
+
+==================================================
+Part: ParentPartNoColumn (CFG-290)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ParentPartNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnParentPartNo
+            End Get
+        End Property
+
+==================================================
+Part: ChildPartNoColumn (CFG-291)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ChildPartNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnChildPartNo
+            End Get
+        End Property
+
+==================================================
+Part: QuantityColumn (CFG-292)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property QuantityColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnQuantity
+            End Get
+        End Property
+
+==================================================
+Part: PricePercentageColumn (CFG-293)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property PricePercentageColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPricePercentage
+            End Get
+        End Property
+
+==================================================
+Part: ChildPartDescriptionColumn (CFG-294)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ChildPartDescriptionColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnChildPartDescription
+            End Get
+        End Property
+
+==================================================
+Part: Old_ChildPartNoColumn (CFG-295)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property Old_ChildPartNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnOld_ChildPartNo
+            End Get
+        End Property

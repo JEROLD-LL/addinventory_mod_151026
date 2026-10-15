@@ -1,0 +1,45 @@
+Private Class GridInfo
+            Public Sub New(ByVal grid As DataGridView)
+                _grid = grid
+
+                _SelectedDataRows = New HashSet(Of Object)(
+                    From r As DataGridViewRow In grid.SelectedRows
+                    Select r.DataBoundItem
+                    )
+
+                Dim currentCell = grid.CurrentCellAddress
+                Dim currentRow = grid.CurrentRow
+                If currentCell.X >= 0 AndAlso currentCell.Y >= 0 Then
+                    _CurrentCellDataRow = currentRow.DataBoundItem
+                    _CurrentCellColumnIndex = currentCell.X
+                End If
+
+                _BindingSource = grid.DataSource
+                _BindingSource.RaiseListChangedEvents = False
+            End Sub
+
+            Public Sub ReapplySettings()
+                _BindingSource.RaiseListChangedEvents = True
+                _BindingSource.ResetBindings(False)
+
+                Dim rowToSetAsCurrent As DataGridViewRow = Nothing
+
+                For Each r As DataGridViewRow In _grid.Rows
+                    r.Selected = _SelectedDataRows.Contains(r.DataBoundItem)
+                    If _CurrentCellDataRow IsNot Nothing AndAlso r.DataBoundItem Is _CurrentCellDataRow Then
+                        rowToSetAsCurrent = r
+                    End If
+                Next
+
+                If rowToSetAsCurrent IsNot Nothing Then
+                    _grid.CurrentCell = rowToSetAsCurrent.Cells(_CurrentCellColumnIndex)
+                End If
+            End Sub
+
+            Private _grid As DataGridView
+            Private _BindingSource As BindingSource
+            Private _SelectedDataRows As HashSet(Of Object)
+
+            Private _CurrentCellDataRow As Object
+            Private _CurrentCellColumnIndex As Integer
+        End Class

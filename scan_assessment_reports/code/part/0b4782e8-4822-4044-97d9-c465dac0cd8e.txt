@@ -1,0 +1,8 @@
+Private Function EnabledZebraPrinting(ownerCode As String) As Boolean
+        Dim selectedOwner = _dtOwners.Select($"OwnerCode = {ownerCode.SQLQuote}")?.FirstOrDefault()
+        If (selectedOwner IsNot Nothing And Not IsDBNull(selectedOwner("EnableZebraPrinting"))) Then
+            Dim EnableZebraPrinting As Boolean = Convert.ToBoolean(selectedOwner("EnableZebraPrinting"))
+            Return EnableZebraPrinting
+        End If
+        Return False
+    End Function

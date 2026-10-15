@@ -1,0 +1,29 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+    Protected Overrides Sub ReadXmlSerializable(ByVal reader As Global.System.Xml.XmlReader)
+        If (Me.DetermineSchemaSerializationMode(reader) = Global.System.Data.SchemaSerializationMode.IncludeSchema) Then
+            Me.Reset
+            Dim ds As Global.System.Data.DataSet = New Global.System.Data.DataSet()
+            ds.ReadXml(reader)
+            If (Not (ds.Tables("inpartsub")) Is Nothing) Then
+                MyBase.Tables.Add(New inpartsubDataTable(ds.Tables("inpartsub")))
+            End If
+            If (Not (ds.Tables("ClairNewSerialNos")) Is Nothing) Then
+                MyBase.Tables.Add(New ClairNewSerialNosDataTable(ds.Tables("ClairNewSerialNos")))
+            End If
+            If (Not (ds.Tables("DisassemblyParts")) Is Nothing) Then
+                MyBase.Tables.Add(New DisassemblyPartsDataTable(ds.Tables("DisassemblyParts")))
+            End If
+            Me.DataSetName = ds.DataSetName
+            Me.Prefix = ds.Prefix
+            Me.Namespace = ds.Namespace
+            Me.Locale = ds.Locale
+            Me.CaseSensitive = ds.CaseSensitive
+            Me.EnforceConstraints = ds.EnforceConstraints
+            Me.Merge(ds, false, Global.System.Data.MissingSchemaAction.Add)
+            Me.InitVars
+        Else
+            Me.ReadXml(reader)
+            Me.InitVars
+        End If
+    End Sub

@@ -1,0 +1,8 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Sub OnRowChanging(ByVal e As Global.System.Data.DataRowChangeEventArgs)
+            MyBase.OnRowChanging(e)
+            If (Not (Me.DisassemblyPartsRowChangingEvent) Is Nothing) Then
+                RaiseEvent DisassemblyPartsRowChanging(Me, New DisassemblyPartsRowChangeEvent(CType(e.Row,DisassemblyPartsRow), e.Action))
+            End If
+        End Sub

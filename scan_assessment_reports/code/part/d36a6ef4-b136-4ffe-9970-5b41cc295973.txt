@@ -1,0 +1,27 @@
+Private Sub SaveToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles SaveToolStripMenuItem.Click, btnCommit.Click
+        If dgvItemsForImport.Rows.Count = 0 Then
+            Beep_Fail()
+            MsgBox("You do not have any items in your list to add into inventory." & vbCrLf & vbCrLf & "Commit has been aborted.", vbOKOnly)
+            Return
+        Else
+            'If (Not IsValidEntry) Then
+            '    Beep_Fail()
+            '    MsgBox("Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order." & vbCrLf & vbCrLf & "Commit has been aborted.", vbOKOnly)
+            '    Return
+            'End If
+            Dim uniqueRows = DataSetAddInventory.inpartsub.AsEnumerable() _
+                                .GroupBy(Function(row) New With {
+                                    Key .PartNo = row.Field(Of String)("partno"),
+                                    Key .PONumber = row.Field(Of String)("PONumber"),
+                                    Key .POLineNo = row.Field(Of String)("POLineNo"),
+                                    Key .POReleaseNo = row.Field(Of String)("POReleaseNo")
+                                }) _
+                                .Select(Function(g) g.First()) _
+                                .CopyToDataTable()
+            SaveData()
+            ReloadSavedPOs(uniqueRows)
+
+            RefreshCurrentInventory()
+            ItemsForImportQtyUpdating()
+        End If
+    End Sub

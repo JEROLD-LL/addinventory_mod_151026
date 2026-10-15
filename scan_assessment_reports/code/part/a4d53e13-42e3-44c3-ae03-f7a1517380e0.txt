@@ -1,0 +1,11 @@
+Private Sub InitPartFileExplorer()
+        If (_FileExplorer Is Nothing) Then
+            _FileExplorer = New FileExplorer("Parts")
+        End If
+        Dim newGUID = getPartGUID(If(String.IsNullOrEmpty(Selected_PartNo), txtPartNo.Text, Selected_PartNo))
+        If ((String.IsNullOrEmpty(_FileExplorer.currentGUID) Or Selected_Barcode <> newGUID) And Not String.IsNullOrEmpty(newGUID)) Then
+            Selected_GUID = newGUID
+            _FileExplorer.rootFolderChanged(Selected_GUID)
+            InitPartImages()
+        End If
+    End Sub

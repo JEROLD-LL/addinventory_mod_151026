@@ -1,0 +1,14 @@
+Private Sub SearchPartCatalog()
+        Dim partno = txtPartNo.Text
+        _picker = Nothing
+
+        Using conn = GetOpenedFinesseConnection()
+
+            Dim data = conn.ExecuteStoredProcedureAndGetData("IFS.search_part_description_by_partno", {
+                 "@partno", partno
+                })
+            If (data IsNot Nothing AndAlso data.Rows.Count > 0) Then
+                txtPartDescEngOp.Text = data.Rows(0)("partdesc").ToString()
+            End If
+        End Using
+    End Sub

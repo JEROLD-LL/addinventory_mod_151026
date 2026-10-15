@@ -1,0 +1,17 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Private Sub InitClass()
+            Me.columnParentPartNo = New Global.System.Data.DataColumn("ParentPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnParentPartNo)
+            Me.columnChildPartNo = New Global.System.Data.DataColumn("ChildPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnChildPartNo)
+            Me.columnQuantity = New Global.System.Data.DataColumn("Quantity", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnQuantity)
+            Me.columnPricePercentage = New Global.System.Data.DataColumn("PricePercentage", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPricePercentage)
+            Me.columnChildPartDescription = New Global.System.Data.DataColumn("ChildPartDescription", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnChildPartDescription)
+            Me.columnOld_ChildPartNo = New Global.System.Data.DataColumn("Old_ChildPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnOld_ChildPartNo)
+            Me.columnChildPartDescription.ReadOnly = true
+        End Sub

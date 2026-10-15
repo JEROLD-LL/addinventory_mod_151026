@@ -1,0 +1,12 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0"),  _
+     Global.System.ComponentModel.BrowsableAttribute(true),  _
+     Global.System.ComponentModel.DesignerSerializationVisibilityAttribute(Global.System.ComponentModel.DesignerSerializationVisibility.Visible)>  _
+    Public Overrides Property SchemaSerializationMode() As Global.System.Data.SchemaSerializationMode
+        Get
+            Return Me._schemaSerializationMode
+        End Get
+        Set
+            Me._schemaSerializationMode = value
+        End Set
+    End Property

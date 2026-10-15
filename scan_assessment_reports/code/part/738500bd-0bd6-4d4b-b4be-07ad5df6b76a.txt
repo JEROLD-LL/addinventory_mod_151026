@@ -1,0 +1,204 @@
+'''<summary>
+    '''Represents strongly named DataRow class.
+    '''</summary>
+    Partial Public Class ClairNewSerialNosRow
+        Inherits Global.System.Data.DataRow
+        
+        Private tableClairNewSerialNos As ClairNewSerialNosDataTable
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Friend Sub New(ByVal rb As Global.System.Data.DataRowBuilder)
+            MyBase.New(rb)
+            Me.tableClairNewSerialNos = CType(Me.Table,ClairNewSerialNosDataTable)
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property partno() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableClairNewSerialNos.partnoColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'partno' in table 'ClairNewSerialNos' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableClairNewSerialNos.partnoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property partdesc() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableClairNewSerialNos.partdescColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'partdesc' in table 'ClairNewSerialNos' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableClairNewSerialNos.partdescColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property serial_no() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableClairNewSerialNos.serial_noColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'serial_no' in table 'ClairNewSerialNos' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableClairNewSerialNos.serial_noColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property onhand() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableClairNewSerialNos.onhandColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'onhand' in table 'ClairNewSerialNos' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableClairNewSerialNos.onhandColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property partentityno() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableClairNewSerialNos.partentitynoColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'partentityno' in table 'ClairNewSerialNos' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableClairNewSerialNos.partentitynoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property receipt() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableClairNewSerialNos.receiptColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'receipt' in table 'ClairNewSerialNos' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableClairNewSerialNos.receiptColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property orderno() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableClairNewSerialNos.ordernoColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'orderno' in table 'ClairNewSerialNos' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableClairNewSerialNos.ordernoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IspartnoNull() As Boolean
+            Return Me.IsNull(Me.tableClairNewSerialNos.partnoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetpartnoNull()
+            Me(Me.tableClairNewSerialNos.partnoColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IspartdescNull() As Boolean
+            Return Me.IsNull(Me.tableClairNewSerialNos.partdescColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetpartdescNull()
+            Me(Me.tableClairNewSerialNos.partdescColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function Isserial_noNull() As Boolean
+            Return Me.IsNull(Me.tableClairNewSerialNos.serial_noColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub Setserial_noNull()
+            Me(Me.tableClairNewSerialNos.serial_noColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsonhandNull() As Boolean
+            Return Me.IsNull(Me.tableClairNewSerialNos.onhandColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetonhandNull()
+            Me(Me.tableClairNewSerialNos.onhandColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IspartentitynoNull() As Boolean
+            Return Me.IsNull(Me.tableClairNewSerialNos.partentitynoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetpartentitynoNull()
+            Me(Me.tableClairNewSerialNos.partentitynoColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsreceiptNull() As Boolean
+            Return Me.IsNull(Me.tableClairNewSerialNos.receiptColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetreceiptNull()
+            Me(Me.tableClairNewSerialNos.receiptColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsordernoNull() As Boolean
+            Return Me.IsNull(Me.tableClairNewSerialNos.ordernoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetordernoNull()
+            Me(Me.tableClairNewSerialNos.ordernoColumn) = Global.System.Convert.DBNull
+        End Sub
+    End Class

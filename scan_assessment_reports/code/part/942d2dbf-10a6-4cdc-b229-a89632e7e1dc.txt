@@ -1,0 +1,14 @@
+Private Sub Init_ERP_OwnersCombo()
+        cboErpOwner.DisplayMember = "OwnerDesc"
+        cboErpOwner.ValueMember = "OwnerCode"
+        Dim table = _dtOwners.Copy()
+        Dim newRow As DataRow = table.NewRow()
+        newRow("OwnerCode") = ""
+        newRow("OwnerDesc") = "(All Owners)"
+        newRow("EnableInpartsubRefChildLinking") = False
+        newRow("EnableZebraPrinting") = False
+        newRow("BarcodeSequenceType") = ""
+        table.Rows.InsertAt(newRow, 0)
+
+        cboErpOwner.DataSource = New DataView(table, "", "OwnerDesc asc", DataViewRowState.CurrentRows)
+    End Sub

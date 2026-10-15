@@ -1,0 +1,56 @@
+
+==================================================
+Part: GetUserWarehouse (PRT-026)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Function GetUserWarehouse()
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+            GetUserWarehouse = newConn.ExecuteScalar("select warehouse_code from warehouses where is_default = 1")
+        End Using
+    End Function
+
+==================================================
+Part: UserPermission (PRT-141)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Public Property UserPermission() As UserAccess
+        Get
+            Return _userPermission
+        End Get
+        Set(value As UserAccess)
+            _userPermission = value
+        End Set
+    End Property
+
+==================================================
+Part: UserAccess (PRT-142)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+#Region "Public Definitions"
+
+    Public Enum UserAccess
+        ''' <summary>
+        ''' User that can add inventory without a PO or restrictions
+        ''' </summary>
+        FULL_ACCESS
+        ''' <summary>
+        ''' User that can add inventory with an existing PO for the selected part
+        ''' </summary>
+        PO_MANDATORY
+        ''' <summary>
+        ''' User that can add inventory with a recieved PO for the selected part
+        ''' </summary>
+        RECIEVED_PO_MANDATORY
+        ''' <summary>
+        ''' User that can saved inventory with reasons diffrents than PURCADD
+        ''' </summary>
+        GENERAL_USER
+        ''' <summary>
+        ''' User that does not have access to save inventory
+        ''' </summary>
+        NO_ACCESS
+    End Enum

@@ -1,0 +1,9 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Overloads Function AddClairNewSerialNosRow(ByVal partno As String, ByVal partdesc As String, ByVal serial_no As String, ByVal onhand As String, ByVal partentityno As String, ByVal receipt As String, ByVal orderno As String) As ClairNewSerialNosRow
+            Dim rowClairNewSerialNosRow As ClairNewSerialNosRow = CType(Me.NewRow,ClairNewSerialNosRow)
+            Dim columnValuesArray() As Object = New Object() {partno, partdesc, serial_no, onhand, partentityno, receipt, orderno}
+            rowClairNewSerialNosRow.ItemArray = columnValuesArray
+            Me.Rows.Add(rowClairNewSerialNosRow)
+            Return rowClairNewSerialNosRow
+        End Function

@@ -1,0 +1,66 @@
+Private Function SaveData()
+        If Not Validate() Then Return False
+
+        bsAddInventory.EndEdit()
+
+        If ValidateAddToInventoryItems() = False Then Return False
+
+        SaveData = False
+        Cursor = Cursors.WaitCursor
+
+        Try
+            Dim sSQL As New StringBuilder
+
+            sSQL.AppendLine("delete inpsAddInventory where session_id = @@spid;")
+            gConn.ExecuteNonQuery(sSQL)
+
+            'Dim uniqueRows = DataSetAddInventory.inpartsub.AsEnumerable() _
+            '                    .GroupBy(Function(row) New With {
+            '                        Key .PartNo = row.Field(Of String)("partno"),
+            '                        Key .OrderNo = row.Field(Of String)("orderno")
+            '                    }) _
+            '                    .Select(Function(g) g.First()) _
+            '                    .CopyToDataTable()
+
+
+
+            BulkSave(DataSetAddInventory.inpartsub, "inpsAddInventory")
+            Dim cmd As New SqlCommand("exec commit_add_inventory", gConn)
+            cmd.CommandType = CommandType.Text
+            cmd.CommandTimeout = 120
+            cmd.ExecuteNonQuery()
+
+            For Each rv As DataGridViewRow In dgvItemsForImport.Rows
+                If rv.Cells(RemoveNonCoded.Index).EditedFormattedValue = True And Not String.IsNullOrEmpty(rv.Cells(dgcAddItemsBarcode.Index).Value) Then
+                    Dim sSQL2 As New StringBuilder
+                    sSQL2.AppendLine("if exists(select * from dbo.inpartsub ps where ps.partno = " & SQLQuote(rv.Cells(PartnoDataGridViewTextBoxColumn.Index).Value) & " and ps.bld = " & SQLQuote(rv.Cells(dgcAddItemsBld.Index).Value) & " and ps.dept = " & SQLQuote(rv.Cells(dgcAddItemsDept.Index).Value) & " and ps.batchno = 'INSTOCK' and ps.unique_no = '' and ps.parentunique_no = '' and onhand > 0)")
+                    sSQL2.AppendLine("begin")
+                    sSQL2.AppendLine("  insert dbo.intrans")
+                    sSQL2.AppendLine("        ( trantype , partno ,unique_no, onhand ,qty ,trandate ,ref4 ,ref5 ,batchno ,dept ,bld ,row ,serial_no ,enterdate, userid  )")
+                    sSQL2.AppendLine("  select top 1 'F', " & SQLQuote(rv.Cells(PartnoDataGridViewTextBoxColumn.Index).Value) & ",'', ps.onhand, -1, cast(floor(cast(getdate() as float)) as datetime), 'NONTOBAR', " & SQLQuote(rv.Cells(dgcAddItemsBarcode.Index).Value) & ",'INSTOCK', ps.dept, ps.bld, ps.row, ps.serial_no, getdate(), suser_sname()")
+                    sSQL2.AppendLine("  from dbo.inpartsub ps")
+                    sSQL2.AppendLine("  where ps.partno = " & SQLQuote(rv.Cells(PartnoDataGridViewTextBoxColumn.Index).Value) & " and ps.bld = " & SQLQuote(rv.Cells(dgcAddItemsBld.Index).Value) & " and ps.dept = " & SQLQuote(rv.Cells(dgcAddItemsDept.Index).Value) & " and ps.batchno = 'INSTOCK' and ps.unique_no = '' and ps.parentunique_no = '' and onhand > 0")
+                    sSQL2.AppendLine(" ")
+                    sSQL2.AppendLine("  update top (1) ps set onhand = onhand - 1")
+                    sSQL2.AppendLine("  from dbo.inpartsub ps ")
+                    sSQL2.AppendLine("  where ps.partno = " & SQLQuote(rv.Cells(PartnoDataGridViewTextBoxColumn.Index).Value) & " and ps.bld = " & SQLQuote(rv.Cells(dgcAddItemsBld.Index).Value) & " and ps.dept = " & SQLQuote(rv.Cells(dgcAddItemsDept.Index).Value) & " and ps.batchno = 'INSTOCK' and ps.unique_no = '' and ps.parentunique_no = '' and onhand > 0")
+                    sSQL2.AppendLine("end")
+                    gConn.ExecuteNonQuery(sSQL2)
+                End If
+            Next
+
+            DataSetAddInventory.inpartsub.AcceptChanges()
+            SaveData = True
+
+            'MsgBox("Inventory added successfully.", vbOKOnly)
+            Dim toast As New ToastNotification($"Inventory added successfully.", Color.Green)
+            toast.Show()
+            DataSetAddInventory.inpartsub.Clear()
+            'Return uniqueRows
+        Catch ex As Exception
+            Beep_Fail()
+            MsgBox("Error while saving: " & ex.Message, MsgBoxStyle.Exclamation)
+        End Try
+
+        Cursor = Cursors.Default
+    End Function

@@ -1,0 +1,22 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+    Friend Overloads Sub InitVars(ByVal initTable As Boolean)
+        Me.tableinpartsub = CType(MyBase.Tables("inpartsub"),inpartsubDataTable)
+        If (initTable = true) Then
+            If (Not (Me.tableinpartsub) Is Nothing) Then
+                Me.tableinpartsub.InitVars
+            End If
+        End If
+        Me.tableClairNewSerialNos = CType(MyBase.Tables("ClairNewSerialNos"),ClairNewSerialNosDataTable)
+        If (initTable = true) Then
+            If (Not (Me.tableClairNewSerialNos) Is Nothing) Then
+                Me.tableClairNewSerialNos.InitVars
+            End If
+        End If
+        Me.tableDisassemblyParts = CType(MyBase.Tables("DisassemblyParts"),DisassemblyPartsDataTable)
+        If (initTable = true) Then
+            If (Not (Me.tableDisassemblyParts) Is Nothing) Then
+                Me.tableDisassemblyParts.InitVars
+            End If
+        End If
+    End Sub

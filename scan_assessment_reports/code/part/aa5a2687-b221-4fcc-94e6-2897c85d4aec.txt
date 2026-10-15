@@ -1,0 +1,31 @@
+Private Sub SelectPartOnErpGrid()
+        Try
+            If (ultraGridERPPurchaseOrders IsNot Nothing AndAlso ultraGridERPPurchaseOrders.Rows.Count = 1) Then
+                ultraGridERPPurchaseOrders.ActiveRow = Nothing
+                ultraGridERPPurchaseOrders.Rows(0).Activate()
+                Return
+            End If
+
+            If (_selected_ifs_po IsNot Nothing AndAlso txtPartNo.Text = _selected_ifs_po.PartNo) Then
+                Return
+            End If
+
+
+            'Dim erpData = ultraGridERPPurchaseOrders.Rows
+            'If (erpData IsNot Nothing) Then
+            '    Dim rows = erpData.ToList().Where(Function(item) item.Cells("OrderNo").Value.ToString = txtPONumber.Text)
+            '    For Each row In rows
+            '        row.Activated = (row.Cells("PartNo").Value.ToString = txtPartNo.Text)
+            '        If (row.HasChild) Then
+            '            For Each childBand In row.ChildBands
+            '                For Each childRow In childBand.Rows
+            '                    childRow.Activated = (childRow.Cells("ChildPartNo").Value.ToString = txtPartNo.Text)
+            '                Next
+            '            Next
+            '        End If
+            '    Next
+            'End If
+        Catch ex As Exception
+            Console.WriteLine("Error activating selected po line: " + ex.Message)
+        End Try
+    End Sub

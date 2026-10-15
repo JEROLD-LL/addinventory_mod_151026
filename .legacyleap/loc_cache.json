@@ -1,0 +1,55 @@
+{
+  "code_count": 1012208,
+  "documentation_count": 1361,
+  "empty_count": 1210,
+  "string_count": 43,
+  "file_count": 152,
+  "source_count": 1012251,
+  "test_code_count": 0,
+  "test_documentation_count": 0,
+  "test_empty_count": 0,
+  "test_string_count": 0,
+  "test_file_count": 0,
+  "test_source_count": 0,
+  "languages": [
+    {
+      "language": "VB.net",
+      "code_count": 7583,
+      "documentation_count": 1132,
+      "empty_count": 1150,
+      "string_count": 22,
+      "file_count": 14,
+      "source_count": 7605
+    },
+    {
+      "language": "XML",
+      "code_count": 1004625,
+      "documentation_count": 0,
+      "empty_count": 2,
+      "string_count": 0,
+      "file_count": 129,
+      "source_count": 1004625
+    },
+    {
+      "language": "Markdown",
+      "code_count": 0,
+      "documentation_count": 54,
+      "empty_count": 16,
+      "string_count": 21,
+      "file_count": 2,
+      "source_count": 21
+    },
+    {
+      "language": "Text only",
+      "code_count": 0,
+      "documentation_count": 175,
+      "empty_count": 42,
+      "string_count": 0,
+      "file_count": 7,
+      "source_count": 0
+    }
+  ],
+  "test_languages": [],
+  "scan_duration_ms": 53697,
+  "scanned_at": "2026-10-15T13:49:38.040714Z"
+}

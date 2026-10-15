@@ -1,0 +1,29 @@
+﻿Namespace My
+    ' The following events are available for MyApplication:
+    ' Startup: Raised when the application starts, before the startup form is created.
+    ' Shutdown: Raised after all application forms are closed.  This event is not raised if the application terminates abnormally.
+    ' UnhandledException: Raised if the application encounters an unhandled exception.
+    ' StartupNextInstance: Raised when launching a single-instance application and the application is already active. 
+    ' NetworkAvailabilityChanged: Raised when the network connection is connected or disconnected.
+    Partial Friend Class MyApplication
+
+        Public Sub My_Startup(ByVal sender As Object, ByVal e As Microsoft.VisualBasic.ApplicationServices.StartupEventArgs) Handles Me.Startup
+            Try
+                Dim arg = AppUtilities.GetCommandArgValue("debug")
+                Dim IsDebug As Boolean
+                Boolean.TryParse(arg, IsDebug)
+                If (IsDebug = True) Then
+                    AppUtilities.ShowCommandOutput()
+                End If
+            Catch ex As Exception
+                Console.WriteLine($"Error getting CommandLineArgs: {ex.Message}")
+            End Try
+
+            AddHandler AppDomain.CurrentDomain.UnhandledException, AddressOf CurrentDomain_UnhandledException
+            AddHandler System.Windows.Forms.Application.ThreadException, AddressOf UIThreadException
+
+
+        End Sub
+
+    End Class
+End Namespace

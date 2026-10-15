@@ -1,0 +1,6 @@
+Private Sub UtilizationToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles UtilizationToolStripMenuItem.Click, tsbUtilization.Click
+        Dim commandArgs As String = ""
+        If Not String.IsNullOrEmpty(Selected_PartNo) Then commandArgs = "bld=" + GetUserWarehouse() + " partno=" + Selected_PartNo
+
+        StartFinesseProcess("utilization.exe", commandArgs)
+    End Sub

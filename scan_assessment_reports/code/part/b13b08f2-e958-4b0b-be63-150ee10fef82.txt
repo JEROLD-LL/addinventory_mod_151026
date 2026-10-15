@@ -1,0 +1,3 @@
+Private Sub dgvItemsForImport_SelectionChanged(sender As Object, e As EventArgs) Handles dgvItemsForImport.SelectionChanged
+        ItemsForImportQtyUpdating()
+    End Sub

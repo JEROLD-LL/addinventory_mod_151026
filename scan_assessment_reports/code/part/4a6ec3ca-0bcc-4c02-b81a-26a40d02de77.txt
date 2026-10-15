@@ -1,0 +1,10 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property serial_no() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.serial_noColumn),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.serial_noColumn) = value
+            End Set
+        End Property

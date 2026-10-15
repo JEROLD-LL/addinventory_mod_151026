@@ -1,0 +1,43 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Overloads Function AddinpartsubRow( _
+                    ByVal partno As String,  _
+                    ByVal partdesc As String,  _
+                    ByVal unique_no As String,  _
+                    ByVal batchno As String,  _
+                    ByVal dept As String,  _
+                    ByVal bld As String,  _
+                    ByVal row As String,  _
+                    ByVal serial_no As String,  _
+                    ByVal onhand As Double,  _
+                    ByVal receipt As Date,  _
+                    ByVal acctno As String,  _
+                    ByVal ref4 As String,  _
+                    ByVal ref5 As String,  _
+                    ByVal RemoveNonCoded As Boolean,  _
+                    ByVal PONumber As String,  _
+                    ByVal ShouldLinkChildParts As Boolean,  _
+                    ByVal IPAddress As String,  _
+                    ByVal MACAddress As String,  _
+                    ByVal PODateEntered As String,  _
+                    ByVal POSite As String,  _
+                    ByVal POInternalCustomer As String,  _
+                    ByVal POInternalDestination As String,  _
+                    ByVal POLineNo As String,  _
+                    ByVal POReleaseNo As String,  _
+                    ByVal POLocationNo As String,  _
+                    ByVal POLotBatchNo As String,  _
+                    ByVal PONoteText As String,  _
+                    ByVal POInternalDestinationId As String,  _
+                    ByVal POIsSerialized As String,  _
+                    ByVal IsDisassembly As Boolean,  _
+                    ByVal ParentPartNo As String,  _
+                    ByVal POPartNo As String,  _
+                    ByVal POQtyArrived As String,  _
+                    ByVal POBuyUnitPrice As String) As inpartsubRow
+            Dim rowinpartsubRow As inpartsubRow = CType(Me.NewRow,inpartsubRow)
+            Dim columnValuesArray() As Object = New Object() {partno, partdesc, unique_no, batchno, dept, bld, row, serial_no, onhand, receipt, acctno, ref4, ref5, RemoveNonCoded, PONumber, ShouldLinkChildParts, IPAddress, MACAddress, PODateEntered, POSite, POInternalCustomer, POInternalDestination, POLineNo, POReleaseNo, POLocationNo, POLotBatchNo, PONoteText, POInternalDestinationId, POIsSerialized, IsDisassembly, ParentPartNo, POPartNo, POQtyArrived, POBuyUnitPrice}
+            rowinpartsubRow.ItemArray = columnValuesArray
+            Me.Rows.Add(rowinpartsubRow)
+            Return rowinpartsubRow
+        End Function

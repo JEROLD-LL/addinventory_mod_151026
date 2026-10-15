@@ -1,0 +1,24 @@
+Private Sub BtnSave_Click(sender As Object, e As EventArgs) Handles BtnSave.Click
+        If (String.IsNullOrEmpty(txtPartNo.Text)) Then
+            Dim toast1 As New ToastNotification($"You must specify the Main part; this field cannot be empty!", Color.Red)
+            toast1.Show()
+            Return
+        End If
+
+        Dim columns As DataColumnCollection = DisassemblyPartsBindingSource.DataSource.Columns
+        columns("ChildPartDescription").ReadOnly = True
+
+        Using conn = GetOpenedFinesseConnection()
+
+            BulkSave(DisassemblyPartsBindingSource.DataSource, "IFS.inpsDisassemblyParts", conn)
+
+            Dim cmd = conn.CreateCommand()
+            cmd.CommandText = "IFS.commit_disassemblyParts"
+            cmd.ExecuteNonQuery()
+
+        End Using
+
+        Dim toast As New ToastNotification($"Changes Saved Succesfully!", Color.Green)
+        toast.Show()
+        SearchPartCatalog()
+    End Sub

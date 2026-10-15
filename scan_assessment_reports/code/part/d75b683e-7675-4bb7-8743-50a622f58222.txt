@@ -1,0 +1,20 @@
+Function ValidateAddToInventoryItems()
+        Dim dt = DataSetAddInventory.inpartsub
+        Dim NBCSummary = From r As DataSetAddInventory.inpartsubRow In dt.Rows
+                         Where r.RemoveNonCoded = True
+                         Group r By partno = r.partno, partdesc = r.partdesc, owner = r.dept, wh = r.bld Into Group
+                         Select partno, partdesc, owner, wh, totalonhand = Group.Sum(Function(r) r.onhand), count = Group.Count()
+        Dim dtNBCSummary = NBCSummary.ToDataTable
+
+        For Each dr As DataRow In dtNBCSummary.Rows
+            Dim sSQL As New StringBuilder
+            sSQL.AppendLine("select onhand from dbo.inpartsub ps where ps.partno = " & SQLQuote(dr.Item("partno")) & " and ps.dept = " & SQLQuote(dr.Item("owner")) & " and ps.bld = " & SQLQuote(dr.Item("wh")) & "  and ps.batchno = 'INSTOCK' and ps.unique_no = '' and ps.parentunique_no = '' and onhand > 0")
+            Dim qtyNBCtoRemove = gConn.GetDataTable(sSQL)
+            If qtyNBCtoRemove.Rows.Count = 0 OrElse qtyNBCtoRemove.Rows(0).Item("onhand") < dr.Item("totalonhand") Then
+                Beep_Fail()
+                MsgBox("You have intended to remove non-barcoded inventory when adding barcodes for " & dr.Item("partno") & ": " & dr.Item("partdesc") & ", but " & IIf(qtyNBCtoRemove.Rows.Count = 0 OrElse qtyNBCtoRemove.Rows(0).Item("onhand") = 0, "no", "not enough") & " non-barcoded items exist in INSTOCK (" & dr.Item("wh") & "), owned by " & dr.Item("owner") & "." & vbCrLf & vbCrLf & "Try to find a matching non-barcoded item in MIA or on Late Returns to check into your INSTOCK before adding this item, or uncheck the 'Remove Non-Coded' checkbox for this item to INCREASE inventory levels." & vbCrLf & vbCrLf & "Commit has been aborted.", vbOKOnly)
+                Return False
+            End If
+        Next
+        Return True
+    End Function

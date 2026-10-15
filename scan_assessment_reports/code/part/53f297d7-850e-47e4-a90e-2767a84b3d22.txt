@@ -1,0 +1,9 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub New()
+            MyBase.New
+            Me.TableName = "inpartsub"
+            Me.BeginInit
+            Me.InitClass
+            Me.EndInit
+        End Sub

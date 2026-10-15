@@ -1,0 +1,54 @@
+Private Sub ReloadSavedPOs(refreshedData As DataTable)
+        Try
+
+            Me.Cursor = Cursors.WaitCursor
+            If (refreshedData IsNot Nothing AndAlso refreshedData.Rows.Count > 0) Then
+                For Each item As DataRow In refreshedData.Rows
+                    Dim newQty
+                    Dim dataResult As DataTable
+                    Using conn = GetOpenedFinesseConnection()
+                        Dim cmd = conn.CreateCommand
+                        cmd.CommandText = "SELECT TOP(1) OrderNo, PartNumber, Qty, Line_No, Release_No 
+                                           FROM IFS.InventoryReceipts
+                                           WHERE OrderNo = @OrderNo
+                                             AND PartNumber = @PartNumber
+                                             AND Line_No = @LineNo
+                                             AND Release_No = @ReleaseNo"
+
+                        cmd.Parameters.Clear()
+                        cmd.Parameters.AddWithValue("@OrderNo", item("PONumber"))
+                        cmd.Parameters.AddWithValue("@PartNumber", item("partno"))
+                        cmd.Parameters.AddWithValue("@LineNo", item("POLineNo"))
+                        cmd.Parameters.AddWithValue("@ReleaseNo", item("POReleaseNo"))
+                        Using reader = cmd.ExecuteReader()
+                            If reader.Read() Then
+                                If Not reader.IsDBNull(reader.GetOrdinal("Qty")) Then
+                                    newQty = Integer.Parse(reader("Qty"))
+                                End If
+                            End If
+                        End Using
+                    End Using
+
+                    Dim element = _ifs_data.FirstOrDefault(Function(po) po.PartNo = item("partno") AndAlso po.OrderNo = item("PONumber") AndAlso po.LineNo = item("POLineNo") AndAlso po.ReleaseNo = item("POReleaseNo"))
+                    If (element IsNot Nothing AndAlso newQty IsNot Nothing) Then
+                        element.FinessePart.QtyInFinesse = newQty
+                    End If
+                Next
+                Dim selectedRow = GetParentchildSelectedRow()
+
+                ultraGridERPPurchaseOrders.DataSource = _ifs_data.ToList()
+                ultraGridERPPurchaseOrders.Selected.Rows.Clear()
+                ultraGridERPPurchaseOrders.ActiveRow = Nothing
+
+                filter_ERP_DataGrid(txtERPPoNumber.Text)
+                SelectPreviousSelectionOnGrid(selectedRow.Item1, selectedRow.Item2)
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            Console.WriteLine(ex.Message)
+            Dim toast As New ToastNotification("Error loading saved PO Data to the grid", Color.Red)
+            toast.Show()
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub

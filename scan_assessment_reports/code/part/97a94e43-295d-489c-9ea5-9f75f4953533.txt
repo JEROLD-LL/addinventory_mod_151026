@@ -1,0 +1,3 @@
+Private Sub cbBarcodeType_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cbBarcodeType.SelectionChangeCommitted
+        GetPreview()
+    End Sub

@@ -1,0 +1,13 @@
+Private Sub Init_dgcs()
+        dgcAddItemsDept.DisplayMember = cboOwner.DisplayMember
+        dgcAddItemsDept.ValueMember = cboOwner.ValueMember
+        dgcAddItemsDept.DataSource = cboOwner.DataSource
+
+        dgcAddItemsBld.DisplayMember = cboWarehouse.DisplayMember
+        dgcAddItemsBld.ValueMember = cboWarehouse.ValueMember
+        dgcAddItemsBld.DataSource = cboWarehouse.DataSource
+
+        dgcAddItemRef4.DisplayMember = cboRef4.DisplayMember
+        dgcAddItemRef4.ValueMember = cboRef4.ValueMember
+        dgcAddItemRef4.DataSource = cboRef4.DataSource
+    End Sub

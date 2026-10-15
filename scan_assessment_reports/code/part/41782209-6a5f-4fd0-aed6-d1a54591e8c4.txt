@@ -1,0 +1,255 @@
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+Partial Class frmMainPartMaintenance
+    Inherits System.Windows.Forms.Form
+
+    'Form overrides dispose to clean up the component list.
+    <System.Diagnostics.DebuggerNonUserCode()> _
+    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        Try
+            If disposing AndAlso components IsNot Nothing Then
+                components.Dispose()
+            End If
+        Finally
+            MyBase.Dispose(disposing)
+        End Try
+    End Sub
+
+    'Required by the Windows Form Designer
+    Private components As System.ComponentModel.IContainer
+
+    'NOTE: The following procedure is required by the Windows Form Designer
+    'It can be modified using the Windows Form Designer.  
+    'Do not modify it using the code editor.
+    <System.Diagnostics.DebuggerStepThrough()> _
+    Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Me.lblPartDescEngOp = New System.Windows.Forms.Label()
+        Me.lblPartNo = New System.Windows.Forms.Label()
+        Me.btnPartNoSearch = New System.Windows.Forms.Button()
+        Me.txtPartNo = New Add_Inventory.HighlightTextBox()
+        Me.txtPartDescEngOp = New Add_Inventory.HighlightTextBox()
+        Me.DisassemblyPartsBindingSource = New System.Windows.Forms.BindingSource(Me.components)
+        Me.DataSetAddInventory = New Add_Inventory.DataSetAddInventory()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.BtnSave = New System.Windows.Forms.Button()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.dgvDisassemblies = New System.Windows.Forms.DataGridView()
+        Me.ParentPartNoDataGridViewTextBoxColumn = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.ChildPartNoDataGridViewTextBoxColumn = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.BtnPartPicker = New System.Windows.Forms.DataGridViewButtonColumn()
+        Me.ChildPartDescription = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Quantity = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.PricePercentageDataGridViewTextBoxColumn = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.BtnDeleteRow = New System.Windows.Forms.DataGridViewButtonColumn()
+        CType(Me.DisassemblyPartsBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.DataSetAddInventory, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Panel1.SuspendLayout()
+        Me.Panel2.SuspendLayout()
+        CType(Me.dgvDisassemblies, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SuspendLayout()
+        '
+        'lblPartDescEngOp
+        '
+        Me.lblPartDescEngOp.AutoSize = True
+        Me.lblPartDescEngOp.Location = New System.Drawing.Point(161, 10)
+        Me.lblPartDescEngOp.Name = "lblPartDescEngOp"
+        Me.lblPartDescEngOp.Size = New System.Drawing.Size(108, 13)
+        Me.lblPartDescEngOp.TabIndex = 118
+        Me.lblPartDescEngOp.Text = "Main Part Description"
+        '
+        'lblPartNo
+        '
+        Me.lblPartNo.AutoSize = True
+        Me.lblPartNo.Location = New System.Drawing.Point(7, 10)
+        Me.lblPartNo.Name = "lblPartNo"
+        Me.lblPartNo.Size = New System.Drawing.Size(65, 13)
+        Me.lblPartNo.TabIndex = 119
+        Me.lblPartNo.Text = "Main Part #:"
+        '
+        'btnPartNoSearch
+        '
+        Me.btnPartNoSearch.Location = New System.Drawing.Point(122, 24)
+        Me.btnPartNoSearch.Margin = New System.Windows.Forms.Padding(0)
+        Me.btnPartNoSearch.Name = "btnPartNoSearch"
+        Me.btnPartNoSearch.Size = New System.Drawing.Size(29, 22)
+        Me.btnPartNoSearch.TabIndex = 117
+        Me.btnPartNoSearch.Text = "..."
+        Me.btnPartNoSearch.UseVisualStyleBackColor = True
+        '
+        'txtPartNo
+        '
+        Me.txtPartNo.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.txtPartNo.Location = New System.Drawing.Point(10, 26)
+        Me.txtPartNo.MaxLength = 50
+        Me.txtPartNo.Name = "txtPartNo"
+        Me.txtPartNo.Size = New System.Drawing.Size(106, 20)
+        Me.txtPartNo.TabIndex = 120
+        Me.txtPartNo.TabStop = False
+        Me.txtPartNo.TextToClear = Nothing
+        '
+        'txtPartDescEngOp
+        '
+        Me.txtPartDescEngOp.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtPartDescEngOp.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.txtPartDescEngOp.Location = New System.Drawing.Point(158, 26)
+        Me.txtPartDescEngOp.MaxLength = 100
+        Me.txtPartDescEngOp.Name = "txtPartDescEngOp"
+        Me.txtPartDescEngOp.ReadOnly = True
+        Me.txtPartDescEngOp.Size = New System.Drawing.Size(554, 20)
+        Me.txtPartDescEngOp.TabIndex = 121
+        Me.txtPartDescEngOp.TabStop = False
+        Me.txtPartDescEngOp.TextToClear = Nothing
+        '
+        'DisassemblyPartsBindingSource
+        '
+        Me.DisassemblyPartsBindingSource.DataMember = "DisassemblyParts"
+        Me.DisassemblyPartsBindingSource.DataSource = Me.DataSetAddInventory
+        '
+        'DataSetAddInventory
+        '
+        Me.DataSetAddInventory.DataSetName = "DataSetAddInventory"
+        Me.DataSetAddInventory.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        '
+        'Panel1
+        '
+        Me.Panel1.Controls.Add(Me.BtnSave)
+        Me.Panel1.Controls.Add(Me.txtPartDescEngOp)
+        Me.Panel1.Controls.Add(Me.txtPartNo)
+        Me.Panel1.Controls.Add(Me.lblPartDescEngOp)
+        Me.Panel1.Controls.Add(Me.btnPartNoSearch)
+        Me.Panel1.Controls.Add(Me.lblPartNo)
+        Me.Panel1.Dock = System.Windows.Forms.DockStyle.Top
+        Me.Panel1.Location = New System.Drawing.Point(0, 0)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(800, 66)
+        Me.Panel1.TabIndex = 123
+        '
+        'BtnSave
+        '
+        Me.BtnSave.Location = New System.Drawing.Point(719, 22)
+        Me.BtnSave.Name = "BtnSave"
+        Me.BtnSave.Size = New System.Drawing.Size(75, 23)
+        Me.BtnSave.TabIndex = 122
+        Me.BtnSave.Text = "Save"
+        Me.BtnSave.UseVisualStyleBackColor = True
+        '
+        'Panel2
+        '
+        Me.Panel2.Controls.Add(Me.dgvDisassemblies)
+        Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel2.Location = New System.Drawing.Point(0, 66)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(800, 384)
+        Me.Panel2.TabIndex = 124
+        '
+        'dgvDisassemblies
+        '
+        Me.dgvDisassemblies.AutoGenerateColumns = False
+        Me.dgvDisassemblies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvDisassemblies.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.ParentPartNoDataGridViewTextBoxColumn, Me.ChildPartNoDataGridViewTextBoxColumn, Me.BtnPartPicker, Me.ChildPartDescription, Me.Quantity, Me.PricePercentageDataGridViewTextBoxColumn, Me.BtnDeleteRow})
+        Me.dgvDisassemblies.DataSource = Me.DisassemblyPartsBindingSource
+        Me.dgvDisassemblies.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.dgvDisassemblies.Location = New System.Drawing.Point(0, 0)
+        Me.dgvDisassemblies.Name = "dgvDisassemblies"
+        Me.dgvDisassemblies.Size = New System.Drawing.Size(800, 384)
+        Me.dgvDisassemblies.TabIndex = 123
+        '
+        'ParentPartNoDataGridViewTextBoxColumn
+        '
+        Me.ParentPartNoDataGridViewTextBoxColumn.DataPropertyName = "ParentPartNo"
+        Me.ParentPartNoDataGridViewTextBoxColumn.HeaderText = "ParentPartNo"
+        Me.ParentPartNoDataGridViewTextBoxColumn.Name = "ParentPartNoDataGridViewTextBoxColumn"
+        Me.ParentPartNoDataGridViewTextBoxColumn.ReadOnly = True
+        Me.ParentPartNoDataGridViewTextBoxColumn.Visible = False
+        '
+        'ChildPartNoDataGridViewTextBoxColumn
+        '
+        Me.ChildPartNoDataGridViewTextBoxColumn.DataPropertyName = "ChildPartNo"
+        Me.ChildPartNoDataGridViewTextBoxColumn.HeaderText = "Sub Part #"
+        Me.ChildPartNoDataGridViewTextBoxColumn.Name = "ChildPartNoDataGridViewTextBoxColumn"
+        '
+        'BtnPartPicker
+        '
+        Me.BtnPartPicker.HeaderText = ""
+        Me.BtnPartPicker.Name = "BtnPartPicker"
+        Me.BtnPartPicker.ReadOnly = True
+        Me.BtnPartPicker.Text = "..."
+        Me.BtnPartPicker.ToolTipText = "Click to choose a part"
+        Me.BtnPartPicker.UseColumnTextForButtonValue = True
+        Me.BtnPartPicker.Width = 30
+        '
+        'ChildPartDescription
+        '
+        Me.ChildPartDescription.DataPropertyName = "ChildPartDescription"
+        Me.ChildPartDescription.HeaderText = "Sub Part Description"
+        Me.ChildPartDescription.Name = "ChildPartDescription"
+        Me.ChildPartDescription.ReadOnly = True
+        Me.ChildPartDescription.Width = 200
+        '
+        'Quantity
+        '
+        Me.Quantity.DataPropertyName = "Quantity"
+        Me.Quantity.HeaderText = "Quantity"
+        Me.Quantity.Name = "Quantity"
+        '
+        'PricePercentageDataGridViewTextBoxColumn
+        '
+        Me.PricePercentageDataGridViewTextBoxColumn.DataPropertyName = "PricePercentage"
+        Me.PricePercentageDataGridViewTextBoxColumn.HeaderText = "PricePercentage"
+        Me.PricePercentageDataGridViewTextBoxColumn.Name = "PricePercentageDataGridViewTextBoxColumn"
+        Me.PricePercentageDataGridViewTextBoxColumn.Visible = False
+        '
+        'BtnDeleteRow
+        '
+        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.Red
+        Me.BtnDeleteRow.DefaultCellStyle = DataGridViewCellStyle1
+        Me.BtnDeleteRow.HeaderText = ""
+        Me.BtnDeleteRow.Name = "BtnDeleteRow"
+        Me.BtnDeleteRow.ReadOnly = True
+        Me.BtnDeleteRow.Text = "Delete"
+        Me.BtnDeleteRow.ToolTipText = "Delete the subpart"
+        Me.BtnDeleteRow.UseColumnTextForButtonValue = True
+        Me.BtnDeleteRow.Width = 60
+        '
+        'frmMainPartMaintenance
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.Controls.Add(Me.Panel2)
+        Me.Controls.Add(Me.Panel1)
+        Me.Name = "frmMainPartMaintenance"
+        Me.Text = "Subpart Maintenance"
+        CType(Me.DisassemblyPartsBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DataSetAddInventory, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
+        Me.Panel2.ResumeLayout(False)
+        CType(Me.dgvDisassemblies, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ResumeLayout(False)
+
+    End Sub
+
+    Friend WithEvents lblPartDescEngOp As Label
+    Friend WithEvents lblPartNo As Label
+    Friend WithEvents btnPartNoSearch As Button
+    Friend WithEvents txtPartNo As HighlightTextBox
+    Friend WithEvents txtPartDescEngOp As HighlightTextBox
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents QuantityDataGridViewTextBoxColumn As DataGridViewTextBoxColumn
+    Friend WithEvents DisassemblyPartsBindingSource As BindingSource
+    Friend WithEvents DataSetAddInventory As DataSetAddInventory
+    Friend WithEvents Panel2 As Panel
+    Friend WithEvents dgvDisassemblies As DataGridView
+    Friend WithEvents BtnSave As Button
+    Friend WithEvents ParentPartNoDataGridViewTextBoxColumn As DataGridViewTextBoxColumn
+    Friend WithEvents ChildPartNoDataGridViewTextBoxColumn As DataGridViewTextBoxColumn
+    Friend WithEvents BtnPartPicker As DataGridViewButtonColumn
+    Friend WithEvents ChildPartDescription As DataGridViewTextBoxColumn
+    Friend WithEvents Quantity As DataGridViewTextBoxColumn
+    Friend WithEvents PricePercentageDataGridViewTextBoxColumn As DataGridViewTextBoxColumn
+    Friend WithEvents BtnDeleteRow As DataGridViewButtonColumn
+End Class

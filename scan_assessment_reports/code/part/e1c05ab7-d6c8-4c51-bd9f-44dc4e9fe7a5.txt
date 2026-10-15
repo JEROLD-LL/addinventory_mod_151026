@@ -1,0 +1,42 @@
+Public ReadOnly Property IsValidEntry() As (Boolean, String)
+        Get
+            Dim isValid = True
+            Dim msg As String
+
+            Dim po = _selected_ifs_po
+            Dim selectedRow
+            If (ultraGridERPPurchaseOrders.ActiveRow IsNot Nothing) Then
+                selectedRow = TryCast(ultraGridERPPurchaseOrders.ActiveRow.ListObject, QuickReportSchema)
+            End If
+
+
+            If (po Is Nothing AndAlso selectedRow IsNot Nothing) Then
+                po = selectedRow
+            End If
+
+            If (cboRef4.SelectedValue = "PURCADD" And Not IsDisassemblyPart) Then
+                If (_selected_ifs_po Is Nothing) Then
+                    _selected_ifs_po = po
+                End If
+
+                If ((po Is Nothing OrElse ultraGridERPPurchaseOrders.ActiveRow Is Nothing) OrElse po.PartNo <> txtPartNo.Text OrElse po.OrderNo <> txtPONumber.Text) Then
+                    isValid = False
+                    msg = "Is Mandatory to select a PO Line in order to add items to inventory."
+                    'ElseIf (po IsNot Nothing AndAlso CurrentFinesseQty > po.InvQtyArrived) Then
+                    '    isValid = False
+                    '    msg = "Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order."
+                ElseIf (po IsNot Nothing AndAlso Not po.IsValidSchema) Then
+                    isValid = False
+                    msg = po.SchemaError
+                End If
+            End If
+            If (_userPermission = UserAccess.FULL_ACCESS AndAlso Not isValid) Then
+                Dim result = MessageBox.Show($"The supplied PO information is not valid to be Proccessed. {vbNewLine}This won't send a succesfull message to IFS.{vbNewLine}Are you sure you want to continue?", "Info", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
+                If (result = DialogResult.Yes) Then
+                    Return (True, "FULL_ACCESS")
+                End If
+            End If
+
+            Return (isValid, msg)
+        End Get
+    End Property

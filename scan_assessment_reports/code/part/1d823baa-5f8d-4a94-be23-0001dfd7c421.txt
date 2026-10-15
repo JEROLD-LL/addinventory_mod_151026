@@ -1,0 +1,7 @@
+Private Async Sub btnReloadIFS_Click(sender As Object, e As EventArgs) Handles btnReloadIFS.Click
+        Dim selectedValues = GetParentchildSelectedRow()
+
+        Await FillERPGrid()
+        filter_ERP_DataGrid(txtERPPoNumber.Text)
+        SelectPreviousSelectionOnGrid(selectedValues.Item1, selectedValues.Item2)
+    End Sub

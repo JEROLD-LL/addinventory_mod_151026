@@ -1,0 +1,23 @@
+Private Sub SendIFSToFinesseMessage()
+        If clickedRow IsNot Nothing Then
+            Dim row = TryCast(clickedRow.ListObject, QuickReportSchema)
+
+            Dim qty = 0
+            Integer.TryParse(txtQuantityMessage.Text, qty)
+            If (String.IsNullOrEmpty(txtQuantityMessage.Text) OrElse qty = 0) Then
+                Dim toast As New ToastNotification($"You need to specify a valid quantity!", Color.Red)
+                toast.Show()
+                Exit Sub
+            End If
+
+            Dim result = row.SendMessage(_dtCurrency, txtQuantityMessage.Text)
+            If (Not String.IsNullOrEmpty(result)) Then
+                Dim toast As New ToastNotification($"Message successfully Sent! [{result}]", Color.Green)
+                toast.Show()
+            Else
+                Dim toast As New ToastNotification($"Error sending the message!", Color.Red)
+                toast.Show()
+            End If
+            UltraGridMenuStrip.Close()
+        End If
+    End Sub

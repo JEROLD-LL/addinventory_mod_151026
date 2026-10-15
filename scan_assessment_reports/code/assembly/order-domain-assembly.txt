@@ -1,0 +1,177 @@
+
+==================================================
+Part: ultraGridERPPurchaseOrders_MouseDown (PRT-086)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub ultraGridERPPurchaseOrders_MouseDown(sender As Object, e As MouseEventArgs) Handles ultraGridERPPurchaseOrders.MouseDown
+        If e.Button = MouseButtons.Right Then
+            Dim uiElement = ultraGridERPPurchaseOrders.DisplayLayout.UIElement.ElementFromPoint(New Point(e.X, e.Y))
+            Dim row = TryCast(uiElement.GetContext(GetType(UltraGridRow)), UltraGridRow)
+
+
+            If row IsNot Nothing Then
+                clickedRow = row
+
+                Dim po = TryCast(clickedRow.ListObject, QuickReportSchema)
+
+                BtnAddSubparts.Visible = _can_add_edit_disassemblies_subparts
+                UltraGridMenuStrip.Show(ultraGridERPPurchaseOrders, New Point(e.X, e.Y))
+                menuItemSendMessage.Visible = _can_add_edit_disassemblies_subparts AndAlso po IsNot Nothing AndAlso po.IsRecieved
+                Dim qty = If(po.QtyOnHand < po.InvQtyArrived, po.QtyOnHand, po.InvQtyArrived)
+                txtQuantityMessage.Text = qty
+            End If
+        End If
+    End Sub
+
+==================================================
+Part: ultraGridERPPurchaseOrders_InitializeRow (PRT-088)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub ultraGridERPPurchaseOrders_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles ultraGridERPPurchaseOrders.InitializeRow
+
+        Dim row = e.Row
+        row.Selected = False
+        If row.Band.Index = 0 Then
+            Dim PoLine = TryCast(row.ListObject, QuickReportSchema)
+            If (PoLine.FinessePart Is Nothing) Then
+                If (PoLine.Disassemblies Is Nothing OrElse PoLine.Disassemblies.Count = 0) Then
+                    row.ToolTipText = "This part does not exist in Finesse, and no subparts have been added. Please create the part or add the required subparts."
+                End If
+                row.Appearance.BackColor = ColorPalette.DangerRow
+            End If
+
+            If (row.HasChild) Then
+                row.ToolTipText = "This PO Line contains Subparts. Please receive all the subparts."
+                row.Appearance.BackColor = ColorPalette.GrayRow
+            End If
+        End If
+
+    End Sub
+
+==================================================
+Part: ultraGridERPPurchaseOrders_BeforeRowDeactivate (PRT-090)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub ultraGridERPPurchaseOrders_BeforeRowDeactivate(sender As Object, e As EventArgs) Handles ultraGridERPPurchaseOrders.BeforeRowDeactivate
+        Console.WriteLine("Deactivating selected row...")
+        _selected_ifs_po = Nothing
+        ReloadPermissions()
+    End Sub
+
+==================================================
+Part: ultraGridERPPurchaseOrders_AfterRowActivate (PRT-091)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub ultraGridERPPurchaseOrders_AfterRowActivate(sender As Object, e As EventArgs) Handles ultraGridERPPurchaseOrders.AfterRowActivate
+        Try
+            If (IsGridLoading) Then
+                Exit Sub
+            End If
+
+            Dim selectedRow As UltraGridRow = ultraGridERPPurchaseOrders.ActiveRow
+            Dim PoLine As QuickReportSchema
+            If (Not selectedRow.HasParent) Then
+                PoLine = TryCast(selectedRow.ListObject, QuickReportSchema)
+                Dim childBand = selectedRow.ChildBands(0)
+                If childBand.Rows.Count > 0 Then
+                    childBand.Rows(0).Activate()
+                    Exit Sub
+                End If
+            Else
+                Dim disassembly = TryCast(selectedRow.ListObject, DisassemblyPart)
+                Dim parent = TryCast(selectedRow.ParentRow.ListObject, QuickReportSchema).Clone()
+
+                If (parent.PartNo <> disassembly.ChildPartNo) Then
+                    parent.PartNo = disassembly.ChildPartNo
+                    parent.IFSInventory = parent.IFSInventory.Where(Function(item) item.PartNo = disassembly.ChildPartNo).ToList()
+                    parent.InvQtyArrived = disassembly.Quantity
+                    'parent.FinesseQty = 0
+                End If
+
+                If (parent IsNot Nothing AndAlso Not parent.IsSerializedPo) Then
+                    txtQty.Text = disassembly.Quantity
+                Else
+                    txtQty.Text = 1
+                End If
+                PoLine = parent
+            End If
+            _selected_ifs_po = PoLine
+            If (PoLine IsNot Nothing) Then
+                cboRef4.SelectedValue = "PURCADD"
+                If (Not String.IsNullOrEmpty(PoLine.Owner)) Then
+                    cboOwner.SelectedValue = PoLine.Owner
+                End If
+                If (Not String.IsNullOrEmpty(PoLine.Warehouse)) Then
+                    cboWarehouse.SelectedValue = PoLine.Warehouse
+                End If
+
+                txtPONumber.Text = PoLine.OrderNo
+                txtPartNo.Text = PoLine.PartNo
+                hideOrDisplayAutoIPAddressForPart(PoLine.PartNo)
+                ReloadPermissions()
+            End If
+
+        Catch ex As Exception
+            Console.WriteLine("Error Activating ultragrid row...")
+            Console.WriteLine(ex.Message)
+        End Try
+    End Sub
+
+==================================================
+Part: ordernoColumn (CFG-268)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ordernoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnorderno
+            End Get
+        End Property
+
+==================================================
+Part: IsordernoNull (CFG-387)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsordernoNull() As Boolean
+            Return Me.IsNull(Me.tableClairNewSerialNos.ordernoColumn)
+        End Function
+
+==================================================
+Part: SetordernoNull (CFG-394)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetordernoNull()
+            Me(Me.tableClairNewSerialNos.ordernoColumn) = Global.System.Convert.DBNull
+        End Sub
+
+==================================================
+Part: orderno (CFG-402)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property orderno() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableClairNewSerialNos.ordernoColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'orderno' in table 'ClairNewSerialNos' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableClairNewSerialNos.ordernoColumn) = value
+            End Set
+        End Property

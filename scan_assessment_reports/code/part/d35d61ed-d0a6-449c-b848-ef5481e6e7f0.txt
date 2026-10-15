@@ -1,0 +1,8 @@
+Private Sub dgvDisassemblies_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgvDisassemblies.CellClick
+        Select Case e.ColumnIndex
+            Case BtnPartPicker.Index
+                PickPartOnCurrentRow()
+            Case BtnDeleteRow.Index
+                DeleteCurrentRow()
+        End Select
+    End Sub

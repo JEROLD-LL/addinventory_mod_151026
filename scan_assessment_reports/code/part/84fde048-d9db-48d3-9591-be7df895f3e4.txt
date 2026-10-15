@@ -1,0 +1,29 @@
+Private Sub MACAddressValidationSurrogateFunction()
+
+        If txtMACAddress.Text = String.Empty Then
+            Exit Sub
+        End If
+
+
+        'Dim hasLowerCaseLetters = Regex.Match(txtMACAddress.Text, "[a-f]")
+
+        'If hasLowerCaseLetters.Success Or txtMACAddress.Text.Length <> 17 Then
+        '    attemptParseMACAddress()
+        '    Exit Sub
+        'End If
+
+
+        If Not isValidMACAddress(txtMACAddress.Text) Then
+
+            Dim parsedMACAddress As String = attemptParseMACAddress(txtMACAddress.Text)
+
+            If Not isValidMACAddress(parsedMACAddress) Then
+                Beep_Fail()
+                MessageBox.Show("This is an invalid MAC address format. Please use the following format 12:34:56:78:9A:BC")
+            Else
+                txtMACAddress.Text = parsedMACAddress
+            End If
+
+        End If
+
+    End Sub

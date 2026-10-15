@@ -1,0 +1,8 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+    Protected Overrides Function GetSchemaSerializable() As Global.System.Xml.Schema.XmlSchema
+        Dim stream As Global.System.IO.MemoryStream = New Global.System.IO.MemoryStream()
+        Me.WriteXmlSchema(New Global.System.Xml.XmlTextWriter(stream, Nothing))
+        stream.Position = 0
+        Return Global.System.Xml.Schema.XmlSchema.Read(New Global.System.Xml.XmlTextReader(stream), Nothing)
+    End Function

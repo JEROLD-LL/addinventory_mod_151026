@@ -1,0 +1,14 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property partdesc() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableClairNewSerialNos.partdescColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'partdesc' in table 'ClairNewSerialNos' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableClairNewSerialNos.partdescColumn) = value
+            End Set
+        End Property

@@ -1,0 +1,11 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Friend Sub InitVars()
+            Me.columnpartno = MyBase.Columns("partno")
+            Me.columnpartdesc = MyBase.Columns("partdesc")
+            Me.columnserial_no = MyBase.Columns("serial_no")
+            Me.columnonhand = MyBase.Columns("onhand")
+            Me.columnpartentityno = MyBase.Columns("partentityno")
+            Me.columnreceipt = MyBase.Columns("receipt")
+            Me.columnorderno = MyBase.Columns("orderno")
+        End Sub

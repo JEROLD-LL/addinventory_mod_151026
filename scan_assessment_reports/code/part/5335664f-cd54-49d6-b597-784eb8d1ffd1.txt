@@ -1,0 +1,5 @@
+Private Sub ultraGridERPPurchaseOrders_BeforeRowDeactivate(sender As Object, e As EventArgs) Handles ultraGridERPPurchaseOrders.BeforeRowDeactivate
+        Console.WriteLine("Deactivating selected row...")
+        _selected_ifs_po = Nothing
+        ReloadPermissions()
+    End Sub

@@ -1,0 +1,747 @@
+'''<summary>
+    '''Represents the strongly named DataTable class.
+    '''</summary>
+    <Global.System.Serializable(),  _
+     Global.System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")>  _
+    Partial Public Class inpartsubDataTable
+        Inherits Global.System.Data.TypedTableBase(Of inpartsubRow)
+        
+        Private columnpartno As Global.System.Data.DataColumn
+        
+        Private columnpartdesc As Global.System.Data.DataColumn
+        
+        Private columnunique_no As Global.System.Data.DataColumn
+        
+        Private columnbatchno As Global.System.Data.DataColumn
+        
+        Private columndept As Global.System.Data.DataColumn
+        
+        Private columnbld As Global.System.Data.DataColumn
+        
+        Private columnrow As Global.System.Data.DataColumn
+        
+        Private columnserial_no As Global.System.Data.DataColumn
+        
+        Private columnonhand As Global.System.Data.DataColumn
+        
+        Private columnreceipt As Global.System.Data.DataColumn
+        
+        Private columnacctno As Global.System.Data.DataColumn
+        
+        Private columnref4 As Global.System.Data.DataColumn
+        
+        Private columnref5 As Global.System.Data.DataColumn
+        
+        Private columnRemoveNonCoded As Global.System.Data.DataColumn
+        
+        Private columnPONumber As Global.System.Data.DataColumn
+        
+        Private columnShouldLinkChildParts As Global.System.Data.DataColumn
+        
+        Private columnIPAddress As Global.System.Data.DataColumn
+        
+        Private columnMACAddress As Global.System.Data.DataColumn
+        
+        Private columnPODateEntered As Global.System.Data.DataColumn
+        
+        Private columnPOSite As Global.System.Data.DataColumn
+        
+        Private columnPOInternalCustomer As Global.System.Data.DataColumn
+        
+        Private columnPOInternalDestination As Global.System.Data.DataColumn
+        
+        Private columnPOLineNo As Global.System.Data.DataColumn
+        
+        Private columnPOReleaseNo As Global.System.Data.DataColumn
+        
+        Private columnPOLocationNo As Global.System.Data.DataColumn
+        
+        Private columnPOLotBatchNo As Global.System.Data.DataColumn
+        
+        Private columnPONoteText As Global.System.Data.DataColumn
+        
+        Private columnPOInternalDestinationId As Global.System.Data.DataColumn
+        
+        Private columnPOIsSerialized As Global.System.Data.DataColumn
+        
+        Private columnIsDisassembly As Global.System.Data.DataColumn
+        
+        Private columnParentPartNo As Global.System.Data.DataColumn
+        
+        Private columnPOPartNo As Global.System.Data.DataColumn
+        
+        Private columnPOQtyArrived As Global.System.Data.DataColumn
+        
+        Private columnPOBuyUnitPrice As Global.System.Data.DataColumn
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub New()
+            MyBase.New
+            Me.TableName = "inpartsub"
+            Me.BeginInit
+            Me.InitClass
+            Me.EndInit
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Friend Sub New(ByVal table As Global.System.Data.DataTable)
+            MyBase.New
+            Me.TableName = table.TableName
+            If (table.CaseSensitive <> table.DataSet.CaseSensitive) Then
+                Me.CaseSensitive = table.CaseSensitive
+            End If
+            If (table.Locale.ToString <> table.DataSet.Locale.ToString) Then
+                Me.Locale = table.Locale
+            End If
+            If (table.Namespace <> table.DataSet.Namespace) Then
+                Me.Namespace = table.Namespace
+            End If
+            Me.Prefix = table.Prefix
+            Me.MinimumCapacity = table.MinimumCapacity
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Sub New(ByVal info As Global.System.Runtime.Serialization.SerializationInfo, ByVal context As Global.System.Runtime.Serialization.StreamingContext)
+            MyBase.New(info, context)
+            Me.InitVars
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property partnoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnpartno
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property partdescColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnpartdesc
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property unique_noColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnunique_no
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property batchnoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnbatchno
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property deptColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columndept
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property bldColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnbld
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property rowColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnrow
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property serial_noColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnserial_no
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property onhandColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnonhand
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property receiptColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnreceipt
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property acctnoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnacctno
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ref4Column() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnref4
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ref5Column() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnref5
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property RemoveNonCodedColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnRemoveNonCoded
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property PONumberColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPONumber
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ShouldLinkChildPartsColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnShouldLinkChildParts
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property IPAddressColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnIPAddress
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property MACAddressColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnMACAddress
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property PODateEnteredColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPODateEntered
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POSiteColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOSite
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POInternalCustomerColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOInternalCustomer
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POInternalDestinationColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOInternalDestination
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POLineNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOLineNo
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POReleaseNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOReleaseNo
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POLocationNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOLocationNo
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POLotBatchNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOLotBatchNo
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property PONoteTextColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPONoteText
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POInternalDestinationIdColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOInternalDestinationId
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POIsSerializedColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOIsSerialized
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property IsDisassemblyColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnIsDisassembly
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property ParentPartNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnParentPartNo
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POPartNoColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOPartNo
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POQtyArrivedColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOQtyArrived
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property POBuyUnitPriceColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnPOBuyUnitPrice
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0"),  _
+         Global.System.ComponentModel.Browsable(false)>  _
+        Public ReadOnly Property Count() As Integer
+            Get
+                Return Me.Rows.Count
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Default ReadOnly Property Item(ByVal index As Integer) As inpartsubRow
+            Get
+                Return CType(Me.Rows(index),inpartsubRow)
+            End Get
+        End Property
+        
+        <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Event inpartsubRowChanging As inpartsubRowChangeEventHandler
+        
+        <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Event inpartsubRowChanged As inpartsubRowChangeEventHandler
+        
+        <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Event inpartsubRowDeleting As inpartsubRowChangeEventHandler
+        
+        <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Event inpartsubRowDeleted As inpartsubRowChangeEventHandler
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Overloads Sub AddinpartsubRow(ByVal row As inpartsubRow)
+            Me.Rows.Add(row)
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Overloads Function AddinpartsubRow( _
+                    ByVal partno As String,  _
+                    ByVal partdesc As String,  _
+                    ByVal unique_no As String,  _
+                    ByVal batchno As String,  _
+                    ByVal dept As String,  _
+                    ByVal bld As String,  _
+                    ByVal row As String,  _
+                    ByVal serial_no As String,  _
+                    ByVal onhand As Double,  _
+                    ByVal receipt As Date,  _
+                    ByVal acctno As String,  _
+                    ByVal ref4 As String,  _
+                    ByVal ref5 As String,  _
+                    ByVal RemoveNonCoded As Boolean,  _
+                    ByVal PONumber As String,  _
+                    ByVal ShouldLinkChildParts As Boolean,  _
+                    ByVal IPAddress As String,  _
+                    ByVal MACAddress As String,  _
+                    ByVal PODateEntered As String,  _
+                    ByVal POSite As String,  _
+                    ByVal POInternalCustomer As String,  _
+                    ByVal POInternalDestination As String,  _
+                    ByVal POLineNo As String,  _
+                    ByVal POReleaseNo As String,  _
+                    ByVal POLocationNo As String,  _
+                    ByVal POLotBatchNo As String,  _
+                    ByVal PONoteText As String,  _
+                    ByVal POInternalDestinationId As String,  _
+                    ByVal POIsSerialized As String,  _
+                    ByVal IsDisassembly As Boolean,  _
+                    ByVal ParentPartNo As String,  _
+                    ByVal POPartNo As String,  _
+                    ByVal POQtyArrived As String,  _
+                    ByVal POBuyUnitPrice As String) As inpartsubRow
+            Dim rowinpartsubRow As inpartsubRow = CType(Me.NewRow,inpartsubRow)
+            Dim columnValuesArray() As Object = New Object() {partno, partdesc, unique_no, batchno, dept, bld, row, serial_no, onhand, receipt, acctno, ref4, ref5, RemoveNonCoded, PONumber, ShouldLinkChildParts, IPAddress, MACAddress, PODateEntered, POSite, POInternalCustomer, POInternalDestination, POLineNo, POReleaseNo, POLocationNo, POLotBatchNo, PONoteText, POInternalDestinationId, POIsSerialized, IsDisassembly, ParentPartNo, POPartNo, POQtyArrived, POBuyUnitPrice}
+            rowinpartsubRow.ItemArray = columnValuesArray
+            Me.Rows.Add(rowinpartsubRow)
+            Return rowinpartsubRow
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function FindBypartnounique_nobatchnodeptbldrowserial_no(ByVal partno As String, ByVal unique_no As String, ByVal batchno As String, ByVal dept As String, ByVal bld As String, ByVal row As String, ByVal serial_no As String) As inpartsubRow
+            Return CType(Me.Rows.Find(New Object() {partno, unique_no, batchno, dept, bld, row, serial_no}),inpartsubRow)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Overrides Function Clone() As Global.System.Data.DataTable
+            Dim cln As inpartsubDataTable = CType(MyBase.Clone,inpartsubDataTable)
+            cln.InitVars
+            Return cln
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Function CreateInstance() As Global.System.Data.DataTable
+            Return New inpartsubDataTable()
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Friend Sub InitVars()
+            Me.columnpartno = MyBase.Columns("partno")
+            Me.columnpartdesc = MyBase.Columns("partdesc")
+            Me.columnunique_no = MyBase.Columns("unique_no")
+            Me.columnbatchno = MyBase.Columns("batchno")
+            Me.columndept = MyBase.Columns("dept")
+            Me.columnbld = MyBase.Columns("bld")
+            Me.columnrow = MyBase.Columns("row")
+            Me.columnserial_no = MyBase.Columns("serial_no")
+            Me.columnonhand = MyBase.Columns("onhand")
+            Me.columnreceipt = MyBase.Columns("receipt")
+            Me.columnacctno = MyBase.Columns("acctno")
+            Me.columnref4 = MyBase.Columns("ref4")
+            Me.columnref5 = MyBase.Columns("ref5")
+            Me.columnRemoveNonCoded = MyBase.Columns("RemoveNonCoded")
+            Me.columnPONumber = MyBase.Columns("PONumber")
+            Me.columnShouldLinkChildParts = MyBase.Columns("ShouldLinkChildParts")
+            Me.columnIPAddress = MyBase.Columns("IPAddress")
+            Me.columnMACAddress = MyBase.Columns("MacAddress")
+            Me.columnPODateEntered = MyBase.Columns("PODateEntered")
+            Me.columnPOSite = MyBase.Columns("POSite")
+            Me.columnPOInternalCustomer = MyBase.Columns("POInternalCustomer")
+            Me.columnPOInternalDestination = MyBase.Columns("POInternalDestination")
+            Me.columnPOLineNo = MyBase.Columns("POLineNo")
+            Me.columnPOReleaseNo = MyBase.Columns("POReleaseNo")
+            Me.columnPOLocationNo = MyBase.Columns("POLocationNo")
+            Me.columnPOLotBatchNo = MyBase.Columns("POLotBatchNo")
+            Me.columnPONoteText = MyBase.Columns("PONoteText")
+            Me.columnPOInternalDestinationId = MyBase.Columns("POInternalDestinationId")
+            Me.columnPOIsSerialized = MyBase.Columns("POIsSerialized")
+            Me.columnIsDisassembly = MyBase.Columns("IsDisassembly")
+            Me.columnParentPartNo = MyBase.Columns("ParentPartNo")
+            Me.columnPOPartNo = MyBase.Columns("POPartNo")
+            Me.columnPOQtyArrived = MyBase.Columns("POQtyArrived")
+            Me.columnPOBuyUnitPrice = MyBase.Columns("POBuyUnitPrice")
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Private Sub InitClass()
+            Me.columnpartno = New Global.System.Data.DataColumn("partno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnpartno)
+            Me.columnpartdesc = New Global.System.Data.DataColumn("partdesc", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnpartdesc)
+            Me.columnunique_no = New Global.System.Data.DataColumn("unique_no", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnunique_no)
+            Me.columnbatchno = New Global.System.Data.DataColumn("batchno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnbatchno)
+            Me.columndept = New Global.System.Data.DataColumn("dept", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columndept)
+            Me.columnbld = New Global.System.Data.DataColumn("bld", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnbld)
+            Me.columnrow = New Global.System.Data.DataColumn("row", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnrow)
+            Me.columnserial_no = New Global.System.Data.DataColumn("serial_no", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnserial_no)
+            Me.columnonhand = New Global.System.Data.DataColumn("onhand", GetType(Double), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnonhand)
+            Me.columnreceipt = New Global.System.Data.DataColumn("receipt", GetType(Date), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnreceipt)
+            Me.columnacctno = New Global.System.Data.DataColumn("acctno", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnacctno)
+            Me.columnref4 = New Global.System.Data.DataColumn("ref4", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnref4)
+            Me.columnref5 = New Global.System.Data.DataColumn("ref5", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnref5)
+            Me.columnRemoveNonCoded = New Global.System.Data.DataColumn("RemoveNonCoded", GetType(Boolean), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnRemoveNonCoded)
+            Me.columnPONumber = New Global.System.Data.DataColumn("PONumber", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPONumber)
+            Me.columnShouldLinkChildParts = New Global.System.Data.DataColumn("ShouldLinkChildParts", GetType(Boolean), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnShouldLinkChildParts)
+            Me.columnIPAddress = New Global.System.Data.DataColumn("IPAddress", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnIPAddress)
+            Me.columnMACAddress = New Global.System.Data.DataColumn("MacAddress", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_ColumnPropNameInRow", "MACAddress")
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_ColumnPropNameInTable", "MACAddressColumn")
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_ColumnVarNameInTable", "columnMACAddress")
+            Me.columnMACAddress.ExtendedProperties.Add("Generator_UserColumnName", "MacAddress")
+            MyBase.Columns.Add(Me.columnMACAddress)
+            Me.columnPODateEntered = New Global.System.Data.DataColumn("PODateEntered", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPODateEntered)
+            Me.columnPOSite = New Global.System.Data.DataColumn("POSite", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOSite)
+            Me.columnPOInternalCustomer = New Global.System.Data.DataColumn("POInternalCustomer", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOInternalCustomer)
+            Me.columnPOInternalDestination = New Global.System.Data.DataColumn("POInternalDestination", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOInternalDestination)
+            Me.columnPOLineNo = New Global.System.Data.DataColumn("POLineNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOLineNo)
+            Me.columnPOReleaseNo = New Global.System.Data.DataColumn("POReleaseNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOReleaseNo)
+            Me.columnPOLocationNo = New Global.System.Data.DataColumn("POLocationNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOLocationNo)
+            Me.columnPOLotBatchNo = New Global.System.Data.DataColumn("POLotBatchNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOLotBatchNo)
+            Me.columnPONoteText = New Global.System.Data.DataColumn("PONoteText", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPONoteText)
+            Me.columnPOInternalDestinationId = New Global.System.Data.DataColumn("POInternalDestinationId", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOInternalDestinationId)
+            Me.columnPOIsSerialized = New Global.System.Data.DataColumn("POIsSerialized", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOIsSerialized)
+            Me.columnIsDisassembly = New Global.System.Data.DataColumn("IsDisassembly", GetType(Boolean), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnIsDisassembly)
+            Me.columnParentPartNo = New Global.System.Data.DataColumn("ParentPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnParentPartNo)
+            Me.columnPOPartNo = New Global.System.Data.DataColumn("POPartNo", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOPartNo)
+            Me.columnPOQtyArrived = New Global.System.Data.DataColumn("POQtyArrived", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOQtyArrived)
+            Me.columnPOBuyUnitPrice = New Global.System.Data.DataColumn("POBuyUnitPrice", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnPOBuyUnitPrice)
+            Me.Constraints.Add(New Global.System.Data.UniqueConstraint("Constraint1", New Global.System.Data.DataColumn() {Me.columnpartno, Me.columnunique_no, Me.columnbatchno, Me.columndept, Me.columnbld, Me.columnrow, Me.columnserial_no}, true))
+            Me.columnpartno.AllowDBNull = false
+            Me.columnpartno.MaxLength = 50
+            Me.columnpartdesc.ReadOnly = true
+            Me.columnunique_no.AllowDBNull = false
+            Me.columnunique_no.MaxLength = 20
+            Me.columnbatchno.AllowDBNull = false
+            Me.columnbatchno.MaxLength = 50
+            Me.columndept.AllowDBNull = false
+            Me.columndept.MaxLength = 10
+            Me.columnbld.AllowDBNull = false
+            Me.columnbld.MaxLength = 10
+            Me.columnrow.AllowDBNull = false
+            Me.columnrow.MaxLength = 20
+            Me.columnserial_no.AllowDBNull = false
+            Me.columnserial_no.MaxLength = 35
+            Me.columnonhand.AllowDBNull = false
+            Me.columnreceipt.AllowDBNull = false
+            Me.columnreceipt.ReadOnly = true
+            Me.columnacctno.AllowDBNull = false
+            Me.columnref4.AllowDBNull = false
+            Me.columnRemoveNonCoded.DefaultValue = CType(false,Boolean)
+            Me.columnIPAddress.MaxLength = 15
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function NewinpartsubRow() As inpartsubRow
+            Return CType(Me.NewRow,inpartsubRow)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Function NewRowFromBuilder(ByVal builder As Global.System.Data.DataRowBuilder) As Global.System.Data.DataRow
+            Return New inpartsubRow(builder)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Function GetRowType() As Global.System.Type
+            Return GetType(inpartsubRow)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Sub OnRowChanged(ByVal e As Global.System.Data.DataRowChangeEventArgs)
+            MyBase.OnRowChanged(e)
+            If (Not (Me.inpartsubRowChangedEvent) Is Nothing) Then
+                RaiseEvent inpartsubRowChanged(Me, New inpartsubRowChangeEvent(CType(e.Row,inpartsubRow), e.Action))
+            End If
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Sub OnRowChanging(ByVal e As Global.System.Data.DataRowChangeEventArgs)
+            MyBase.OnRowChanging(e)
+            If (Not (Me.inpartsubRowChangingEvent) Is Nothing) Then
+                RaiseEvent inpartsubRowChanging(Me, New inpartsubRowChangeEvent(CType(e.Row,inpartsubRow), e.Action))
+            End If
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Sub OnRowDeleted(ByVal e As Global.System.Data.DataRowChangeEventArgs)
+            MyBase.OnRowDeleted(e)
+            If (Not (Me.inpartsubRowDeletedEvent) Is Nothing) Then
+                RaiseEvent inpartsubRowDeleted(Me, New inpartsubRowChangeEvent(CType(e.Row,inpartsubRow), e.Action))
+            End If
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Sub OnRowDeleting(ByVal e As Global.System.Data.DataRowChangeEventArgs)
+            MyBase.OnRowDeleting(e)
+            If (Not (Me.inpartsubRowDeletingEvent) Is Nothing) Then
+                RaiseEvent inpartsubRowDeleting(Me, New inpartsubRowChangeEvent(CType(e.Row,inpartsubRow), e.Action))
+            End If
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub RemoveinpartsubRow(ByVal row As inpartsubRow)
+            Me.Rows.Remove(row)
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Shared Function GetTypedTableSchema(ByVal xs As Global.System.Xml.Schema.XmlSchemaSet) As Global.System.Xml.Schema.XmlSchemaComplexType
+            Dim type As Global.System.Xml.Schema.XmlSchemaComplexType = New Global.System.Xml.Schema.XmlSchemaComplexType()
+            Dim sequence As Global.System.Xml.Schema.XmlSchemaSequence = New Global.System.Xml.Schema.XmlSchemaSequence()
+            Dim ds As DataSetAddInventory = New DataSetAddInventory()
+            Dim any1 As Global.System.Xml.Schema.XmlSchemaAny = New Global.System.Xml.Schema.XmlSchemaAny()
+            any1.Namespace = "http://www.w3.org/2001/XMLSchema"
+            any1.MinOccurs = New Decimal(0)
+            any1.MaxOccurs = Decimal.MaxValue
+            any1.ProcessContents = Global.System.Xml.Schema.XmlSchemaContentProcessing.Lax
+            sequence.Items.Add(any1)
+            Dim any2 As Global.System.Xml.Schema.XmlSchemaAny = New Global.System.Xml.Schema.XmlSchemaAny()
+            any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1"
+            any2.MinOccurs = New Decimal(1)
+            any2.ProcessContents = Global.System.Xml.Schema.XmlSchemaContentProcessing.Lax
+            sequence.Items.Add(any2)
+            Dim attribute1 As Global.System.Xml.Schema.XmlSchemaAttribute = New Global.System.Xml.Schema.XmlSchemaAttribute()
+            attribute1.Name = "namespace"
+            attribute1.FixedValue = ds.Namespace
+            type.Attributes.Add(attribute1)
+            Dim attribute2 As Global.System.Xml.Schema.XmlSchemaAttribute = New Global.System.Xml.Schema.XmlSchemaAttribute()
+            attribute2.Name = "tableTypeName"
+            attribute2.FixedValue = "inpartsubDataTable"
+            type.Attributes.Add(attribute2)
+            type.Particle = sequence
+            Dim dsSchema As Global.System.Xml.Schema.XmlSchema = ds.GetSchemaSerializable
+            If xs.Contains(dsSchema.TargetNamespace) Then
+                Dim s1 As Global.System.IO.MemoryStream = New Global.System.IO.MemoryStream()
+                Dim s2 As Global.System.IO.MemoryStream = New Global.System.IO.MemoryStream()
+                Try 
+                    Dim schema As Global.System.Xml.Schema.XmlSchema = Nothing
+                    dsSchema.Write(s1)
+                    Dim schemas As Global.System.Collections.IEnumerator = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator
+                    Do While schemas.MoveNext
+                        schema = CType(schemas.Current,Global.System.Xml.Schema.XmlSchema)
+                        s2.SetLength(0)
+                        schema.Write(s2)
+                        If (s1.Length = s2.Length) Then
+                            s1.Position = 0
+                            s2.Position = 0
+                            
+                            Do While ((s1.Position <> s1.Length)  _
+                                        AndAlso (s1.ReadByte = s2.ReadByte))
+                                
+                                
+                            Loop
+                            If (s1.Position = s1.Length) Then
+                                Return type
+                            End If
+                        End If
+                        
+                    Loop
+                Finally
+                    If (Not (s1) Is Nothing) Then
+                        s1.Close
+                    End If
+                    If (Not (s2) Is Nothing) Then
+                        s2.Close
+                    End If
+                End Try
+            End If
+            xs.Add(dsSchema)
+            Return type
+        End Function
+    End Class

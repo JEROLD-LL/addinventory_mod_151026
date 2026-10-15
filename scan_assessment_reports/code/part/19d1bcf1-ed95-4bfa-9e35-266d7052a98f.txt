@@ -1,0 +1,5 @@
+Private Sub Init_OwnersCombo()
+        cboOwner.DisplayMember = "OwnerDesc"
+        cboOwner.ValueMember = "OwnerCode"
+        cboOwner.DataSource = New DataView(_dtOwners, "", "OwnerDesc asc", DataViewRowState.CurrentRows)
+    End Sub

@@ -1,0 +1,3 @@
+Public Sub Beep_Fail()
+        My.Computer.Audio.Play(GetEnvironmentVariable("ESSVBDir") + "\sounds\bad_beep.wav", AudioPlayMode.Background)
+    End Sub

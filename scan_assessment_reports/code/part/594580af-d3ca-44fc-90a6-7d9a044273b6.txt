@@ -1,0 +1,5 @@
+Private Sub txtPartNo_LostFocus(sender As Object, e As EventArgs) Handles txtPartNo.LostFocus
+        If (Not String.IsNullOrEmpty(txtPartNo.Text) AndAlso (_picker Is Nothing OrElse _picker.PartNumber <> txtPartNo.Text)) Then
+            SearchPartCatalog()
+        End If
+    End Sub

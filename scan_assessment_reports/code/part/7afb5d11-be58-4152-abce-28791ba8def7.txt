@@ -1,0 +1,19 @@
+Private Sub ultraGridERPPurchaseOrders_MouseDown(sender As Object, e As MouseEventArgs) Handles ultraGridERPPurchaseOrders.MouseDown
+        If e.Button = MouseButtons.Right Then
+            Dim uiElement = ultraGridERPPurchaseOrders.DisplayLayout.UIElement.ElementFromPoint(New Point(e.X, e.Y))
+            Dim row = TryCast(uiElement.GetContext(GetType(UltraGridRow)), UltraGridRow)
+
+
+            If row IsNot Nothing Then
+                clickedRow = row
+
+                Dim po = TryCast(clickedRow.ListObject, QuickReportSchema)
+
+                BtnAddSubparts.Visible = _can_add_edit_disassemblies_subparts
+                UltraGridMenuStrip.Show(ultraGridERPPurchaseOrders, New Point(e.X, e.Y))
+                menuItemSendMessage.Visible = _can_add_edit_disassemblies_subparts AndAlso po IsNot Nothing AndAlso po.IsRecieved
+                Dim qty = If(po.QtyOnHand < po.InvQtyArrived, po.QtyOnHand, po.InvQtyArrived)
+                txtQuantityMessage.Text = qty
+            End If
+        End If
+    End Sub

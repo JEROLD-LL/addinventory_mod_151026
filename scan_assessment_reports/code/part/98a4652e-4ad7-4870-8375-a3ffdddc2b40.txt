@@ -1,0 +1,22 @@
+Private Function getPartGUID(partno As String) As String
+        If (String.IsNullOrEmpty(partno)) Then
+            Return ""
+        End If
+
+        Dim partGUID As String = String.Empty
+        Try
+            Dim jammer As New SQLJammer(GetOpenedFinesseConnection())
+            jammer.Add($"
+                SELECT TOP 1 GUID FROM dbo.inpart
+                WHERE partno =  {SQLQuote(partno)}",
+                     Sub(result)
+                         If result.Rows.Count > 0 Then
+                             partGUID = result.Rows(0).Item("GUID").ToString()
+                         End If
+                     End Sub)
+            jammer.Execute()
+        Catch ex As Exception
+            MessageBox.Show("Error Getting File Storage GUID: " & ex.Message)
+        End Try
+        Return partGUID
+    End Function

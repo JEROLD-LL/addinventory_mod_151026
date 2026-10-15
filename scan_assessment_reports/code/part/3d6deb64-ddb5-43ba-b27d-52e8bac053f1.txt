@@ -1,0 +1,32 @@
+Private Sub GetPreview()
+        Dim selectedItemToPrint As ItemsToPrintRow = cbBarcode.SelectedItem
+        Dim selectedBarcodeTemplate As BarcodeTemplate = cbBarcodeType.SelectedItem
+        Dim ZPLData = selectedBarcodeTemplate.GetZPLData(selectedItemToPrint.Barcode, selectedItemToPrint.SerialNumber)
+
+        If ZPLData = "" Then
+            Throw New ArgumentNullException("ZPLData", "This barcode type has no template file or data. Select another barcode type and contact IT for help." + vbCrLf + "Expected template file: " + selectedBarcodeTemplate.Path)
+        End If
+
+        Dim zpl() As Byte = Encoding.UTF8.GetBytes(ZPLData)
+
+        ' adjust print density (8dpmm), label width (4 inches), label height (6 inches), and label index (0) as necessary
+        Dim request As HttpWebRequest = WebRequest.Create("http://api.labelary.com/v1/printers/12dpmm/labels/1x.5/0/")
+        request.Method = "POST"
+        request.ContentType = "application/x-www-form-urlencoded"
+        request.ContentLength = zpl.Length
+
+        Dim requestStream As Stream = request.GetRequestStream()
+        requestStream.Write(zpl, 0, zpl.Length)
+        requestStream.Close()
+
+        Try
+            Dim response As HttpWebResponse = request.GetResponse()
+            Dim responseStream As Stream = response.GetResponseStream()
+            Dim bm As New Bitmap(responseStream)
+            picBarcodePreview.Image = bm
+            responseStream.Close()
+        Catch ex As WebException
+            MsgBox("Failed to get preview." + vbCrLf + "Error: " + ex.Message, MsgBoxStyle.Critical)
+        End Try
+
+    End Sub

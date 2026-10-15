@@ -1,0 +1,13 @@
+Private Function HasDataChanged() As Boolean
+
+        For Each r As DataRow In DataSetAddInventory.inpartsub
+            Select Case r.RowState
+                Case DataRowState.Unchanged
+                    'Nothing
+                Case Else
+                    Return True
+            End Select
+        Next
+
+        Return False
+    End Function

@@ -1,0 +1,22 @@
+Private Function DoYouWantToSave(ByRef shouldReturn As Boolean)
+        shouldReturn = False
+        If HasDataChanged() Then
+            Dim result = MsgBox("Do you want to save/commit your changes?", vbYesNoCancel)
+            Select Case result
+                Case DialogResult.Yes
+                    Try
+                        DataSetAddInventory.AcceptChanges()
+                        SaveData()
+                        'Continue closing
+                    Catch ex As Exception
+                        MsgBox(ex.Message)
+                    End Try
+                Case DialogResult.No
+                    'DataSetAddInventory.AcceptChanges() ' why was this here?
+                    'Do Nothing and close
+                Case DialogResult.Cancel
+                    shouldReturn = True
+            End Select
+        End If
+        Return shouldReturn
+    End Function

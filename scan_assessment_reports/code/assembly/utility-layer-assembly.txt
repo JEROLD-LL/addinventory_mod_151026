@@ -1,0 +1,47 @@
+
+==================================================
+Part: GetErpBaseData (REPO-035)
+Type: repository
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Function GetErpBaseData() As IEnumerable(Of QuickReportSchema)
+        If (_ifs_data IsNot Nothing AndAlso cboErpWarehouse.SelectedItem IsNot Nothing) Then
+            Dim selectedCompany = cboErpWarehouse.SelectedItem.Row("IFSCompanyCd").ToString
+            Dim result = _ifs_data.Where(Function(po) _
+                                        (String.IsNullOrEmpty(selectedCompany) OrElse String.IsNullOrEmpty(po.Contract) OrElse po.Contract = selectedCompany OrElse po.Warehouse = selectedCompany) AndAlso
+    (String.IsNullOrEmpty(cboErpOwner.SelectedValue) OrElse String.IsNullOrEmpty(po.Owner) OrElse po.Owner = cboErpOwner.SelectedValue) AndAlso
+                                        (chkUnexistingParts.Checked OrElse (Not chkUnexistingParts.Checked AndAlso (po.FinessePart IsNot Nothing OrElse (po.Disassemblies IsNot Nothing AndAlso po.Disassemblies.Count > 0)))) AndAlso
+    (Not chkRecievedOnly.Checked OrElse
+        (po.IsRecieved = True AndAlso
+         CInt(po.FinesseQty) < CInt(po.BuyQtyDue) AndAlso 'Filtering by Qty ordered instead of qty arrived to show rows that haven't been fully receipt.
+         (po.FinessePart IsNot Nothing OrElse po.Disassemblies IsNot Nothing)))
+)
+
+
+
+            Return result
+        End If
+
+        Return New List(Of QuickReportSchema)()
+    End Function
+
+==================================================
+Part: CycleCountUtilityToolStripMenuItem_Click (UI-105)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub CycleCountUtilityToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles CycleCountUtilityToolStripMenuItem.Click
+        StartFinesseProcess("Cycle Count.exe")
+    End Sub
+
+==================================================
+Part: UtilizationToolStripMenuItem_Click (UI-106)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub UtilizationToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles UtilizationToolStripMenuItem.Click, tsbUtilization.Click
+        Dim commandArgs As String = ""
+        If Not String.IsNullOrEmpty(Selected_PartNo) Then commandArgs = "bld=" + GetUserWarehouse() + " partno=" + Selected_PartNo
+
+        StartFinesseProcess("utilization.exe", commandArgs)
+    End Sub

@@ -1,0 +1,7 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public ReadOnly Property onhandColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnonhand
+            End Get
+        End Property

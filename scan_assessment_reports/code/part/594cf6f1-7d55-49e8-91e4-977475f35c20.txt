@@ -1,0 +1,14 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POSite() As String
+            Get
+                If Me.IsPOSiteNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POSiteColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POSiteColumn) = value
+            End Set
+        End Property

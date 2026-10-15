@@ -1,0 +1,25 @@
+Private Sub btnGetNextBarcode_Click(sender As Object, e As EventArgs) Handles btnGetNextBarcode.Click
+        If txtBarcode.Text <> "" Then
+            Dim result = MsgBox("Would you like to clear the barcode and retrieve another?", MsgBoxStyle.OkCancel, "Clear barcode?")
+            If result = MsgBoxResult.Cancel Then
+                Exit Sub
+            End If
+        End If
+
+        Dim owner = _dtOwners.Select($"OwnerCode = '{cboOwner.SelectedValue}'").FirstOrDefault
+
+        Dim BarcodeSequenceType = owner("BarcodeSequenceType").ToString
+
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+
+            Dim conn As SqlConnection = GetOpenedFinesseConnection()
+            Dim getSequenceCmd As SqlCommand = New SqlCommand("create_barcode", conn)
+            getSequenceCmd.CommandType = CommandType.StoredProcedure
+            getSequenceCmd.Parameters.Add("@SequenceType", SqlDbType.VarChar, 255).Value = BarcodeSequenceType
+            getSequenceCmd.Parameters.Add("@nextBarcode", SqlDbType.VarChar, 50)
+            getSequenceCmd.Parameters("@nextBarcode").Direction = ParameterDirection.Output
+            getSequenceCmd.ExecuteNonQuery()
+            txtBarcode.Text = getSequenceCmd.Parameters.Item("@nextBarcode").Value.ToString
+        End Using
+    End Sub

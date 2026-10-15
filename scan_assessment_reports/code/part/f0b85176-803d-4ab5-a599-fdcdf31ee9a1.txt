@@ -1,0 +1,14 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POLineNo() As String
+            Get
+                If Me.IsPOLineNoNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POLineNoColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POLineNoColumn) = value
+            End Set
+        End Property

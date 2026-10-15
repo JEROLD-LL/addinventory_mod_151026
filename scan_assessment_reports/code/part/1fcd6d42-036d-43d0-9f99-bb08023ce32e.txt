@@ -1,0 +1,4 @@
+Private Sub invokeMACAddressValidation(ByVal x As Object)
+        Dim mi = New MethodInvoker(AddressOf MACAddressValidationSurrogateFunction)
+        Invoke(mi)
+    End Sub

@@ -1,0 +1,26 @@
+Private Sub txtBarcode_TextChanged(ByVal sender As Object, ByVal e As EventArgs) Handles txtBarcode.TextChanged, txtSerialNo.TextChanged
+        If Not String.IsNullOrEmpty(txtSerialNo.Text) Or Not String.IsNullOrEmpty(txtBarcode.Text) Then
+            txtQty.Text = 1
+            txtQty.ReadOnly = True
+        Else
+            txtQty.Clear()
+            txtQty.ReadOnly = False
+        End If
+        If Not String.IsNullOrEmpty(Trim(txtBarcode.Text)) Then
+            Dim enc As New DmtxImageEncoder
+            Dim dmOptions As New DmtxImageEncoderOptions
+
+            dmOptions.SizeIdx = DmtxSymbolSize.DmtxSymbol14x14
+            dmOptions.MarginSize = 5
+            dmOptions.Scheme = DmtxScheme.DmtxSchemeAscii
+            Try
+                Dim bcDataMatrix = enc.EncodeImage(txtBarcode.Text, dmOptions)
+                pb2Dbarcode.Image = bcDataMatrix
+            Catch ex As Exception
+
+            End Try
+
+        Else
+            pb2Dbarcode.Image = Nothing
+        End If
+    End Sub

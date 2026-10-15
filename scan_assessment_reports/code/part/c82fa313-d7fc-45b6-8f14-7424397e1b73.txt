@@ -1,0 +1,14 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POLocationNo() As String
+            Get
+                If Me.IsPOLocationNoNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POLocationNoColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POLocationNoColumn) = value
+            End Set
+        End Property

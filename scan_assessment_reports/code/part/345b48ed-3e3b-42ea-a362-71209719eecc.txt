@@ -1,0 +1,158 @@
+Private Async Sub btnAddItemToList_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnAddItemToList.Click
+        Dim Validation = IsValidEntry
+        If (Not Validation.Item1) Then
+            MsgBox(Validation.Item2, MsgBoxStyle.Critical)
+            Return
+        End If
+
+        If (String.IsNullOrEmpty(txtSerialNo.Text) And String.IsNullOrEmpty(txtBarcode.Text) And String.IsNullOrEmpty(txtQty.Text)) Then
+            txtBarcode.Focus()
+            Return
+        End If
+
+        If Not String.IsNullOrEmpty(txtSerialNo.Text) And String.IsNullOrEmpty(txtBarcode.Text) Then
+            txtBarcode.Focus()
+            Return
+        End If
+
+        Dim qty As Integer
+
+        Try
+            qty = CInt(txtQty.Text)
+        Catch ex As Exception
+            MsgBox("Quantity must be a whole number greater than zero.", vbOKOnly)
+            Return
+        End Try
+
+        If CInt(txtQty.Text) < 1 Then
+            MsgBox("Quantity must be a whole number greater than zero.", vbOKOnly)
+            Return
+        End If
+
+        Dim lShouldReturn As Boolean
+        ValidateNewInventoryItemInfo(lShouldReturn)
+        If lShouldReturn Then Return
+
+        'Set ShouldLinkChildParts to false as the default before any "add item" processing begins.
+        Dim ShouldLinkChildParts As Boolean = False
+        Dim dtLinkedParts As New DataTable
+
+        Try
+            Dim childPartLinkingAllowed As Boolean = DirectCast(cboOwner.SelectedItem, DataRowView)("EnableInpartsubRefChildLinking")
+
+            If Not childPartLinkingAllowed Then GoTo StagePartForAdd
+
+
+            Using conn As New SqlConnection(FinesseConnectionString), cmd As New SqlCommand("GetLinkedChildPartInformation", conn), ad As New SqlDataAdapter(cmd)
+                conn.Open()
+                cmd.CommandType = CommandType.StoredProcedure
+                With cmd.Parameters
+                    ''Set the size of VarChar max to -1
+                    .Add("@partno", SqlDbType.VarChar, 50).Value = txtPartNo.Text
+                    .Add("@qty", SqlDbType.Int).Value = qty
+                    .Add("@bld", SqlDbType.VarChar, 10).Value = cboWarehouse.SelectedValue
+                    .Add("@owner", SqlDbType.VarChar, 10).Value = cboOwner.SelectedValue
+                End With
+                ad.Fill(dtLinkedParts)
+            End Using
+
+
+            'Child Part Count
+            If dtLinkedParts IsNot Nothing AndAlso dtLinkedParts.Rows.Count > 0 Then
+                Dim msg As New StringBuilder
+                msg.AppendLine("Parent part " & txtPartNo.Text & ": " & txtPartDescEngOp.Text & " has linked parts associated with it.  By adding this part, you will be removing linked parts from working inventory:")
+                msg.AppendLine("") 'Add an empty space between the message and the parts
+                For Each r In dtLinkedParts.Rows
+                    msg.AppendLine(r("childPartQtyToLink") & " of " & r("childPartno") & ": " & r("childPartDesc"))
+                Next
+                msg.AppendLine("") 'Add an empty space between the parts and the working inventory question.
+                msg.AppendLine("Do you want to remove linked parts from working inventory?")
+
+
+                Dim result = MsgBox(msg.ToString, MsgBoxStyle.YesNoCancel, "Linked Parts")
+
+                Select Case result
+                    Case MsgBoxResult.Yes
+                        Dim childPartsGoingNegativeQty = From r In dtLinkedParts Where (r("childOnhand") - r("childPartQtyToLink")) < 0
+                        Dim errExists As Boolean = False
+                        For Each r In childPartsGoingNegativeQty
+                            'errMsg.AppendLine("There is not enough [Part Type] [Part Description] in [Warehouse] owned by [Owner] to be linked to [Parent Part Description].  The [Parent Part Description] will not be added to inventory.")
+                            Dim errMsg = "There are not enough " & r("childPartno") & ": " & r("childPartDesc") & " in " & cboWarehouse.Text & " owned by " & cboOwner.Text & " to be linked to " & txtPartDescEngOp.Text & ".  " & r("childPartQtyToLink") & " " & IsAre(r("childPartQtyToLink")) & " required to be linked to this part." & vbCrLf & vbCrLf & "The " & txtPartDescEngOp.Text & " will not be added to inventory."
+                            MsgBox(errMsg.ToString,, "Not Enough Linked Child Parts")
+                            errExists = True
+                        Next
+                        If errExists Then Exit Sub
+
+                        ShouldLinkChildParts = True
+                    Case MsgBoxResult.No
+                        ShouldLinkChildParts = False
+                    Case MsgBoxResult.Cancel
+                        'Quit, do nothing
+                        Exit Sub
+                End Select
+            End If
+
+            Dim IsValidPO As Boolean = cboRef4.SelectedValue = "PURCADD" AndAlso _selected_ifs_po IsNot Nothing AndAlso _selected_ifs_po.PartNo = txtPartNo.Text AndAlso _selected_ifs_po.OrderNo = txtPONumber.Text
+
+StagePartForAdd:
+            If (IsValidPO) Then
+                Dim FinesseInventory = Await (New ReceivedInventory).GetReceivedInventory(_selected_ifs_po.PartNo, _selected_ifs_po.OrderNo, _selected_ifs_po.LineNo.ToString, _selected_ifs_po.ReleaseNo.ToString)
+                If (FinesseInventory IsNot Nothing) Then
+                    Dim maxqty = _selected_ifs_po.InvQtyArrived
+
+                    If (IsDisassemblyPart) Then
+                        Dim parentExpectedqty = TryCast(ultraGridERPPurchaseOrders.ActiveRow.ParentRow.ListObject, QuickReportSchema)
+                        maxqty = maxqty * parentExpectedqty.InvQtyArrived
+                    End If
+
+                    Dim t = From r As DataGridViewRow In dgvItemsForImport.Rows
+                            Where r.DataBoundItem("partno") = _selected_ifs_po.PartNo AndAlso r.DataBoundItem("PONumber") = _selected_ifs_po.OrderNo
+                            Select total = r.DataBoundItem("onhand")
+
+                    Dim totalItemsAddedQty = t.Sum(Function(r) r)
+                    Dim onhand = FinesseInventory.onhand + CInt(txtQty.Text) + totalItemsAddedQty
+                    If (onhand > maxqty) Then
+                        If (UserPermission = UserAccess.FULL_ACCESS) Then
+                            Dim result = MessageBox.Show($"Overstocking inventory shouldn't be possible. The quantity added to the inventory should not exceed the quantity specified in the Purchase Order.{vbNewLine}Max quantity: [{maxqty}] Current Inventory [{FinesseInventory.onhand}].{vbNewLine}Adding: [{txtQty.Text}].{vbNewLine}Are you sure you want to continue?", "Info", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
+                            If (result <> DialogResult.Yes) Then
+                                Return
+                            End If
+                        Else
+                            MsgBox($"Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order.{vbNewLine}Max quantity: [{maxqty}] Current Inventory [{FinesseInventory.onhand}].{vbNewLine}Adding: [{txtQty.Text}].", MsgBoxStyle.Critical)
+                            Return
+                        End If
+                    End If
+                End If
+                'Else
+                '    If (cboRef4.SelectedValue = "PURCADD") Then
+                '        MsgBox("This won't send messages to IFS. Make sure you're doing the right thing!")
+
+                '        If (UserPermission <> UserAccess.FULL_ACCESS) Then
+                '            Return
+                '        End If
+                '    End If
+            End If
+
+
+            AddItemRow(ShouldLinkChildParts, Validation)
+
+            txtSerialNo.Clear()
+            txtBarcode.Clear()
+            txtRevision.Clear()
+            txtMACAddress.Clear()
+
+
+            If chkDeferEnteringMacAddress.Checked Then
+                txtSerialNo.Focus()
+            Else
+                txtMACAddress.Focus()
+            End If
+
+
+            txtQty.Text = 0
+
+        Catch ex As Exception
+            Beep_Fail()
+            MsgBox(ex.ToString)
+        End Try
+    End Sub

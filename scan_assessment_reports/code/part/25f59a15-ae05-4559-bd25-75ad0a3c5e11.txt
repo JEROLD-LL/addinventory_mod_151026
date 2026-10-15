@@ -1,0 +1,3 @@
+Private Sub TransferToolsToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles TransferToolsToolStripMenuItem.Click
+        StartFinesseProcess("TransferInquiryTools.exe")
+    End Sub

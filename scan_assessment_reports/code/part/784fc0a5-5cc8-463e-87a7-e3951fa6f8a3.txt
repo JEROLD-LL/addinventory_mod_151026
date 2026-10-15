@@ -1,0 +1,28 @@
+Private Async Function GetAllIFSPOsData() As Task
+        Dim text = chkRecievedOnly.Text
+        Try
+            Me.Invoke(Sub()
+                          chkRecievedOnly.Enabled = False
+                          chkRecievedOnly.Text = "Loading Unreceived data..."
+                      End Sub)
+
+            Dim result = Await IFSDAL.GetPOLinesQuickReport()
+
+            If result IsNot Nothing Then
+                Me.Invoke(Sub()
+                              _ifs_data = result
+                          End Sub)
+            End If
+        Catch ex As Exception
+            Me.Invoke(Sub()
+                          Console.WriteLine($"PO Data Loading Error: {ex.Message}")
+                          Dim toast As New ToastNotification("Error loading the rest of the PO Data!", Color.Red)
+                          toast.Show()
+                      End Sub)
+        Finally
+            Me.Invoke(Sub()
+                          chkRecievedOnly.Enabled = True
+                          chkRecievedOnly.Text = text
+                      End Sub)
+        End Try
+    End Function

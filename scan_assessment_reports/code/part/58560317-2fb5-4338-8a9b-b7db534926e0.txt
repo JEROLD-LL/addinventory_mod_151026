@@ -1,0 +1,7 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+    Private Sub SchemaChanged(ByVal sender As Object, ByVal e As Global.System.ComponentModel.CollectionChangeEventArgs)
+        If (e.Action = Global.System.ComponentModel.CollectionChangeAction.Remove) Then
+            Me.InitVars
+        End If
+    End Sub

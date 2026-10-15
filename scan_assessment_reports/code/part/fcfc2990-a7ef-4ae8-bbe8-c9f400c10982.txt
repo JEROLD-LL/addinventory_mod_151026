@@ -1,0 +1,15 @@
+Private Sub LAMEToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LAMEToolStripMenuItem.Click
+        Dim sqlStr As New StringBuilder
+        sqlStr.AppendLine("select value")
+        sqlStr.AppendLine("from dbo.SysConfig sc")
+        sqlStr.AppendLine("where tag = 'PODIO_PUBLIC_ISSUE_TRACKING_URL'")
+
+        Dim lameURL As String = ""
+
+        Using conn As New SqlConnection(FinesseConnectionString)
+            conn.Open()
+            lameURL = conn.ExecuteScalar(sqlStr)
+        End Using
+
+        Process.Start(lameURL)
+    End Sub

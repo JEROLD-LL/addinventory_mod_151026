@@ -1,0 +1,19 @@
+Private Sub DgvInventoryInStock_SelectionChanged(sender As Object, e As EventArgs) Handles DgvInventoryInStock.SelectionChanged
+        If (DgvInventoryInStock.SelectedRows.Count = 0) Then
+            Exit Sub
+        End If
+
+        Dim selected As DataGridViewRow = DgvInventoryInStock.SelectedRows(0)
+
+        If selected.Cells("SerialNo").Value IsNot Nothing Then
+            If (selected.Cells("SerialNo").Value.ToString() <> "*") Then
+                txtSerialNo.Text = selected.Cells("SerialNo").Value.ToString()
+            Else
+                txtSerialNo.Text = String.Empty
+            End If
+            'txtQty.Text = selected.Cells("Qty").Value.ToString()
+            'Else
+            '    txtSerialNo.Text = String.Empty
+        End If
+        txtSerialNo.Text = String.Empty
+    End Sub

@@ -1,0 +1,49 @@
+Private Sub frmAddInventory_FormClosing(ByVal sender As Object, ByVal e As FormClosingEventArgs) Handles Me.FormClosing
+        Dim sw As New Stopwatch
+        sw.Start()
+
+        Debug.Print(sw.ElapsedMilliseconds & " Before DoYouWantToSave")
+
+        Dim lShouldReturn As Boolean
+        DoYouWantToSave(lShouldReturn)
+        If lShouldReturn Then Return
+
+        Debug.Print(sw.ElapsedMilliseconds & " After DoYouWantToSave")
+
+        Try
+            Debug.Print(sw.ElapsedMilliseconds & " Before OpenConnection")
+
+            Dim newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+
+            Debug.Print(sw.ElapsedMilliseconds & " After OpenConnection")
+
+            Dim SettingsToSave As New List(Of AppConfigState) From {
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormSize", .Rvalue = Me.Size.ToString},
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormLocation", .Rvalue = Me.Location.ToString},
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormWindowState", .Rvalue = Me.WindowState.ToString}
+            }
+
+            If (Not String.IsNullOrEmpty(cboOwner.SelectedValue)) Then
+                SettingsToSave.Add(New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "LastOwnerCode", .Rvalue = cboOwner.SelectedValue})
+            End If
+
+            If (Not String.IsNullOrEmpty(cboWarehouse.SelectedValue)) Then
+                SettingsToSave.Add(New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "LastSelectedWarehouse", .Rvalue = cboWarehouse.SelectedValue})
+            End If
+
+            Debug.Print(sw.ElapsedMilliseconds & " After array of settings")
+
+            SettingsToSave.SaveConfig()
+
+            newConn.Close()
+            newConn.Dispose()
+
+            Debug.Print(sw.ElapsedMilliseconds & " After Close Connection")
+
+        Catch ex As Exception
+            Console.WriteLine("Error saving App Configs: ")
+            Console.WriteLine(ex.Message)
+        End Try
+
+    End Sub

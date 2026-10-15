@@ -1,0 +1,14 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POReleaseNo() As String
+            Get
+                If Me.IsPOReleaseNoNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POReleaseNoColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POReleaseNoColumn) = value
+            End Set
+        End Property

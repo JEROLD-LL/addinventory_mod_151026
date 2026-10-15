@@ -1,0 +1,5 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function FindBypartnounique_nobatchnodeptbldrowserial_no(ByVal partno As String, ByVal unique_no As String, ByVal batchno As String, ByVal dept As String, ByVal bld As String, ByVal row As String, ByVal serial_no As String) As inpartsubRow
+            Return CType(Me.Rows.Find(New Object() {partno, unique_no, batchno, dept, bld, row, serial_no}),inpartsubRow)
+        End Function

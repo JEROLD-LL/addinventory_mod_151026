@@ -1,0 +1,14 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property PONoteText() As String
+            Get
+                If Me.IsPONoteTextNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.PONoteTextColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.PONoteTextColumn) = value
+            End Set
+        End Property

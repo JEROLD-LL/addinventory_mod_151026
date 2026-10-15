@@ -1,0 +1,3 @@
+[submodule "Add Inventory/ClairUtilities"]
+	path = Add Inventory/ClairUtilities
+	url = https://git.clairglobal.net/Finesse/ClairUtilities.git

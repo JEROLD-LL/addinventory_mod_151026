@@ -1,0 +1,111 @@
+
+==================================================
+Part: InitializeMenuStripMessage (PRT-045)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub InitializeMenuStripMessage()
+        Dim panel As New FlowLayoutPanel()
+        panel.FlowDirection = FlowDirection.LeftToRight
+        panel.AutoSize = True
+        panel.WrapContents = False
+        panel.Margin = Padding.Empty
+        panel.Padding = Padding.Empty
+
+        panel.BackColor = UltraGridMenuStrip.BackColor
+
+        AddHandler panel.Click, AddressOf menuItemSendMessage_Click
+
+        Dim newLabel As New Label()
+        newLabel.Text = "Send Msg w/Qty:"
+        newLabel.AutoSize = True
+        newLabel.TextAlign = ContentAlignment.MiddleLeft
+        newLabel.Margin = New Padding(0, 3, 5, 0)
+        newLabel.BackColor = UltraGridMenuStrip.BackColor
+
+        AddHandler newLabel.Click, AddressOf menuItemSendMessage_Click
+
+        Dim textBox As New TextBox()
+        textBox.Width = 100
+        txtQuantityMessage = textBox
+        panel.Controls.Add(newLabel)
+        panel.Controls.Add(txtQuantityMessage)
+
+
+        Dim tsHost As New ToolStripControlHost(panel)
+        tsHost.Margin = Padding.Empty
+        menuItemSendMessage = tsHost
+
+
+        UltraGridMenuStrip.Items.Add(menuItemSendMessage)
+    End Sub
+
+==================================================
+Part: SendIFSToFinesseMessage (PRT-048)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub SendIFSToFinesseMessage()
+        If clickedRow IsNot Nothing Then
+            Dim row = TryCast(clickedRow.ListObject, QuickReportSchema)
+
+            Dim qty = 0
+            Integer.TryParse(txtQuantityMessage.Text, qty)
+            If (String.IsNullOrEmpty(txtQuantityMessage.Text) OrElse qty = 0) Then
+                Dim toast As New ToastNotification($"You need to specify a valid quantity!", Color.Red)
+                toast.Show()
+                Exit Sub
+            End If
+
+            Dim result = row.SendMessage(_dtCurrency, txtQuantityMessage.Text)
+            If (Not String.IsNullOrEmpty(result)) Then
+                Dim toast As New ToastNotification($"Message successfully Sent! [{result}]", Color.Green)
+                toast.Show()
+            Else
+                Dim toast As New ToastNotification($"Error sending the message!", Color.Red)
+                toast.Show()
+            End If
+            UltraGridMenuStrip.Close()
+        End If
+    End Sub
+
+==================================================
+Part: menuItemSendMessage_Click (UI-049)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub menuItemSendMessage_Click(sender As Object, e As EventArgs)
+        SendIFSToFinesseMessage()
+    End Sub
+
+==================================================
+Part: GetPOMessages (PRT-132)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Async Sub GetPOMessages()
+        Try
+
+            lblIncomingMsgAlert.Visible = String.IsNullOrEmpty(txtPONumber.Text)
+            If (String.IsNullOrEmpty(txtPONumber.Text)) Then
+                Exit Sub
+            End If
+
+            Dim data = Await IFSDAL.GetIFSInventoryReceiptMessages(txtPONumber.Text)
+            lblIncomingMsgAlert.Visible = data.Count = 0
+            dgvIFSMessages.DataSource = data.ToList()
+            dgvIFSMessages.Columns("ErrorMessage").Width = 700
+
+        Catch ex As Exception
+            Console.WriteLine("Error loading Messages Data")
+        End Try
+    End Sub
+
+==================================================
+Part: BtnRefreshIfsMessages_Click (PRT-133)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub BtnRefreshIfsMessages_Click(sender As Object, e As EventArgs) Handles BtnRefreshIfsMessages.Click
+        GetPOMessages()
+    End Sub

@@ -1,0 +1,7 @@
+Private Sub txtMACAddress_TextChanged(sender As Object, e As EventArgs) Handles txtMACAddress.TextChanged
+        If IsNothing(_searchTimer) Then
+            _searchTimer = New Threading.Timer(AddressOf invokeMACAddressValidation, Nothing, _searchDelay, Timeout.Infinite)
+        Else
+            _searchTimer.Change(_searchDelay, Timeout.Infinite)
+        End If
+    End Sub

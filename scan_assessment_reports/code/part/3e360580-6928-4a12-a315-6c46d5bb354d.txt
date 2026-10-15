@@ -1,0 +1,7 @@
+Private Sub txtPartNo_KeyDown(sender As Object, e As KeyEventArgs) Handles txtPartNo.KeyDown
+        If (e.KeyCode = Keys.Enter) Then
+            If (Not String.IsNullOrEmpty(txtPartNo.Text) AndAlso (_picker Is Nothing OrElse _picker.PartNumber <> txtPartNo.Text)) Then
+                SearchPartCatalog()
+            End If
+        End If
+    End Sub

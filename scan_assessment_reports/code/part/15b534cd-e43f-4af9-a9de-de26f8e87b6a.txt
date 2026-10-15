@@ -1,0 +1,4 @@
+<Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
+        Protected Overrides Sub OnCreateMainForm()
+            Me.MainForm = Global.Add_Inventory.frmAddInventory
+        End Sub

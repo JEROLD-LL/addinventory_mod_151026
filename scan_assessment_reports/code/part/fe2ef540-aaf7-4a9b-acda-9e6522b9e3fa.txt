@@ -1,0 +1,32 @@
+Private Sub filter_ERP_DataGrid(Optional search As String = Nothing)
+        If (_ifs_data IsNot Nothing) Then
+            Dim data = GetErpBaseData()
+            Dim dataResult As IEnumerable(Of QuickReportSchema) = data
+            If (Not String.IsNullOrEmpty(search)) Then
+                Dim lowerSearchText = search.ToLower()
+
+                Dim allWords = lowerSearchText.Split({" "}, StringSplitOptions.RemoveEmptyEntries)
+
+                dataResult = data.Where(Function(po) _
+                                        allWords.All(Function(word) _
+                                            (po.PartNo IsNot Nothing AndAlso po.PartNo.ToLower().Contains(word)) OrElse
+                                            (po.FinesseDescription IsNot Nothing AndAlso po.FinesseDescription.ToLower().Contains(word)) OrElse
+                                            (po.OrderNo IsNot Nothing AndAlso po.OrderNo.ToLower().Contains(word)) OrElse
+                                            (po.SupplierID IsNot Nothing AndAlso po.SupplierID.ToLower().Contains(word)) OrElse
+                                            (po.SupplierName IsNot Nothing AndAlso po.SupplierName.ToLower().Contains(word)) OrElse
+                                            (po.PoState IsNot Nothing AndAlso po.PoState.ToLower().Contains(word))
+                                        )
+                                    )
+
+            End If
+            ultraGridERPPurchaseOrders.DataSource = (dataResult.ToList())
+
+            ultraGridERPPurchaseOrders.Selected.Rows.Clear()
+            ultraGridERPPurchaseOrders.ActiveRow = Nothing
+
+            ultraGridERPPurchaseOrders.Rows.ExpandAll(True)
+
+            SelectPartOnErpGrid()
+            ReloadPermissions()
+        End If
+    End Sub

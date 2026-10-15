@@ -1,0 +1,8 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+    Public Overrides Function Clone() As Global.System.Data.DataSet
+        Dim cln As DataSetAddInventory = CType(MyBase.Clone,DataSetAddInventory)
+        cln.InitVars
+        cln.SchemaSerializationMode = Me.SchemaSerializationMode
+        Return cln
+    End Function

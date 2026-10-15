@@ -1,0 +1,16 @@
+Private Sub LoadPrinters()
+        Dim bs = New BindingSource
+        bs.DataSource = _printDialogState.Printers
+
+        cbPrinters.DataSource = bs
+
+        cbPrinters.DisplayMember = "Name"
+        cbPrinters.ValueMember = "Name"
+
+        For Each printer In _printDialogState.Printers
+            If printer.CurrentPrinter Then
+                cbPrinters.SelectedItem = printer
+                printer.CurrentPrinter = False
+            End If
+        Next
+    End Sub

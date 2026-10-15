@@ -1,0 +1,4 @@
+Private Sub txtPONumber_TextChanged(sender As Object, e As EventArgs) Handles txtPONumber.TextChanged
+        FilterInventoryInStock()
+        GetPOMessages()
+    End Sub

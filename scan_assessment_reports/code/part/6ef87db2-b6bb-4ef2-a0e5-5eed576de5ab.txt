@@ -1,0 +1,17 @@
+Private Async Sub GetPOMessages()
+        Try
+
+            lblIncomingMsgAlert.Visible = String.IsNullOrEmpty(txtPONumber.Text)
+            If (String.IsNullOrEmpty(txtPONumber.Text)) Then
+                Exit Sub
+            End If
+
+            Dim data = Await IFSDAL.GetIFSInventoryReceiptMessages(txtPONumber.Text)
+            lblIncomingMsgAlert.Visible = data.Count = 0
+            dgvIFSMessages.DataSource = data.ToList()
+            dgvIFSMessages.Columns("ErrorMessage").Width = 700
+
+        Catch ex As Exception
+            Console.WriteLine("Error loading Messages Data")
+        End Try
+    End Sub

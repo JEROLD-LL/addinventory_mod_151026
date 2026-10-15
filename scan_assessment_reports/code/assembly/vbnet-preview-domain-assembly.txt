@@ -1,0 +1,321 @@
+
+==================================================
+Part: frmPrintZPLDialog (UI-004)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmPrintZPLDialog.vb
+==================================================
+Public Class frmPrintZPLDialog
+
+    Private _printDialogState As PrintDialogState
+    Private _dtItemsToPrint As ItemsToPrintDataTable
+
+    Public Property dtItemsToPrint As ItemsToPrintDataTable
+        Get
+            Return _dtItemsToPrint
+        End Get
+        Set(value As ItemsToPrintDataTable)
+            _dtItemsToPrint = value
+        End Set
+    End Property
+
+    Public Property PrintDialogState As PrintDialogState
+        Get
+            Return _printDialogState
+        End Get
+        Set(value As PrintDialogState)
+            _printDialogState = value
+        End Set
+    End Property
+
+    Public Sub New()
+        ' This call is required by the designer.
+        InitializeComponent()
+
+    End Sub
+
+    Private Sub frmPrintZPLDialog_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        LoadPrinters()
+        LoadBarcodeTemplates()
+        LoadPrintData()
+
+        'simplify ui if only a single item being printed
+        If _dtItemsToPrint.Count = 1 Then
+            btnPrintBarcode.Text = "Print"
+            btnPreviewNextBarcode.Visible = False
+            btnPreviewPrevBarcode.Visible = False
+            cbBarcode.Enabled = False
+        End If
+
+        GetPreview()
+    End Sub
+
+    Private Sub frmPrintZPLDialog_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles MyBase.KeyDown
+        If e.KeyCode = Keys.Escape Then Me.Close()
+    End Sub
+
+    Private Sub LoadPrinters()
+        Dim bs = New BindingSource
+        bs.DataSource = _printDialogState.Printers
+
+        cbPrinters.DataSource = bs
+
+        cbPrinters.DisplayMember = "Name"
+        cbPrinters.ValueMember = "Name"
+
+        For Each printer In _printDialogState.Printers
+            If printer.CurrentPrinter Then
+                cbPrinters.SelectedItem = printer
+                printer.CurrentPrinter = False
+            End If
+        Next
+    End Sub
+
+    Private Sub LoadBarcodeTemplates()
+        Dim bs As New BindingSource
+        bs.DataSource = _printDialogState.BarcodeTemplates
+
+        cbBarcodeType.DataSource = bs
+
+        nupXCalibration.DataBindings.Add("Value", bs, "XOffset", False, DataSourceUpdateMode.OnPropertyChanged)
+        nupYCalibration.DataBindings.Add("Value", bs, "YOffset", False, DataSourceUpdateMode.OnPropertyChanged)
+
+        cbBarcodeType.DisplayMember = "Name"
+        cbBarcodeType.ValueMember = "Path"
+
+        For Each template In _printDialogState.BarcodeTemplates
+            If template.CurrentTemplate Then
+                cbBarcodeType.SelectedItem = template
+                template.CurrentTemplate = False
+            End If
+        Next
+
+    End Sub
+
+    Private Sub LoadPrintData()
+        If _dtItemsToPrint.Rows.Count = 0 Then
+            MsgBox("No barcode data to print.", MsgBoxStyle.OkOnly)
+            Me.Close()
+        Else
+            Dim bs As New BindingSource
+            Dim items As New List(Of ItemsToPrintRow)
+
+            For Each item As ItemsToPrintRow In _dtItemsToPrint
+                items.Add(item)
+            Next
+
+            bs.DataSource = items
+
+            cbBarcode.DataSource = bs
+            cbBarcode.DisplayMember = "Barcode"
+            cbBarcode.ValueMember = "Barcode"
+            lbSerialNumberValue.DataBindings.Add("Text", bs, "SerialNumber", False, DataSourceUpdateMode.OnPropertyChanged)
+
+            'cbBarcode.SelectedIndex = 0
+        End If
+    End Sub
+
+    Private Sub GetPreview()
+        Dim selectedItemToPrint As ItemsToPrintRow = cbBarcode.SelectedItem
+        Dim selectedBarcodeTemplate As BarcodeTemplate = cbBarcodeType.SelectedItem
+        Dim ZPLData = selectedBarcodeTemplate.GetZPLData(selectedItemToPrint.Barcode, selectedItemToPrint.SerialNumber)
+
+        If ZPLData = "" Then
+            Throw New ArgumentNullException("ZPLData", "This barcode type has no template file or data. Select another barcode type and contact IT for help." + vbCrLf + "Expected template file: " + selectedBarcodeTemplate.Path)
+        End If
+
+        Dim zpl() As Byte = Encoding.UTF8.GetBytes(ZPLData)
+
+        ' adjust print density (8dpmm), label width (4 inches), label height (6 inches), and label index (0) as necessary
+        Dim request As HttpWebRequest = WebRequest.Create("http://api.labelary.com/v1/printers/12dpmm/labels/1x.5/0/")
+        request.Method = "POST"
+        request.ContentType = "application/x-www-form-urlencoded"
+        request.ContentLength = zpl.Length
+
+        Dim requestStream As Stream = request.GetRequestStream()
+        requestStream.Write(zpl, 0, zpl.Length)
+        requestStream.Close()
+
+        Try
+            Dim response As HttpWebResponse = request.GetResponse()
+            Dim responseStream As Stream = response.GetResponseStream()
+            Dim bm As New Bitmap(responseStream)
+            picBarcodePreview.Image = bm
+            responseStream.Close()
+        Catch ex As WebException
+            MsgBox("Failed to get preview." + vbCrLf + "Error: " + ex.Message, MsgBoxStyle.Critical)
+        End Try
+
+    End Sub
+
+    Private Function Print() As Boolean
+        Dim selectedBarcodeTemplate As BarcodeTemplate = cbBarcodeType.SelectedItem
+        Dim selectedPrinter As ZPrinter = cbPrinters.SelectedItem
+        Dim ZPLData As String
+        Dim blPrintSuccess = False
+        Cursor = Cursors.WaitCursor
+
+        Try
+            'print each item passed from parent form
+            For Each row As ItemsToPrintRow In _dtItemsToPrint.Rows
+                ZPLData = ""
+
+                ZPLData = selectedBarcodeTemplate.GetZPLData(row.Barcode, row.SerialNumber)
+
+                If ZPLData = "" Then
+                    MsgBox("This barcode type has no template file or data. Select another barcode type and contact IT for help." + vbCrLf + "Expected template file: " + selectedBarcodeTemplate.Path, MsgBoxStyle.OkOnly)
+                    Return False
+                End If
+
+                'repeat print * # Copies
+                Dim copies = nupPrintCopies.Value
+                For n As Integer = 1 To copies
+#If DEBUG Then
+                    MsgBox(ZPLData)
+#Else
+                    'do the print stuff
+                    Try
+                        Dim buffer = Encoding.ASCII.GetBytes(ZPLData)
+
+                        Dim client = New Sockets.TcpClient(selectedPrinter.Address, selectedPrinter.Port)
+
+                        Dim clientStream = client.GetStream()
+                        clientStream.Write(buffer, 0, buffer.Length)
+                        clientStream.Flush()
+                        clientStream.Close()
+                    Catch ex As Exception
+                        MsgBox(ex.Message, MsgBoxStyle.OkOnly)
+                    End Try
+#End If
+
+                    'this is a total guess on sleep time and if its even needed.
+                    Threading.Thread.Sleep(1000)
+                Next
+            Next
+        Catch ex As Exception
+            MsgBox("Failed to print." + vbCrLf + "Error: " + ex.Message, MsgBoxStyle.Critical)
+            Return False
+        End Try
+
+        Cursor = Cursors.Default
+
+        selectedBarcodeTemplate.CurrentTemplate = True
+        selectedPrinter.CurrentPrinter = True
+
+        Return True
+
+    End Function
+
+    Private Sub btnPreviewBarcode_Click(sender As Object, e As EventArgs) Handles btnPreviewBarcode.Click
+        GetPreview()
+    End Sub
+
+    Private Sub btnPrintBarcode_Click(sender As Object, e As EventArgs) Handles btnPrintBarcode.Click
+        'set _dtItemsToPrint
+
+        Dim blPrintSuccess = Print()
+
+        'users requested the dialog stay open 
+        'If Not blPrintSuccess Then
+        'Exit Sub
+        'Else
+        'Me.Close()
+        'End If
+
+    End Sub
+
+    Private Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
+        Dim selectedBarcodeTemplate As BarcodeTemplate = cbBarcodeType.SelectedItem
+        Dim selectedPrinter As ZPrinter = cbPrinters.SelectedItem
+
+        selectedBarcodeTemplate.CurrentTemplate = True
+        selectedPrinter.CurrentPrinter = True
+        Me.Close()
+    End Sub
+
+    Private Sub btnXCalibrationUp_Click(sender As Object, e As EventArgs) Handles btnXCalibrationUp.Click
+        nupXCalibration.Value += 1
+        'Dim selectedBarcodeType As BarcodeType = cbBarcodeType.SelectedItem
+        'selectedBarcodeType.XOffset += 1
+    End Sub
+
+    Private Sub btnXCalibrationDown_Click(sender As Object, e As EventArgs) Handles btnXCalibrationDown.Click
+        nupXCalibration.Value += -1
+        'Dim selectedBarcodeType As BarcodeType = cbBarcodeType.SelectedItem
+        'selectedBarcodeType.XOffset += -1
+    End Sub
+
+    Private Sub btnPreviewNextBarcode_Click(sender As Object, e As EventArgs) Handles btnPreviewNextBarcode.Click
+        Dim curInx = cbBarcode.SelectedIndex
+
+        If curInx = cbBarcode.Items.Count - 1 Then
+            cbBarcode.SelectedIndex = 0
+        Else
+            cbBarcode.SelectedIndex = curInx + 1
+        End If
+
+        GetPreview()
+    End Sub
+
+    Private Sub btnPreviewPrevBarcode_Click(sender As Object, e As EventArgs) Handles btnPreviewPrevBarcode.Click
+        Dim curIndex = cbBarcode.SelectedIndex
+
+        If curIndex = 0 Then
+            cbBarcode.SelectedIndex = cbBarcode.Items.Count - 1
+        Else
+            cbBarcode.SelectedIndex = curIndex - 1
+        End If
+
+        GetPreview()
+    End Sub
+
+    Private Sub cbBarcodeType_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cbBarcodeType.SelectionChangeCommitted
+        GetPreview()
+    End Sub
+
+    Private Sub cbBarcode_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cbBarcode.SelectionChangeCommitted
+        GetPreview()
+    End Sub
+End Class
+
+==================================================
+Part: btnPreviewBarcode_Click (UI-012)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmPrintZPLDialog.vb
+==================================================
+Private Sub btnPreviewBarcode_Click(sender As Object, e As EventArgs) Handles btnPreviewBarcode.Click
+        GetPreview()
+    End Sub
+
+==================================================
+Part: btnPreviewNextBarcode_Click (UI-017)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmPrintZPLDialog.vb
+==================================================
+Private Sub btnPreviewNextBarcode_Click(sender As Object, e As EventArgs) Handles btnPreviewNextBarcode.Click
+        Dim curInx = cbBarcode.SelectedIndex
+
+        If curInx = cbBarcode.Items.Count - 1 Then
+            cbBarcode.SelectedIndex = 0
+        Else
+            cbBarcode.SelectedIndex = curInx + 1
+        End If
+
+        GetPreview()
+    End Sub
+
+==================================================
+Part: btnPreviewPrevBarcode_Click (UI-018)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmPrintZPLDialog.vb
+==================================================
+Private Sub btnPreviewPrevBarcode_Click(sender As Object, e As EventArgs) Handles btnPreviewPrevBarcode.Click
+        Dim curIndex = cbBarcode.SelectedIndex
+
+        If curIndex = 0 Then
+            cbBarcode.SelectedIndex = cbBarcode.Items.Count - 1
+        Else
+            cbBarcode.SelectedIndex = curIndex - 1
+        End If
+
+        GetPreview()
+    End Sub

@@ -1,0 +1,5 @@
+Private Sub Init_WarehousesCombo()
+        cboWarehouse.DisplayMember = "warehouse_description"
+        cboWarehouse.ValueMember = "warehouse_code"
+        cboWarehouse.DataSource = New DataView(_dtWarehouses, "", "warehouse_description asc", DataViewRowState.CurrentRows)
+    End Sub

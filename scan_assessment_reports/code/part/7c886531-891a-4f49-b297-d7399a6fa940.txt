@@ -1,0 +1,14 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property Quantity() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableDisassemblyParts.QuantityColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'Quantity' in table 'DisassemblyParts' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableDisassemblyParts.QuantityColumn) = value
+            End Set
+        End Property

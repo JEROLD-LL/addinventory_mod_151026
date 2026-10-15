@@ -1,0 +1,34 @@
+Private Sub RefreshCurrentInventory()
+        Dim currentTotal As String
+        Dim partno As String = txtPartNo.Text
+        Dim owner As String = cboOwner.SelectedValue
+        Dim warehouse As String = cboWarehouse.SelectedValue
+
+        If String.IsNullOrEmpty(partno) OrElse String.IsNullOrEmpty(owner) OrElse String.IsNullOrEmpty(warehouse) Then
+            lblCurrentInventoryWarning.Visible = True
+            Exit Sub
+        Else
+            lblCurrentInventoryWarning.Visible = False
+        End If
+
+        Dim sSQL As New StringBuilder
+        sSQL.AppendLine("select Qty = ps.onhand, Barcode = ps.unique_no, [Phase No] = ps.batchno, [Phase Desc] = g.entitydesc, WH = ps.bld, [Owner] = ps.dept, [Return] = pj.todate, ps.receipt")
+        sSQL.AppendLine("from dbo.inpartsub ps")
+        sSQL.AppendLine("join dbo.glentities g on ps.batchno = g.entityno")
+        sSQL.AppendLine("left outer join dbo.pjjobbudexp pj on g.entityno = pj.entityno and ps.partno = pj.partno")
+        sSQL.AppendLine("where ps.partno = " & partno.SQLQuote)
+        sSQL.AppendLine("and ps.dept = " & owner.SQLQuote)
+        sSQL.AppendLine("and ps.bld = " & warehouse.SQLQuote)
+        sSQL.AppendLine("and ps.onhand > 0")
+        sSQL.AppendLine("order by ps.receipt DESC, ps.unique_no")
+
+        Using newConn = New SqlConnection(FinesseConnectionString)
+            Dim t = newConn.GetDataTable(sSQL)
+            dgvCurrentInventory.DataSource = t
+            currentTotal = IIf(String.IsNullOrEmpty(t.Compute("Sum(qty)", "").ToString), "0", t.Compute("Sum(qty)", "").ToString)
+            newConn.Close()
+        End Using
+
+        tsslCurrentInventoryTotalQty.Text = $"Total Qty: {currentTotal}"
+        ItemsForImportQtyUpdating()
+    End Sub

@@ -1,0 +1,159 @@
+﻿Imports System.Data.SqlClient
+
+Public Class frmMainPartMaintenance
+
+    Private _partno As String
+    Private _picker As PartPicker
+
+    Public Sub New()
+
+        ' This call is required by the designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+
+    End Sub
+
+    Public Sub New(partno As String)
+
+        InitializeComponent()
+        _partno = partno
+        txtPartNo.Text = partno
+        SearchPartCatalog()
+    End Sub
+
+    Private Sub btnPartNoSearch_Click(sender As Object, e As EventArgs) Handles btnPartNoSearch.Click
+        Static picker As New PartPicker(Me, btnPartNoSearch, FinesseConnectionString)
+        picker.SearchForBarcode = False
+
+        If Not picker.GetPart() Then
+            Exit Sub
+        End If
+        _picker = picker
+        txtPartNo.Text = picker.PartNumber
+        txtPartDescEngOp.Text = picker.PartDesc
+    End Sub
+
+
+    Private Sub txtPartNo_LostFocus(sender As Object, e As EventArgs) Handles txtPartNo.LostFocus
+        If (Not String.IsNullOrEmpty(txtPartNo.Text) AndAlso (_picker Is Nothing OrElse _picker.PartNumber <> txtPartNo.Text)) Then
+            SearchPartCatalog()
+        End If
+    End Sub
+
+    Private Sub txtPartNo_KeyDown(sender As Object, e As KeyEventArgs) Handles txtPartNo.KeyDown
+        If (e.KeyCode = Keys.Enter) Then
+            If (Not String.IsNullOrEmpty(txtPartNo.Text) AndAlso (_picker Is Nothing OrElse _picker.PartNumber <> txtPartNo.Text)) Then
+                SearchPartCatalog()
+            End If
+        End If
+    End Sub
+
+    Private Sub SearchPartCatalog()
+        Dim partno = txtPartNo.Text
+        _picker = Nothing
+
+        Using conn = GetOpenedFinesseConnection()
+
+            Dim data = conn.ExecuteStoredProcedureAndGetData("IFS.search_part_description_by_partno", {
+                 "@partno", partno
+                })
+            If (data IsNot Nothing AndAlso data.Rows.Count > 0) Then
+                txtPartDescEngOp.Text = data.Rows(0)("partdesc").ToString()
+            End If
+        End Using
+    End Sub
+
+    Private Sub txtPartNo_Changed(sender As Object, e As EventArgs) Handles txtPartNo.TextChanged
+        Dim partno = txtPartNo.Text
+
+        Using conn = GetOpenedFinesseConnection()
+
+            Dim data = conn.ExecuteStoredProcedureAndGetData("IFS.get_disassemblies_by_parent", {
+                         "@parent", partno
+            })
+            DisassemblyPartsBindingSource.DataSource = data
+            DisassemblyPartsBindingSource.EndEdit()
+        End Using
+
+    End Sub
+
+
+    Private Sub PickPartOnCurrentRow()
+        Dim _partPicker = New PartPicker(Me, CType(Nothing, Control), GetOpenedFinesseConnection())
+        _partPicker.PositionOverControl = dgvDisassemblies.EditingControl
+        If _partPicker.GetPart Then
+
+            Dim editingRow = DisassemblyPartsBindingSource.CurrentDataRow(Of DataRow)
+
+            If editingRow IsNot Nothing Then
+
+                Try
+                    If (IsDBNull(editingRow("ParentPartNo"))) Then
+                        editingRow("ParentPartNo") = txtPartNo.Text
+                    End If
+
+                    Dim data As DataTable = TryCast(DisassemblyPartsBindingSource.DataSource, DataTable)
+                    If data IsNot Nothing AndAlso data.Rows.Count > 0 Then
+                        Dim exists As Boolean = data.AsEnumerable().Any(Function(row) row.Field(Of String)("ChildPartNo") = _partPicker.PartNumber)
+                        If exists Then
+                            Dim toast As New ToastNotification($"The specified part already exists.", Color.Yellow)
+                            toast.ForeColor = Color.Black
+                            toast.Show()
+                            Exit Sub
+                        End If
+                    End If
+
+                    editingRow("ChildPartNo") = _partPicker.PartNumber
+                    editingRow("ChildPartDescription") = _partPicker.PartDesc
+                    If (editingRow("Quantity") Is DBNull.Value) Then
+                        editingRow("Quantity") = 1
+                    End If
+
+                    DisassemblyPartsBindingSource.EndEdit()
+                Catch ex As Exception
+                    Console.WriteLine(ex.Message)
+                End Try
+            End If
+
+        End If
+    End Sub
+
+    Private Sub dgvDisassemblies_CellClick(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgvDisassemblies.CellClick
+        Select Case e.ColumnIndex
+            Case BtnPartPicker.Index
+                PickPartOnCurrentRow()
+            Case BtnDeleteRow.Index
+                DeleteCurrentRow()
+        End Select
+    End Sub
+
+    Private Sub DeleteCurrentRow()
+        DisassemblyPartsBindingSource.CurrentDataRow(Of DataRow).Delete()
+    End Sub
+
+    Private Sub BtnSave_Click(sender As Object, e As EventArgs) Handles BtnSave.Click
+        If (String.IsNullOrEmpty(txtPartNo.Text)) Then
+            Dim toast1 As New ToastNotification($"You must specify the Main part; this field cannot be empty!", Color.Red)
+            toast1.Show()
+            Return
+        End If
+
+        Dim columns As DataColumnCollection = DisassemblyPartsBindingSource.DataSource.Columns
+        columns("ChildPartDescription").ReadOnly = True
+
+        Using conn = GetOpenedFinesseConnection()
+
+            BulkSave(DisassemblyPartsBindingSource.DataSource, "IFS.inpsDisassemblyParts", conn)
+
+            Dim cmd = conn.CreateCommand()
+            cmd.CommandText = "IFS.commit_disassemblyParts"
+            cmd.ExecuteNonQuery()
+
+        End Using
+
+        Dim toast As New ToastNotification($"Changes Saved Succesfully!", Color.Green)
+        toast.Show()
+        SearchPartCatalog()
+    End Sub
+End Class

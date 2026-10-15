@@ -1,0 +1,169 @@
+﻿Imports System.Data
+Imports System.Data.SqlClient
+Imports System.Environment
+Imports System.Runtime.InteropServices
+
+Module AddInventoryGeneral
+
+    <DllImport("user32.dll", SetLastError:=True)> Private Function SetForegroundWindow(ByVal hWnd As IntPtr) As Boolean
+    End Function
+
+    <DllImport("user32.dll", SetLastError:=True)> Private Function ShowWindow(ByVal hWnd As IntPtr, ByVal nCmdShow As Integer) As Boolean
+    End Function
+
+    Public gConn As New SqlConnection(RealFinesseConnectionString)
+
+    Private ReadOnly Property RealFinesseConnectionString As String
+        Get
+            Dim cs As New SqlConnectionStringBuilder(ClairLibrary.FinesseShared.FinesseConnectionString)
+            cs.PersistSecurityInfo = True
+            Return cs.ConnectionString
+        End Get
+    End Property
+
+    Public Sub StartFinesseProcess(ByVal ExeFileName As String, Optional ByVal IfExistsBringToFront As Boolean = True, Optional ByVal CommandArgs As String = "", Optional ByVal ProcessName As String = "")
+        'Me.TopMost = False
+        If (IfExistsBringToFront = True AndAlso Process.GetProcessesByName(ProcessName).Length > 0) Then
+
+            Process.GetProcessesByName(ProcessName)(0).StartInfo.WindowStyle = ProcessWindowStyle.Normal
+            ShowWindow(Process.GetProcessesByName(ProcessName)(0).MainWindowHandle, 1)
+            SetForegroundWindow(Process.GetProcessesByName(ProcessName)(0).MainWindowHandle)
+
+        Else
+
+            Dim myNewProcess As New Process()
+            myNewProcess.StartInfo.FileName = GetEnvironmentVariable("ESSVBDir") + "\" + ExeFileName
+            myNewProcess.StartInfo.WindowStyle = ProcessWindowStyle.Normal
+            myNewProcess.StartInfo.Arguments = CommandArgs
+
+            'Start Process
+            myNewProcess.Start()
+
+        End If
+
+    End Sub
+
+    Public Function EmptyStringToNull(ByVal arg1 As String) As Object
+        Dim varOut As Object
+        varOut = Nothing
+        If arg1 <> vbNullString Then
+            varOut = arg1
+        End If
+        EmptyStringToNull = varOut
+    End Function
+
+    <System.Runtime.CompilerServices.Extension()>
+    Public Function GetSelectedDataRows(Of T As DataRow)(ByVal dgv As DataGridView) As IEnumerable(Of T)
+        Return (
+            From r In dgv.GetSelectionRows
+            Where r.DataBoundItem IsNot Nothing
+            Select rv = CType(r.DataBoundItem, DataRowView)
+            Select CType(rv.Row, T)
+        )
+    End Function
+
+    <System.Runtime.CompilerServices.Extension()>
+    Public Function GetSelectionRows(ByVal dgv As DataGridView) As IEnumerable(Of DataGridViewRow)
+        Dim selectionRows =
+            From r As DataGridViewRow In dgv.SelectedRows
+
+        If Not selectionRows.Any Then
+            selectionRows =
+                From c As DataGridViewCell In dgv.SelectedCells
+                Where c.RowIndex >= 0
+                Select r = dgv.Rows(c.RowIndex)
+        End If
+
+        If Not selectionRows.Any Then
+            If dgv.CurrentCell IsNot Nothing Then
+                selectionRows = New DataGridViewRow() {dgv.CurrentCell.OwningRow}
+            End If
+        End If
+
+        If Not selectionRows.Any Then
+            selectionRows = Enumerable.Empty(Of DataGridViewRow)()
+        End If
+
+        ' for some reason, DataGridView.Selected* methods return items in the reverse order in which they
+        ' were selected, so this puts them back into the (correct) order in which they were selected.
+        Return selectionRows.Reverse
+    End Function
+
+    Public Class TemporararilyUnbindDataGrid
+        Implements IDisposable
+
+        Private _disposedValue As Boolean ' To detect redundant calls
+
+        Private Class GridInfo
+            Public Sub New(ByVal grid As DataGridView)
+                _grid = grid
+
+                _SelectedDataRows = New HashSet(Of Object)(
+                    From r As DataGridViewRow In grid.SelectedRows
+                    Select r.DataBoundItem
+                    )
+
+                Dim currentCell = grid.CurrentCellAddress
+                Dim currentRow = grid.CurrentRow
+                If currentCell.X >= 0 AndAlso currentCell.Y >= 0 Then
+                    _CurrentCellDataRow = currentRow.DataBoundItem
+                    _CurrentCellColumnIndex = currentCell.X
+                End If
+
+                _BindingSource = grid.DataSource
+                _BindingSource.RaiseListChangedEvents = False
+            End Sub
+
+            Public Sub ReapplySettings()
+                _BindingSource.RaiseListChangedEvents = True
+                _BindingSource.ResetBindings(False)
+
+                Dim rowToSetAsCurrent As DataGridViewRow = Nothing
+
+                For Each r As DataGridViewRow In _grid.Rows
+                    r.Selected = _SelectedDataRows.Contains(r.DataBoundItem)
+                    If _CurrentCellDataRow IsNot Nothing AndAlso r.DataBoundItem Is _CurrentCellDataRow Then
+                        rowToSetAsCurrent = r
+                    End If
+                Next
+
+                If rowToSetAsCurrent IsNot Nothing Then
+                    _grid.CurrentCell = rowToSetAsCurrent.Cells(_CurrentCellColumnIndex)
+                End If
+            End Sub
+
+            Private _grid As DataGridView
+            Private _BindingSource As BindingSource
+            Private _SelectedDataRows As HashSet(Of Object)
+
+            Private _CurrentCellDataRow As Object
+            Private _CurrentCellColumnIndex As Integer
+        End Class
+
+        Private _gridInfo As List(Of GridInfo)
+
+        Public Sub New(ByVal ParamArray grids() As DataGridView)
+            _gridInfo = grids.ToList.ConvertAll(Function(grid) New GridInfo(grid))
+        End Sub
+
+        Protected Overridable Sub Dispose(ByVal disposing As Boolean)
+            If Not Me._disposedValue Then
+                If disposing Then
+                    _gridInfo.ForEach(Sub(gi) gi.ReapplySettings())
+                End If
+
+                _gridInfo = Nothing
+            End If
+            Me._disposedValue = True
+        End Sub
+
+        Public Sub Dispose() Implements IDisposable.Dispose
+            ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+            Dispose(True)
+            GC.SuppressFinalize(Me)
+        End Sub
+
+    End Class
+
+End Module
+

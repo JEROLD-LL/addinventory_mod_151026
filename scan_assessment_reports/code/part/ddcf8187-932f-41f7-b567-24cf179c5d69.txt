@@ -1,0 +1,11 @@
+<Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("1024, 768")>  _
+        Public Property MainFormSize() As Global.System.Drawing.Size
+            Get
+                Return CType(Me("MainFormSize"),Global.System.Drawing.Size)
+            End Get
+            Set
+                Me("MainFormSize") = value
+            End Set
+        End Property

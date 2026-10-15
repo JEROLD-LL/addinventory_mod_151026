@@ -1,0 +1,20 @@
+Private Sub btnPrintSingleBarcode_Click(sender As Object, e As EventArgs) Handles btnPrintSingleBarcode.Click, PrintToolStripMenuItem.Click
+        Dim cantValidate As Boolean
+        ValidateNewInventoryItemInfo(cantValidate)
+
+        If Not cantValidate Then
+            If Not String.IsNullOrEmpty(Trim(txtBarcode.Text)) Then
+                Dim dtPrintItems As New List(Of ItemsToPrintRow)
+                Dim ipAddress As String = ""
+                If chkAutoAssignIPAddress.Checked And txtMACAddress.Visible Then
+                    ipAddress = getNextAvailableIPAddress(txtPartNo.Text)
+                    ipAddress = If(ipAddress Is Nothing Or IsDBNull(ipAddress), "", ipAddress)
+                End If
+
+                dtPrintItems.Add(New ItemsToPrintRow(txtSerialNo.Text, txtBarcode.Text, "", ipAddress, txtMACAddress.Text))
+                PrintBarcodes(dtPrintItems)
+            Else
+                MsgBox("There is nothing to print in the New Inventory Item Barcode field.")
+            End If
+        End If
+    End Sub

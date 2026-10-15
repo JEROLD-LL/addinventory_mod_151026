@@ -1,0 +1,39 @@
+Private Sub PickPartOnCurrentRow()
+        Dim _partPicker = New PartPicker(Me, CType(Nothing, Control), GetOpenedFinesseConnection())
+        _partPicker.PositionOverControl = dgvDisassemblies.EditingControl
+        If _partPicker.GetPart Then
+
+            Dim editingRow = DisassemblyPartsBindingSource.CurrentDataRow(Of DataRow)
+
+            If editingRow IsNot Nothing Then
+
+                Try
+                    If (IsDBNull(editingRow("ParentPartNo"))) Then
+                        editingRow("ParentPartNo") = txtPartNo.Text
+                    End If
+
+                    Dim data As DataTable = TryCast(DisassemblyPartsBindingSource.DataSource, DataTable)
+                    If data IsNot Nothing AndAlso data.Rows.Count > 0 Then
+                        Dim exists As Boolean = data.AsEnumerable().Any(Function(row) row.Field(Of String)("ChildPartNo") = _partPicker.PartNumber)
+                        If exists Then
+                            Dim toast As New ToastNotification($"The specified part already exists.", Color.Yellow)
+                            toast.ForeColor = Color.Black
+                            toast.Show()
+                            Exit Sub
+                        End If
+                    End If
+
+                    editingRow("ChildPartNo") = _partPicker.PartNumber
+                    editingRow("ChildPartDescription") = _partPicker.PartDesc
+                    If (editingRow("Quantity") Is DBNull.Value) Then
+                        editingRow("Quantity") = 1
+                    End If
+
+                    DisassemblyPartsBindingSource.EndEdit()
+                Catch ex As Exception
+                    Console.WriteLine(ex.Message)
+                End Try
+            End If
+
+        End If
+    End Sub

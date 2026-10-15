@@ -1,0 +1,54 @@
+
+==================================================
+Part: filter_ERP_DataGrid (REPO-092)
+Type: repository
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub filter_ERP_DataGrid(Optional search As String = Nothing)
+        If (_ifs_data IsNot Nothing) Then
+            Dim data = GetErpBaseData()
+            Dim dataResult As IEnumerable(Of QuickReportSchema) = data
+            If (Not String.IsNullOrEmpty(search)) Then
+                Dim lowerSearchText = search.ToLower()
+
+                Dim allWords = lowerSearchText.Split({" "}, StringSplitOptions.RemoveEmptyEntries)
+
+                dataResult = data.Where(Function(po) _
+                                        allWords.All(Function(word) _
+                                            (po.PartNo IsNot Nothing AndAlso po.PartNo.ToLower().Contains(word)) OrElse
+                                            (po.FinesseDescription IsNot Nothing AndAlso po.FinesseDescription.ToLower().Contains(word)) OrElse
+                                            (po.OrderNo IsNot Nothing AndAlso po.OrderNo.ToLower().Contains(word)) OrElse
+                                            (po.SupplierID IsNot Nothing AndAlso po.SupplierID.ToLower().Contains(word)) OrElse
+                                            (po.SupplierName IsNot Nothing AndAlso po.SupplierName.ToLower().Contains(word)) OrElse
+                                            (po.PoState IsNot Nothing AndAlso po.PoState.ToLower().Contains(word))
+                                        )
+                                    )
+
+            End If
+            ultraGridERPPurchaseOrders.DataSource = (dataResult.ToList())
+
+            ultraGridERPPurchaseOrders.Selected.Rows.Clear()
+            ultraGridERPPurchaseOrders.ActiveRow = Nothing
+
+            ultraGridERPPurchaseOrders.Rows.ExpandAll(True)
+
+            SelectPartOnErpGrid()
+            ReloadPermissions()
+        End If
+    End Sub
+
+==================================================
+Part: FilterInventoryInStock (PRT-126)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub FilterInventoryInStock()
+        If (_selected_ifs_po Is Nothing OrElse String.IsNullOrEmpty(txtPartNo.Text) OrElse String.IsNullOrEmpty(txtPONumber.Text) OrElse cboRef4.SelectedValue <> "PURCADD") Then
+            Exit Sub
+        End If
+
+        Dim result = _selected_ifs_po.IFSInventory.Where(Function(item) item.AvailableQty > 0)
+        DgvInventoryInStock.DataSource = result.ToList()
+
+
+    End Sub

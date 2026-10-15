@@ -1,0 +1,5 @@
+Private Sub btnXCalibrationDown_Click(sender As Object, e As EventArgs) Handles btnXCalibrationDown.Click
+        nupXCalibration.Value += -1
+        'Dim selectedBarcodeType As BarcodeType = cbBarcodeType.SelectedItem
+        'selectedBarcodeType.XOffset += -1
+    End Sub

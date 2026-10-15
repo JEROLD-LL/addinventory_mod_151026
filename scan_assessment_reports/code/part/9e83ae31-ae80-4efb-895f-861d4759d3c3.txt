@@ -1,0 +1,28 @@
+Public ReadOnly Property CurrentFinesseQty() As Integer
+        Get
+            If (_selected_ifs_po IsNot Nothing) Then
+                Dim partno = _selected_ifs_po.PartNo
+
+                Dim result = 0 '_selected_ifs_po.FinesseQty
+
+                'Dim ActualFinesseQty = 0
+                Dim inventoryQty = (New ReceivedInventory()).GetReceivedInventory(partno, _selected_ifs_po.OrderNo, _selected_ifs_po.LineNo.ToString, _selected_ifs_po.ReleaseNo.ToString).GetAwaiter().GetResult()
+                result += Integer.Parse(txtQty.Text) + inventoryQty.onhand
+                'If (Not IsDisassemblyPart) Then
+                '    result += Integer.Parse(txtQty.Text) + inventoryQty.onhand
+                'Else
+                '    'Dim row = ultraGridERPPurchaseOrders.ActiveRow.ParentRow
+                '    'partno = row.Cells("ChildPartNo").Value.ToString()
+                '    'Dim POElements = DataSetAddInventory.inpartsub.Where(Function(item) item.PONumber = _selected_ifs_po.OrderNo AndAlso item.partno = partno AndAlso item.POReleaseNo = partno)
+                '    'If (POElements IsNot Nothing AndAlso POElements.Count > 0) Then
+                '    '    result += POElements.Sum(Function(item) item.onhand)
+                '    'End If
+                '    result = 0
+                'End If
+
+                Return result
+            End If
+
+            Return dgvItemsForImport.Rows.Count
+        End Get
+    End Property

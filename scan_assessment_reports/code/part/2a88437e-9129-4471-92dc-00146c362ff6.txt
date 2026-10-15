@@ -1,0 +1,6 @@
+Private Sub AvailabilityCalendarToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles AvailabilityCalendarToolStripMenuItem.Click, tsbAvailability.Click
+        Dim commandArgs As String = ""
+        If Not String.IsNullOrEmpty(Selected_PartNo) Then commandArgs = "partno=" + Selected_PartNo
+
+        StartFinesseProcess("prjpjinvcal.exe", commandArgs)
+    End Sub

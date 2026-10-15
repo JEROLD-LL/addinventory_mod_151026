@@ -1,0 +1,14 @@
+Public ReadOnly Property IsSelfContainedDisassembly() As Boolean
+        Get
+            If (ultraGridERPPurchaseOrders Is Nothing) Then
+                Throw New Exception("Unable to load the Infragistics package. =(")
+            End If
+            If (ultraGridERPPurchaseOrders.ActiveRow IsNot Nothing AndAlso ultraGridERPPurchaseOrders.ActiveRow.HasParent()) Then
+                Dim PoLine = TryCast(ultraGridERPPurchaseOrders.ActiveRow.ParentRow.ListObject, QuickReportSchema)
+                Dim child = PoLine.Disassemblies.FirstOrDefault(Function(item) item.ChildPartNo = PoLine.PartNo)
+                Return child IsNot Nothing
+            End If
+
+            Return False
+        End Get
+    End Property

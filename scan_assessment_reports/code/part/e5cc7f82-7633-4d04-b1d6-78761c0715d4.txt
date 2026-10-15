@@ -1,0 +1,8 @@
+Private Sub bsAddInventory_BindingComplete(ByVal sender As Object, ByVal e As BindingCompleteEventArgs) Handles bsAddInventory.BindingComplete
+        If bsAddInventory.Current("ref4") = "NONTOBAR" And Not String.IsNullOrEmpty(bsAddInventory.Current("unique_no")) And bsAddInventory.Current("RemoveNonCoded") = False Then
+            Dim result = MsgBox("You have changed your reason for adding inventory to '" & _dtReasonRef4.Select("ref4='NONTOBAR'")(0)("description") & "'.  Would you like to attempt to remove a related non-barcoded item from " & bsAddInventory.Current("bld") & " INSTOCK (Owner: " & bsAddInventory.Current("dept") & "?", vbYesNo)
+            If result = MsgBoxResult.Yes Then
+                bsAddInventory.Current("RemoveNonCoded") = True
+            End If
+        End If
+    End Sub

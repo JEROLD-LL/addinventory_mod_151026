@@ -1,0 +1,11 @@
+Private Sub btnPartNoSearch_Click(sender As Object, e As EventArgs) Handles btnPartNoSearch.Click
+        Static picker As New PartPicker(Me, btnPartNoSearch, FinesseConnectionString)
+        picker.SearchForBarcode = False
+
+        If Not picker.GetPart() Then
+            Exit Sub
+        End If
+        _picker = picker
+        txtPartNo.Text = picker.PartNumber
+        txtPartDescEngOp.Text = picker.PartDesc
+    End Sub

@@ -1,0 +1,13 @@
+Private Sub txtPartNo_Changed(sender As Object, e As EventArgs) Handles txtPartNo.TextChanged
+        Dim partno = txtPartNo.Text
+
+        Using conn = GetOpenedFinesseConnection()
+
+            Dim data = conn.ExecuteStoredProcedureAndGetData("IFS.get_disassemblies_by_parent", {
+                         "@parent", partno
+            })
+            DisassemblyPartsBindingSource.DataSource = data
+            DisassemblyPartsBindingSource.EndEdit()
+        End Using
+
+    End Sub

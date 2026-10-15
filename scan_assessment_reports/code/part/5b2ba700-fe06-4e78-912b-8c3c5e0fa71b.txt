@@ -1,0 +1,9 @@
+Private Sub EnableDoubleBuffering(ByVal control As Control)
+        GetType(DataGridView).InvokeMember(
+                    "DoubleBuffered",
+                    Reflection.BindingFlags.NonPublic Or Reflection.BindingFlags.Instance Or Reflection.BindingFlags.SetProperty,
+                    Nothing,
+                    control,
+                    New Object() {True}
+                    )
+    End Sub

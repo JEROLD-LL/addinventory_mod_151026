@@ -1,0 +1,8 @@
+Public Property PrintDialogState As PrintDialogState
+        Get
+            Return _printDialogState
+        End Get
+        Set(value As PrintDialogState)
+            _printDialogState = value
+        End Set
+    End Property

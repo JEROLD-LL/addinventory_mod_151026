@@ -1,0 +1,10 @@
+Private Sub PrintPreviewToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles PrintPreviewToolStripMenuItem.Click
+        Try
+            PrintPreviewDialog1.Document = PreparePrintDocument()
+            PrintPreviewDialog1.Document.DefaultPageSettings.Landscape = True
+            PrintPreviewDialog1.WindowState = FormWindowState.Maximized
+            PrintPreviewDialog1.ShowDialog()
+        Catch ex As Exception
+            MsgBox("Nothing has been selected to be printed.")
+        End Try
+    End Sub

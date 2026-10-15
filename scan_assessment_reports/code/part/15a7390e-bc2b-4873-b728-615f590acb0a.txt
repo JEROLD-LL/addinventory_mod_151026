@@ -1,0 +1,19 @@
+Private Sub PrintBArcodesSelectedItemsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PrintBArcodesSelectedItemsToolStripMenuItem.Click
+        Dim itemsToImport = dgvItemsForImport.SelectedRows
+        If (itemsToImport Is Nothing Or itemsToImport?.Count = 0) Then
+            MessageBox.Show("There is not selected items to print.")
+            Exit Sub
+        End If
+        'bsAddInventory.GetDataRows(Of inpartsubRow)()
+        Dim dtPrintItems As New List(Of ItemsToPrintRow)
+
+        For Each item In itemsToImport
+            Dim uniqueId = item.Cells("dgcAddItemsBarcode").Value.ToString
+            Dim serialNo = item.Cells("dgcAddItemsSerialNo").Value.ToString
+            Dim owner = item.Cells("dgcAddItemsDept").Value.ToString
+
+            dtPrintItems.Add(New ItemsToPrintRow(serialNo, uniqueId))
+        Next
+
+        PrintBarcodes(dtPrintItems)
+    End Sub

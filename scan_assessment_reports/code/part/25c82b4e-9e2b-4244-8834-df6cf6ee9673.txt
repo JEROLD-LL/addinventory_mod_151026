@@ -1,0 +1,29 @@
+Private Sub GotPartsAsync(ByVal result As IAsyncResult)
+        Dim cmd As SqlCommand = CType(result.AsyncState, SqlCommand)
+        Dim reader As SqlDataReader = cmd.EndExecuteReader(result)
+        Invoke(
+            Sub()
+                Try
+                    If cmd Is _expectedCommand Then
+                        _dtClairNewSerialNos.Load(reader)
+
+                        'If (_dtClairNewSerialNos.Rows.Count > 0) Then
+                        '    lblEnterClairNewSerialNo.Visible = False
+                        'Else
+                        '    lblEnterClairNewSerialNo.Visible = True
+                        'End If
+                    End If
+
+                Catch ex As Exception
+                    Beep_Fail()
+                    MsgBox("WTF?" & ex.ToString, MsgBoxStyle.Critical)
+                Finally
+                    If Not reader Is Nothing Then
+                        reader.Close()
+                    End If
+                    cmd.Connection.Close()
+                    cmd.Connection.Dispose()
+                    cmd.Dispose()
+                End Try
+            End Sub)
+    End Sub

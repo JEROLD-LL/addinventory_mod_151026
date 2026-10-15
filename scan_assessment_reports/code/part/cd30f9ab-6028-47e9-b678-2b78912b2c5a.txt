@@ -1,0 +1,10 @@
+Private Sub Init_ERP_WarehousesCombo()
+        cboErpWarehouse.DisplayMember = "warehouse_description"
+        cboErpWarehouse.ValueMember = "warehouse_code"
+        Dim table = _dtWarehouses.Copy()
+        Dim newRow As DataRow = table.NewRow()
+        newRow("warehouse_code") = ""
+        newRow("warehouse_description") = "(All warehouses)"
+        table.Rows.InsertAt(newRow, 0)
+        cboErpWarehouse.DataSource = New DataView(table, "", "warehouse_description asc", DataViewRowState.CurrentRows)
+    End Sub

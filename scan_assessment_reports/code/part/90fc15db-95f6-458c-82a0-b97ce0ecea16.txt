@@ -1,0 +1,10 @@
+Private Sub tsmPrintSelectedItemsForImport_Click(sender As Object, e As EventArgs) Handles tsmPrintSelectedItemsForImport.Click
+        Dim selectedItemsToImport = dgvItemsForImport.SelectedRows
+        Dim dtPrintItems As New List(Of ItemsToPrintRow)
+
+        For Each item As DataGridViewRow In selectedItemsToImport
+            dtPrintItems.Add(New ItemsToPrintRow(item.Cells("dgcAddItemsSerialNo").Value.ToString, item.Cells("dgcAddItemsBarcode").Value.ToString))
+        Next
+
+        PrintBarcodes(dtPrintItems)
+    End Sub

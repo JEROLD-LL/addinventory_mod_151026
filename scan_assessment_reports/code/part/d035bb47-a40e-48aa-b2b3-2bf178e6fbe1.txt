@@ -1,0 +1,13 @@
+Private Function checkIfPartHasIPRangeSet(partno As String) As Boolean
+        Dim conn As SqlConnection = GetOpenedFinesseConnection()
+        Dim isRangeSet As Boolean
+
+        isRangeSet = conn.ExecuteScalar($"SELECT CASE WHEN ip.RangeType IS NULL THEN 0
+                                          	   ELSE 1 END as isSet
+                                          FROM dbo.inpart ip
+                                          WHERE ip.partno = '{partno}'")
+        conn.Close()
+        conn.Dispose()
+
+        Return isRangeSet
+    End Function

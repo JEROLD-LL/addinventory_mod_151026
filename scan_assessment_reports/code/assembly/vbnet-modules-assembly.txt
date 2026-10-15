@@ -1,0 +1,777 @@
+
+==================================================
+Part: GetErpBaseData (REPO-035)
+Type: repository
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Function GetErpBaseData() As IEnumerable(Of QuickReportSchema)
+        If (_ifs_data IsNot Nothing AndAlso cboErpWarehouse.SelectedItem IsNot Nothing) Then
+            Dim selectedCompany = cboErpWarehouse.SelectedItem.Row("IFSCompanyCd").ToString
+            Dim result = _ifs_data.Where(Function(po) _
+                                        (String.IsNullOrEmpty(selectedCompany) OrElse String.IsNullOrEmpty(po.Contract) OrElse po.Contract = selectedCompany OrElse po.Warehouse = selectedCompany) AndAlso
+    (String.IsNullOrEmpty(cboErpOwner.SelectedValue) OrElse String.IsNullOrEmpty(po.Owner) OrElse po.Owner = cboErpOwner.SelectedValue) AndAlso
+                                        (chkUnexistingParts.Checked OrElse (Not chkUnexistingParts.Checked AndAlso (po.FinessePart IsNot Nothing OrElse (po.Disassemblies IsNot Nothing AndAlso po.Disassemblies.Count > 0)))) AndAlso
+    (Not chkRecievedOnly.Checked OrElse
+        (po.IsRecieved = True AndAlso
+         CInt(po.FinesseQty) < CInt(po.BuyQtyDue) AndAlso 'Filtering by Qty ordered instead of qty arrived to show rows that haven't been fully receipt.
+         (po.FinessePart IsNot Nothing OrElse po.Disassemblies IsNot Nothing)))
+)
+
+
+
+            Return result
+        End If
+
+        Return New List(Of QuickReportSchema)()
+    End Function
+
+==================================================
+Part: SchemaSerializationMode (CFG-184)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Data/DataSetAddInventory.Designer.vb
+==================================================
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0"),  _
+     Global.System.ComponentModel.BrowsableAttribute(true),  _
+     Global.System.ComponentModel.DesignerSerializationVisibilityAttribute(Global.System.ComponentModel.DesignerSerializationVisibility.Visible)>  _
+    Public Overrides Property SchemaSerializationMode() As Global.System.Data.SchemaSerializationMode
+        Get
+            Return Me._schemaSerializationMode
+        End Get
+        Set
+            Me._schemaSerializationMode = value
+        End Set
+    End Property
+
+==================================================
+Part: TemporararilyUnbindDataGrid (REPO-436)
+Type: repository
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Modules/AddInventoryGeneral.vb
+==================================================
+Public Class TemporararilyUnbindDataGrid
+        Implements IDisposable
+
+        Private _disposedValue As Boolean ' To detect redundant calls
+
+        Private Class GridInfo
+            Public Sub New(ByVal grid As DataGridView)
+                _grid = grid
+
+                _SelectedDataRows = New HashSet(Of Object)(
+                    From r As DataGridViewRow In grid.SelectedRows
+                    Select r.DataBoundItem
+                    )
+
+                Dim currentCell = grid.CurrentCellAddress
+                Dim currentRow = grid.CurrentRow
+                If currentCell.X >= 0 AndAlso currentCell.Y >= 0 Then
+                    _CurrentCellDataRow = currentRow.DataBoundItem
+                    _CurrentCellColumnIndex = currentCell.X
+                End If
+
+                _BindingSource = grid.DataSource
+                _BindingSource.RaiseListChangedEvents = False
+            End Sub
+
+            Public Sub ReapplySettings()
+                _BindingSource.RaiseListChangedEvents = True
+                _BindingSource.ResetBindings(False)
+
+                Dim rowToSetAsCurrent As DataGridViewRow = Nothing
+
+                For Each r As DataGridViewRow In _grid.Rows
+                    r.Selected = _SelectedDataRows.Contains(r.DataBoundItem)
+                    If _CurrentCellDataRow IsNot Nothing AndAlso r.DataBoundItem Is _CurrentCellDataRow Then
+                        rowToSetAsCurrent = r
+                    End If
+                Next
+
+                If rowToSetAsCurrent IsNot Nothing Then
+                    _grid.CurrentCell = rowToSetAsCurrent.Cells(_CurrentCellColumnIndex)
+                End If
+            End Sub
+
+            Private _grid As DataGridView
+            Private _BindingSource As BindingSource
+            Private _SelectedDataRows As HashSet(Of Object)
+
+            Private _CurrentCellDataRow As Object
+            Private _CurrentCellColumnIndex As Integer
+        End Class
+
+        Private _gridInfo As List(Of GridInfo)
+
+        Public Sub New(ByVal ParamArray grids() As DataGridView)
+            _gridInfo = grids.ToList.ConvertAll(Function(grid) New GridInfo(grid))
+        End Sub
+
+        Protected Overridable Sub Dispose(ByVal disposing As Boolean)
+            If Not Me._disposedValue Then
+                If disposing Then
+                    _gridInfo.ForEach(Sub(gi) gi.ReapplySettings())
+                End If
+
+                _gridInfo = Nothing
+            End If
+            Me._disposedValue = True
+        End Sub
+
+        Public Sub Dispose() Implements IDisposable.Dispose
+            ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+            Dispose(True)
+            GC.SuppressFinalize(Me)
+        End Sub
+
+    End Class
+
+==================================================
+Part: Dispose (PRT-437)
+Type: class
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Modules/AddInventoryGeneral.vb
+==================================================
+Protected Overridable Sub Dispose(ByVal disposing As Boolean)
+            If Not Me._disposedValue Then
+                If disposing Then
+                    _gridInfo.ForEach(Sub(gi) gi.ReapplySettings())
+                End If
+
+                _gridInfo = Nothing
+            End If
+            Me._disposedValue = True
+        End Sub
+
+==================================================
+Part: Dispose (PRT-438)
+Type: class
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Modules/AddInventoryGeneral.vb
+==================================================
+Public Sub Dispose() Implements IDisposable.Dispose
+            ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+            Dispose(True)
+            GC.SuppressFinalize(Me)
+        End Sub
+
+==================================================
+Part: New (PRT-439)
+Type: class
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Modules/AddInventoryGeneral.vb
+==================================================
+Public Sub New(ByVal ParamArray grids() As DataGridView)
+            _gridInfo = grids.ToList.ConvertAll(Function(grid) New GridInfo(grid))
+        End Sub
+
+==================================================
+Part: GridInfo (PRT-440)
+Type: class
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Modules/AddInventoryGeneral.vb
+==================================================
+Private Class GridInfo
+            Public Sub New(ByVal grid As DataGridView)
+                _grid = grid
+
+                _SelectedDataRows = New HashSet(Of Object)(
+                    From r As DataGridViewRow In grid.SelectedRows
+                    Select r.DataBoundItem
+                    )
+
+                Dim currentCell = grid.CurrentCellAddress
+                Dim currentRow = grid.CurrentRow
+                If currentCell.X >= 0 AndAlso currentCell.Y >= 0 Then
+                    _CurrentCellDataRow = currentRow.DataBoundItem
+                    _CurrentCellColumnIndex = currentCell.X
+                End If
+
+                _BindingSource = grid.DataSource
+                _BindingSource.RaiseListChangedEvents = False
+            End Sub
+
+            Public Sub ReapplySettings()
+                _BindingSource.RaiseListChangedEvents = True
+                _BindingSource.ResetBindings(False)
+
+                Dim rowToSetAsCurrent As DataGridViewRow = Nothing
+
+                For Each r As DataGridViewRow In _grid.Rows
+                    r.Selected = _SelectedDataRows.Contains(r.DataBoundItem)
+                    If _CurrentCellDataRow IsNot Nothing AndAlso r.DataBoundItem Is _CurrentCellDataRow Then
+                        rowToSetAsCurrent = r
+                    End If
+                Next
+
+                If rowToSetAsCurrent IsNot Nothing Then
+                    _grid.CurrentCell = rowToSetAsCurrent.Cells(_CurrentCellColumnIndex)
+                End If
+            End Sub
+
+            Private _grid As DataGridView
+            Private _BindingSource As BindingSource
+            Private _SelectedDataRows As HashSet(Of Object)
+
+            Private _CurrentCellDataRow As Object
+            Private _CurrentCellColumnIndex As Integer
+        End Class
+
+==================================================
+Part: ReapplySettings (CFG-441)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Modules/AddInventoryGeneral.vb
+==================================================
+Public Sub ReapplySettings()
+                _BindingSource.RaiseListChangedEvents = True
+                _BindingSource.ResetBindings(False)
+
+                Dim rowToSetAsCurrent As DataGridViewRow = Nothing
+
+                For Each r As DataGridViewRow In _grid.Rows
+                    r.Selected = _SelectedDataRows.Contains(r.DataBoundItem)
+                    If _CurrentCellDataRow IsNot Nothing AndAlso r.DataBoundItem Is _CurrentCellDataRow Then
+                        rowToSetAsCurrent = r
+                    End If
+                Next
+
+                If rowToSetAsCurrent IsNot Nothing Then
+                    _grid.CurrentCell = rowToSetAsCurrent.Cells(_CurrentCellColumnIndex)
+                End If
+            End Sub
+
+==================================================
+Part: New (PRT-442)
+Type: class
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Modules/AddInventoryGeneral.vb
+==================================================
+Public Sub New(ByVal grid As DataGridView)
+                _grid = grid
+
+                _SelectedDataRows = New HashSet(Of Object)(
+                    From r As DataGridViewRow In grid.SelectedRows
+                    Select r.DataBoundItem
+                    )
+
+                Dim currentCell = grid.CurrentCellAddress
+                Dim currentRow = grid.CurrentRow
+                If currentCell.X >= 0 AndAlso currentCell.Y >= 0 Then
+                    _CurrentCellDataRow = currentRow.DataBoundItem
+                    _CurrentCellColumnIndex = currentCell.X
+                End If
+
+                _BindingSource = grid.DataSource
+                _BindingSource.RaiseListChangedEvents = False
+            End Sub
+
+==================================================
+Part: AddInventoryGeneral (PRT-443)
+Type: module
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Modules/AddInventoryGeneral.vb
+==================================================
+Module AddInventoryGeneral
+
+    <DllImport("user32.dll", SetLastError:=True)> Private Function SetForegroundWindow(ByVal hWnd As IntPtr) As Boolean
+    End Function
+
+    <DllImport("user32.dll", SetLastError:=True)> Private Function ShowWindow(ByVal hWnd As IntPtr, ByVal nCmdShow As Integer) As Boolean
+    End Function
+
+    Public gConn As New SqlConnection(RealFinesseConnectionString)
+
+    Private ReadOnly Property RealFinesseConnectionString As String
+        Get
+            Dim cs As New SqlConnectionStringBuilder(ClairLibrary.FinesseShared.FinesseConnectionString)
+            cs.PersistSecurityInfo = True
+            Return cs.ConnectionString
+        End Get
+    End Property
+
+    Public Sub StartFinesseProcess(ByVal ExeFileName As String, Optional ByVal IfExistsBringToFront As Boolean = True, Optional ByVal CommandArgs As String = "", Optional ByVal ProcessName As String = "")
+        'Me.TopMost = False
+        If (IfExistsBringToFront = True AndAlso Process.GetProcessesByName(ProcessName).Length > 0) Then
+
+            Process.GetProcessesByName(ProcessName)(0).StartInfo.WindowStyle = ProcessWindowStyle.Normal
+            ShowWindow(Process.GetProcessesByName(ProcessName)(0).MainWindowHandle, 1)
+            SetForegroundWindow(Process.GetProcessesByName(ProcessName)(0).MainWindowHandle)
+
+        Else
+
+            Dim myNewProcess As New Process()
+            myNewProcess.StartInfo.FileName = GetEnvironmentVariable("ESSVBDir") + "\" + ExeFileName
+            myNewProcess.StartInfo.WindowStyle = ProcessWindowStyle.Normal
+            myNewProcess.StartInfo.Arguments = CommandArgs
+
+            'Start Process
+            myNewProcess.Start()
+
+        End If
+
+    End Sub
+
+    Public Function EmptyStringToNull(ByVal arg1 As String) As Object
+        Dim varOut As Object
+        varOut = Nothing
+        If arg1 <> vbNullString Then
+            varOut = arg1
+        End If
+        EmptyStringToNull = varOut
+    End Function
+
+    <System.Runtime.CompilerServices.Extension()>
+    Public Function GetSelectedDataRows(Of T As DataRow)(ByVal dgv As DataGridView) As IEnumerable(Of T)
+        Return (
+            From r In dgv.GetSelectionRows
+            Where r.DataBoundItem IsNot Nothing
+            Select rv = CType(r.DataBoundItem, DataRowView)
+            Select CType(rv.Row, T)
+        )
+    End Function
+
+    <System.Runtime.CompilerServices.Extension()>
+    Public Function GetSelectionRows(ByVal dgv As DataGridView) As IEnumerable(Of DataGridViewRow)
+        Dim selectionRows =
+            From r As DataGridViewRow In dgv.SelectedRows
+
+        If Not selectionRows.Any Then
+            selectionRows =
+                From c As DataGridViewCell In dgv.SelectedCells
+                Where c.RowIndex >= 0
+                Select r = dgv.Rows(c.RowIndex)
+        End If
+
+        If Not selectionRows.Any Then
+            If dgv.CurrentCell IsNot Nothing Then
+                selectionRows = New DataGridViewRow() {dgv.CurrentCell.OwningRow}
+            End If
+        End If
+
+        If Not selectionRows.Any Then
+            selectionRows = Enumerable.Empty(Of DataGridViewRow)()
+        End If
+
+        ' for some reason, DataGridView.Selected* methods return items in the reverse order in which they
+        ' were selected, so this puts them back into the (correct) order in which they were selected.
+        Return selectionRows.Reverse
+    End Function
+
+    Public Class TemporararilyUnbindDataGrid
+        Implements IDisposable
+
+        Private _disposedValue As Boolean ' To detect redundant calls
+
+        Private Class GridInfo
+            Public Sub New(ByVal grid As DataGridView)
+                _grid = grid
+
+                _SelectedDataRows = New HashSet(Of Object)(
+                    From r As DataGridViewRow In grid.SelectedRows
+                    Select r.DataBoundItem
+                    )
+
+                Dim currentCell = grid.CurrentCellAddress
+                Dim currentRow = grid.CurrentRow
+                If currentCell.X >= 0 AndAlso currentCell.Y >= 0 Then
+                    _CurrentCellDataRow = currentRow.DataBoundItem
+                    _CurrentCellColumnIndex = currentCell.X
+                End If
+
+                _BindingSource = grid.DataSource
+                _BindingSource.RaiseListChangedEvents = False
+            End Sub
+
+            Public Sub ReapplySettings()
+                _BindingSource.RaiseListChangedEvents = True
+                _BindingSource.ResetBindings(False)
+
+                Dim rowToSetAsCurrent As DataGridViewRow = Nothing
+
+                For Each r As DataGridViewRow In _grid.Rows
+                    r.Selected = _SelectedDataRows.Contains(r.DataBoundItem)
+                    If _CurrentCellDataRow IsNot Nothing AndAlso r.DataBoundItem Is _CurrentCellDataRow Then
+                        rowToSetAsCurrent = r
+                    End If
+                Next
+
+                If rowToSetAsCurrent IsNot Nothing Then
+                    _grid.CurrentCell = rowToSetAsCurrent.Cells(_CurrentCellColumnIndex)
+                End If
+            End Sub
+
+            Private _grid As DataGridView
+            Private _BindingSource As BindingSource
+            Private _SelectedDataRows As HashSet(Of Object)
+
+            Private _CurrentCellDataRow As Object
+            Private _CurrentCellColumnIndex As Integer
+        End Class
+
+        Private _gridInfo As List(Of GridInfo)
+
+        Public Sub New(ByVal ParamArray grids() As DataGridView)
+            _gridInfo = grids.ToList.ConvertAll(Function(grid) New GridInfo(grid))
+        End Sub
+
+        Protected Overridable Sub Dispose(ByVal disposing As Boolean)
+            If Not Me._disposedValue Then
+                If disposing Then
+                    _gridInfo.ForEach(Sub(gi) gi.ReapplySettings())
+                End If
+
+                _gridInfo = Nothing
+            End If
+            Me._disposedValue = True
+        End Sub
+
+        Public Sub Dispose() Implements IDisposable.Dispose
+            ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+            Dispose(True)
+            GC.SuppressFinalize(Me)
+        End Sub
+
+    End Class
+
+End Module
+
+==================================================
+Part: MySettingsProperty (CFG-456)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/My Project/Settings.Designer.vb
+==================================================
+<Global.Microsoft.VisualBasic.HideModuleNameAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>  _
+    Friend Module MySettingsProperty
+        
+        <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>  _
+        Friend ReadOnly Property Settings() As Global.Add_Inventory.My.MySettings
+            Get
+                Return Global.Add_Inventory.My.MySettings.Default
+            End Get
+        End Property
+    End Module
+
+==================================================
+Part: Resources (API-458)
+Type: api
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/My Project/Resources.Designer.vb
+==================================================
+'This class was auto-generated by the StronglyTypedResourceBuilder
+    'class via a tool like ResGen or Visual Studio.
+    'To add or remove a member, edit your .ResX file then rerun ResGen
+    'with the /str option, or rebuild your VS project.
+    '''<summary>
+    '''  A strongly-typed resource class, for looking up localized strings, etc.
+    '''</summary>
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0"),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
+     Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
+    Friend Module Resources
+        
+        Private resourceMan As Global.System.Resources.ResourceManager
+        
+        Private resourceCulture As Global.System.Globalization.CultureInfo
+        
+        '''<summary>
+        '''  Returns the cached ResourceManager instance used by this class.
+        '''</summary>
+        <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
+        Friend ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
+            Get
+                If Object.ReferenceEquals(resourceMan, Nothing) Then
+                    Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("Add_Inventory.Resources", GetType(Resources).Assembly)
+                    resourceMan = temp
+                End If
+                Return resourceMan
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Overrides the current thread's CurrentUICulture property for all
+        '''  resource lookups using this strongly typed resource class.
+        '''</summary>
+        <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
+        Friend Property Culture() As Global.System.Globalization.CultureInfo
+            Get
+                Return resourceCulture
+            End Get
+            Set
+                resourceCulture = value
+            End Set
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Add_New_Row() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Add_New_Row", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property addin() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("addin", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property arrow_down_blue() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("arrow_down_blue", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property arrow_right_blue() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("arrow_right_blue", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property availability() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("availability", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property btn_search_up() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("btn_search_up", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property CALC() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("CALC", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property calculator() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("calculator", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property calculator1() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("calculator1", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property CheckmarkBox() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("CheckmarkBox", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property CLAIM016() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("CLAIM016", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Cube() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Cube", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Cube1() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Cube1", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Deleting() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Deleting", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property excel() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("excel", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property EXPEDIA() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("EXPEDIA", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Filtering() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Filtering", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property ForestGreen() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("ForestGreen", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property MOVE() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("MOVE", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property MSPAINT2() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("MSPAINT2", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property OBarCreateNew() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("OBarCreateNew", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property OrderDetails48() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("OrderDetails48", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Payment() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Payment", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Print() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Print", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property refresh() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("refresh", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property save_16x16() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("save_16x16", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property save_16x161() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("save_16x161", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property utilization() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("utilization", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+    End Module

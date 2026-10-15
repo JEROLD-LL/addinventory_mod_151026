@@ -1,0 +1,28 @@
+Private Sub CopyPONumberToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopyPONumberToolStripMenuItem.Click, CopyPartNumberToolStripMenuItem.Click
+        Dim clickedItem = CType(sender, ToolStripMenuItem)
+
+        Dim partno As String
+        Dim ponumber As String
+
+
+        If (clickedRow.HasParent) Then
+            Dim row = TryCast(clickedRow.ListObject, DisassemblyPart)
+            partno = row.ChildPartNo
+            ponumber = row.OrderNo
+        Else
+            Dim row = TryCast(clickedRow.ListObject, QuickReportSchema)
+            partno = row.PartNo
+            ponumber = row.OrderNo
+        End If
+
+        Dim copiedText As String
+        If clickedItem Is CopyPONumberToolStripMenuItem Then
+            copiedText = ponumber
+        ElseIf clickedItem Is CopyPartNumberToolStripMenuItem Then
+            copiedText = partno
+        End If
+        Clipboard.SetText(copiedText)
+
+        Dim toast As New ToastNotification($"{copiedText} Copied to clipboard!", Color.Green)
+        toast.Show()
+    End Sub

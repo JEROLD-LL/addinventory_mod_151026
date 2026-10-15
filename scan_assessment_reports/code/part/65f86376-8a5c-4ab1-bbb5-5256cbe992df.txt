@@ -1,0 +1,24 @@
+Private Sub InitPartImages()
+        Try
+            If TabControl1.SelectedTab?.Name = ImagesTab.Name Then
+                If (_FileExplorer Is Nothing) Then
+                    InitPartFileExplorer()
+                End If
+                If (Not String.IsNullOrEmpty(Selected_PartNo) Or Not String.IsNullOrEmpty(txtPartNo.Text)) Then
+                    ImagesTab.Enabled = True
+                    LblNonPartsImages.SendToBack()
+                Else
+                    ImagesTab.Enabled = False
+                    LblNonPartsImages.BringToFront()
+                End If
+                ImagesTab.Controls.Clear()
+                _PartImages = New PartImagesPanel(_FileExplorer)
+                ImagesTab.Controls.Add(_PartImages)
+                _PartImages.Dock = DockStyle.Fill
+                _PartImages.Visible = True
+                _PartImages.InitTreeView()
+            End If
+        Catch ex As Exception
+
+        End Try
+    End Sub

@@ -1,0 +1,20 @@
+Private Sub txtPartNo_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtPartNo.Validating
+        If txtPartNo.ReadOnly Then Exit Sub
+        If PartValidated Then Exit Sub
+
+        'Check to see if part number exists in ClairTour.
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+
+            Dim ClairTourPartNo = newConn.GetDataTable("select partdesc from dbo.inpart p where partno = " & SQLQuote(txtPartNo.Text))
+
+            Dim result_ClairTour As DialogResult = Nothing
+            If ClairTourPartNo.Rows.Count = 0 Then
+                Beep_Fail()
+                MsgBox("This part number does not exist in the rental inventory database.", vbOKOnly)
+                txtPartNo.Clear()
+                Return
+            End If
+        End Using
+        PartValidated = True
+    End Sub

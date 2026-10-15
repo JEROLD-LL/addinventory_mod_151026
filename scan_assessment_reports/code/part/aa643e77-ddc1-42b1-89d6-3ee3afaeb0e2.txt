@@ -1,0 +1,7 @@
+Public Function IsFormClosing() As Boolean
+        Dim stackTrace As StackTrace = New StackTrace
+        For Each sf As StackFrame In stackTrace.GetFrames
+            If (sf.GetMethod.Name = WMCLOSE) Then Return True
+        Next
+        Return False
+    End Function

@@ -1,0 +1,30 @@
+Private Sub UpdatePrintBehavior()
+        Dim activateZebraPrint As Boolean = EnabledZebraPrinting(cboOwner.SelectedValue)
+
+        _useZebraPrinting = activateZebraPrint
+        pb2Dbarcode.Visible = Not activateZebraPrint
+        btnGetNextBarcode.Visible = activateZebraPrint
+        tsmPrintSelectedItemsForImport.Visible = activateZebraPrint
+        PrintToolStripMenuItem.Visible = Not activateZebraPrint
+        PrintToolStripMenuItem.Enabled = Not activateZebraPrint
+        PrintPreviewToolStripMenuItem.Visible = Not activateZebraPrint
+
+        tsmPrintBarcodes.Visible = activateZebraPrint
+        tsmPrintBarcodes.Enabled = activateZebraPrint
+        PrintBArcodesSelectedItemsToolStripMenuItem.Enabled = activateZebraPrint
+        PrintBArcodesSelectedItemsToolStripMenuItem.Visible = activateZebraPrint
+
+        If activateZebraPrint Then
+            PrintToolStripMenuItem.ShortcutKeys = Nothing
+            PrintPreviewToolStripMenuItem.ShortcutKeys = Nothing
+            tsmPrintBarcodes.ShortcutKeys = Shortcut.CtrlP
+            PrintBArcodesSelectedItemsToolStripMenuItem.ShortcutKeys = Shortcut.CtrlShiftP
+        Else
+            tsmPrintBarcodes.ShortcutKeys = Nothing
+            PrintBArcodesSelectedItemsToolStripMenuItem.ShortcutKeys = Nothing
+            PrintToolStripMenuItem.ShortcutKeys = Shortcut.CtrlP
+            PrintPreviewToolStripMenuItem.ShortcutKeys = Shortcut.CtrlShiftP
+
+        End If
+
+    End Sub

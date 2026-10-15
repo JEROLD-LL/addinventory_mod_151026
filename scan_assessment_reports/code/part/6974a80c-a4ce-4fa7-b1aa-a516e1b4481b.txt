@@ -1,0 +1,8 @@
+Public Property UserPermission() As UserAccess
+        Get
+            Return _userPermission
+        End Get
+        Set(value As UserAccess)
+            _userPermission = value
+        End Set
+    End Property

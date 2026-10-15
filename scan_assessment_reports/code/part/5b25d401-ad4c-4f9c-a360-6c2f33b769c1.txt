@@ -1,0 +1,67 @@
+Private Sub ValidateNewInventoryItemInfo(ByRef shouldReturn As Boolean)
+        shouldReturn = True
+
+        If Not String.IsNullOrEmpty(txtSerialNo.Text) And String.IsNullOrEmpty(txtBarcode.Text) Then
+            Beep_Fail()
+            MsgBox("You have entered a serial number, but no barcode.", vbOKOnly)
+            txtBarcode.Focus()
+            Return
+        End If
+
+        If Not String.IsNullOrEmpty(txtBarcode.Text) And String.IsNullOrEmpty(txtSerialNo.Text) Then
+            Beep_Fail()
+            MsgBox("You have entered a barcode, but no serial number.", vbOKOnly)
+            txtSerialNo.Focus()
+            Return
+        End If
+
+        If cboRef4.SelectedIndex = 0 Then
+            Beep_Fail()
+            MsgBox("Please select a reason for adding inventory.", vbOKOnly)
+            Return
+        End If
+
+        If Not String.IsNullOrEmpty(_dtReasonRef4.Select("ref4=" & SQLQuote(cboRef4.SelectedValue))(0)("ref5desc")) Then
+            If String.IsNullOrEmpty(txtRef5.Text) Then
+                Beep_Fail()
+                MsgBox("Please enter a note for reason for adding inventory: " & cboRef4.Text, vbOKOnly)
+                Return
+            End If
+        End If
+
+        If cboRef4.SelectedValue = "NONTOBAR" And String.IsNullOrEmpty(txtBarcode.Text) Then
+            Beep_Fail()
+            MsgBox("You have selected '" & _dtReasonRef4.Select("ref4='NONTOBAR'")(0)("description") & "' as the reason for adding inventory, but no barcode has been entered.", vbOKOnly)
+            Return
+        End If
+
+        Dim partno = txtPartNo.Text
+        Dim existsInList = DataSetAddInventory.inpartsub.Select("partno=" & SQLQuote(partno) &
+                                             " and serial_no=" & SQLQuote(txtSerialNo.Text) &
+                                             " and unique_no=" & SQLQuote(txtBarcode.Text) &
+                                             " and dept=" & SQLQuote(cboOwner.SelectedValue) &
+                                             " and bld=" & SQLQuote(cboWarehouse.SelectedValue) &
+                                             " and row=" & SQLQuote(txtRevision.Text))
+        '" and PONumber=" & SQLQuote(txtPONumber.Text) & TODO: Update the constraint to include the PO Number to allow same information but Diffrent PO Number
+        If existsInList.Length > 0 Then
+            Beep_Fail()
+            MsgBox("You've already entered this part (" & existsInList(0).Item("partno") & ": " & existsInList(0).Item("partdesc") & ") with the same PO Number, owner, warehouse and revision.  You can make changes to the list below if necessary.", vbOKOnly)
+            Return
+        End If
+
+        Dim barcodeExistsInList = DataSetAddInventory.inpartsub.Select("unique_no=" & SQLQuote(txtBarcode.Text))
+        If barcodeExistsInList.Length > 0 AndAlso Not String.IsNullOrEmpty(barcodeExistsInList(0).Item("unique_no")) Then
+            Beep_Fail()
+            MsgBox("You've already entered this barcode (" & barcodeExistsInList(0).Item("unique_no") & ").", vbOKOnly)
+            Return
+        End If
+
+        Dim serial_noExistsInList = DataSetAddInventory.inpartsub.Select("serial_no=" & SQLQuote(txtSerialNo.Text))
+        If serial_noExistsInList.Length > 0 AndAlso Not String.IsNullOrEmpty(serial_noExistsInList(0).Item("serial_no")) Then
+            Beep_Fail()
+            MsgBox("You've already entered this serial number (" & serial_noExistsInList(0).Item("serial_no") & ").", vbOKOnly)
+            Return
+        End If
+
+        shouldReturn = False
+    End Sub

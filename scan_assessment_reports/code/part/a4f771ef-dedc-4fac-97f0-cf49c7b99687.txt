@@ -1,0 +1,1984 @@
+<System.Diagnostics.DebuggerStepThrough()>
+    Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmAddInventory))
+        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
+        Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IFS PO No")
+        Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Part No")
+        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Description")
+        Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Qty Ordered")
+        Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Qty Arrived")
+        Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Qty In Finesse")
+        Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Available Qty")
+        Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Unreceived Qty")
+        Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Supplier")
+        Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Warehouse")
+        Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Owner")
+        Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Date")
+        Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Due Date")
+        Dim UltraGridColumn14 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Status")
+        Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Band 1")
+        Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 1", -1)
+        Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Part No")
+        Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Part Description")
+        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Qty Per Unit", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Descending, False)
+        Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Total Minimum Qty")
+        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance8 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance9 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle7 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle8 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle9 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle10 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle11 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle12 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Me.MenuStrip = New System.Windows.Forms.MenuStrip()
+        Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SaveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
+        Me.PrintToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PrintPreviewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsmPrintBarcodes = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PrintBArcodesSelectedItemsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ViewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.AvailabilityCalendarToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SchedulingBoardToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.UtilizationToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
+        Me.PartMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CycleCountUtilityToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PartAttachmentMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TransferToolsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MasterDataToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MainSubpartMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.LAMEToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsMain = New System.Windows.Forms.ToolStrip()
+        Me.tsbExcel = New System.Windows.Forms.ToolStripButton()
+        Me.tsbAvailability = New System.Windows.Forms.ToolStripButton()
+        Me.tsbSchedulingBoard = New System.Windows.Forms.ToolStripButton()
+        Me.tsbUtilization = New System.Windows.Forms.ToolStripButton()
+        Me.tsbPartMaintenance = New System.Windows.Forms.ToolStripButton()
+        Me.tsbBarcodeNinja = New System.Windows.Forms.ToolStripButton()
+        Me.QueryToolsToolStripDropDownButton = New System.Windows.Forms.ToolStripDropDownButton()
+        Me.EquipmentLocationsToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TransactionsToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PhaseHistoryToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator14 = New System.Windows.Forms.ToolStripSeparator()
+        Me.LateReturnsToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.BatchLocationSummaryToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.pnlDataEntry = New System.Windows.Forms.Panel()
+        Me.Panel8 = New System.Windows.Forms.Panel()
+        Me.lblPoExistance = New System.Windows.Forms.Label()
+        Me.ultraGridERPPurchaseOrders = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.Panel7 = New System.Windows.Forms.Panel()
+        Me.chkUnexistingParts = New System.Windows.Forms.CheckBox()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.cboErpOwner = New System.Windows.Forms.ComboBox()
+        Me.chkRecievedOnly = New System.Windows.Forms.CheckBox()
+        Me.btnReloadIFS = New System.Windows.Forms.Button()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.cboErpWarehouse = New System.Windows.Forms.ComboBox()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.txtERPPoNumber = New System.Windows.Forms.TextBox()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.gbNewInventoryItemInfo = New System.Windows.Forms.GroupBox()
+        Me.LblPermissionMsg = New System.Windows.Forms.Label()
+        Me.chkDeferEnteringMacAddress = New System.Windows.Forms.CheckBox()
+        Me.txtMACAddress = New System.Windows.Forms.TextBox()
+        Me.lblMACAddress = New System.Windows.Forms.Label()
+        Me.chkAutoAssignIPAddress = New System.Windows.Forms.CheckBox()
+        Me.btnPrintSingleBarcode = New System.Windows.Forms.Button()
+        Me.btnGetNextBarcode = New System.Windows.Forms.Button()
+        Me.btnPONumberSearch = New System.Windows.Forms.Button()
+        Me.lblPONumber = New System.Windows.Forms.Label()
+        Me.lblNoteOptional = New System.Windows.Forms.Label()
+        Me.lblRevisionOptional = New System.Windows.Forms.Label()
+        Me.pb2Dbarcode = New System.Windows.Forms.PictureBox()
+        Me.btnClearItem = New System.Windows.Forms.Button()
+        Me.lblPartDescEngOp = New System.Windows.Forms.Label()
+        Me.btnAddItemToList = New System.Windows.Forms.Button()
+        Me.lblPartNo = New System.Windows.Forms.Label()
+        Me.lblWarehouse = New System.Windows.Forms.Label()
+        Me.btnPartNoSearch = New System.Windows.Forms.Button()
+        Me.cboWarehouse = New System.Windows.Forms.ComboBox()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.lblRev = New System.Windows.Forms.Label()
+        Me.lblOwner = New System.Windows.Forms.Label()
+        Me.cboOwner = New System.Windows.Forms.ComboBox()
+        Me.lblQty = New System.Windows.Forms.Label()
+        Me.lblRef5 = New System.Windows.Forms.Label()
+        Me.lblRef4 = New System.Windows.Forms.Label()
+        Me.lblBarcode = New System.Windows.Forms.Label()
+        Me.txtRef5 = New System.Windows.Forms.TextBox()
+        Me.cboRef4 = New System.Windows.Forms.ComboBox()
+        Me.PartImagePanel = New System.Windows.Forms.Panel()
+        Me.TabControl1 = New System.Windows.Forms.TabControl()
+        Me.InfoTab = New System.Windows.Forms.TabPage()
+        Me.gbItemsForImport = New System.Windows.Forms.GroupBox()
+        Me.Panel6 = New System.Windows.Forms.Panel()
+        Me.OrderSerialNumbers = New System.Windows.Forms.GroupBox()
+        Me.DgvInventoryInStock = New System.Windows.Forms.DataGridView()
+        Me.SerialNo = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Qty = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
+        Me.dgvItemsForImport = New System.Windows.Forms.DataGridView()
+        Me.PartnoDataGridViewTextBoxColumn = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.partdesc = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.PONumber = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.dgcAddItemsSerialNo = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.dgcAddItemsBarcode = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.BatchnoDataGridViewTextBoxColumn = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.dgcAddItemsDept = New System.Windows.Forms.DataGridViewComboBoxColumn()
+        Me.dgcAddItemsBld = New System.Windows.Forms.DataGridViewComboBoxColumn()
+        Me.RowDataGridViewTextBoxColumn = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.dgcAddItemsQty = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.ReceiptDataGridViewTextBoxColumn = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.dgcAddItemRef4 = New System.Windows.Forms.DataGridViewComboBoxColumn()
+        Me.dgcAddItemsRef5 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.RemoveNonCoded = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.ShouldLinkChildParts = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.mnuItemsForImport = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.ClearSelectedRowsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ClearAllToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsmPrintSelectedItemsForImport = New System.Windows.Forms.ToolStripMenuItem()
+        Me.bsAddInventory = New System.Windows.Forms.BindingSource(Me.components)
+        Me.DataSetAddInventory = New Add_Inventory.DataSetAddInventory()
+        Me.gbCurrentInventory = New System.Windows.Forms.GroupBox()
+        Me.lblCurrentInventoryWarning = New System.Windows.Forms.Label()
+        Me.dgvCurrentInventory = New System.Windows.Forms.DataGridView()
+        Me.ssCurrentInventory = New System.Windows.Forms.StatusStrip()
+        Me.tsslCurrentInventoryTotalQty = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ssItemsForImport = New System.Windows.Forms.StatusStrip()
+        Me.tsslItemsForImportSelectedRowQty = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.tsslItemsForImportTotalQty = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.IFSMsgTab = New System.Windows.Forms.TabPage()
+        Me.lblIncomingMsgAlert = New System.Windows.Forms.Label()
+        Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.BtnRefreshIfsMessages = New System.Windows.Forms.Button()
+        Me.dgvIFSMessages = New System.Windows.Forms.DataGridView()
+        Me.ImagesTab = New System.Windows.Forms.TabPage()
+        Me.LblNonPartsImages = New System.Windows.Forms.Label()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.btnClearItemsForImportList = New System.Windows.Forms.Button()
+        Me.btnCommit = New System.Windows.Forms.Button()
+        Me.Timer_RefreshClairNewSerialNos = New System.Windows.Forms.Timer(Me.components)
+        Me.PrintDocument1 = New System.Drawing.Printing.PrintDocument()
+        Me.PrintDialog1 = New System.Windows.Forms.PrintDialog()
+        Me.PrintPreviewDialog1 = New System.Windows.Forms.PrintPreviewDialog()
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.Timer_PartImages = New System.Windows.Forms.Timer(Me.components)
+        Me.UltraGridMenuStrip = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.CopyPONumberToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CopyPartNumberToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
+        Me.BtnAddSubparts = New System.Windows.Forms.ToolStripMenuItem()
+        Me.bsClairNewSerialNos = New System.Windows.Forms.BindingSource(Me.components)
+        Me.txtPONumber = New Add_Inventory.HighlightTextBox()
+        Me.txtSerialNo = New Add_Inventory.HighlightTextBox()
+        Me.txtRevision = New Add_Inventory.HighlightTextBox()
+        Me.txtPartNo = New Add_Inventory.HighlightTextBox()
+        Me.txtPartDescEngOp = New Add_Inventory.HighlightTextBox()
+        Me.txtQty = New Add_Inventory.HighlightTextBox()
+        Me.txtBarcode = New Add_Inventory.HighlightTextBox()
+        Me.PartImageViewerControl1 = New Add_Inventory.PartImageViewerControl()
+        Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
+        Me.MenuStrip.SuspendLayout()
+        Me.tsMain.SuspendLayout()
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer1.Panel1.SuspendLayout()
+        Me.SplitContainer1.Panel2.SuspendLayout()
+        Me.SplitContainer1.SuspendLayout()
+        Me.pnlDataEntry.SuspendLayout()
+        Me.Panel8.SuspendLayout()
+        CType(Me.ultraGridERPPurchaseOrders, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Panel7.SuspendLayout()
+        Me.Panel2.SuspendLayout()
+        Me.gbNewInventoryItemInfo.SuspendLayout()
+        CType(Me.pb2Dbarcode, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.PartImagePanel.SuspendLayout()
+        Me.TabControl1.SuspendLayout()
+        Me.InfoTab.SuspendLayout()
+        Me.gbItemsForImport.SuspendLayout()
+        Me.Panel6.SuspendLayout()
+        Me.OrderSerialNumbers.SuspendLayout()
+        CType(Me.DgvInventoryInStock, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dgvItemsForImport, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.mnuItemsForImport.SuspendLayout()
+        CType(Me.bsAddInventory, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.DataSetAddInventory, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.gbCurrentInventory.SuspendLayout()
+        CType(Me.dgvCurrentInventory, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.ssCurrentInventory.SuspendLayout()
+        Me.ssItemsForImport.SuspendLayout()
+        Me.IFSMsgTab.SuspendLayout()
+        Me.Panel3.SuspendLayout()
+        CType(Me.dgvIFSMessages, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.ImagesTab.SuspendLayout()
+        Me.Panel1.SuspendLayout()
+        Me.UltraGridMenuStrip.SuspendLayout()
+        CType(Me.bsClairNewSerialNos, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SuspendLayout()
+        '
+        'MenuStrip
+        '
+        Me.MenuStrip.GripMargin = New System.Windows.Forms.Padding(2, 2, 0, 2)
+        Me.MenuStrip.ImageScalingSize = New System.Drawing.Size(24, 24)
+        Me.MenuStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.ViewToolStripMenuItem, Me.MasterDataToolStripMenuItem, Me.LAMEToolStripMenuItem})
+        Me.MenuStrip.Location = New System.Drawing.Point(0, 0)
+        Me.MenuStrip.Name = "MenuStrip"
+        Me.MenuStrip.Size = New System.Drawing.Size(2260, 36)
+        Me.MenuStrip.TabIndex = 9
+        Me.MenuStrip.Text = "MenuStrip1"
+        '
+        'FileToolStripMenuItem
+        '
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SaveToolStripMenuItem, Me.ToolStripSeparator4, Me.PrintToolStripMenuItem, Me.PrintPreviewToolStripMenuItem, Me.tsmPrintBarcodes, Me.PrintBArcodesSelectedItemsToolStripMenuItem, Me.ToolStripSeparator1, Me.ExitToolStripMenuItem})
+        Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
+        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(54, 30)
+        Me.FileToolStripMenuItem.Text = "&File"
+        '
+        'SaveToolStripMenuItem
+        '
+        Me.SaveToolStripMenuItem.Enabled = False
+        Me.SaveToolStripMenuItem.Image = Global.Add_Inventory.My.Resources.Resources.save_16x16
+        Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
+        Me.SaveToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.S), System.Windows.Forms.Keys)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(471, 34)
+        Me.SaveToolStripMenuItem.Text = "&Save/Commit"
+        '
+        'ToolStripSeparator4
+        '
+        Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(468, 6)
+        '
+        'PrintToolStripMenuItem
+        '
+        Me.PrintToolStripMenuItem.Image = Global.Add_Inventory.My.Resources.Resources.Print
+        Me.PrintToolStripMenuItem.Name = "PrintToolStripMenuItem"
+        Me.PrintToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.P), System.Windows.Forms.Keys)
+        Me.PrintToolStripMenuItem.Size = New System.Drawing.Size(471, 34)
+        Me.PrintToolStripMenuItem.Text = "Print Barcode (P-Touch)"
+        '
+        'PrintPreviewToolStripMenuItem
+        '
+        Me.PrintPreviewToolStripMenuItem.Name = "PrintPreviewToolStripMenuItem"
+        Me.PrintPreviewToolStripMenuItem.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Shift) _
+            Or System.Windows.Forms.Keys.P), System.Windows.Forms.Keys)
+        Me.PrintPreviewToolStripMenuItem.Size = New System.Drawing.Size(471, 34)
+        Me.PrintPreviewToolStripMenuItem.Text = "Print Barcode Preview (P-Touch)"
+        '
+        'tsmPrintBarcodes
+        '
+        Me.tsmPrintBarcodes.Enabled = False
+        Me.tsmPrintBarcodes.Image = Global.Add_Inventory.My.Resources.Resources.Print
+        Me.tsmPrintBarcodes.Name = "tsmPrintBarcodes"
+        Me.tsmPrintBarcodes.Size = New System.Drawing.Size(471, 34)
+        Me.tsmPrintBarcodes.Text = "Print Barcodes (Zebra) - Items for Import"
+        Me.tsmPrintBarcodes.Visible = False
+        '
+        'PrintBArcodesSelectedItemsToolStripMenuItem
+        '
+        Me.PrintBArcodesSelectedItemsToolStripMenuItem.Enabled = False
+        Me.PrintBArcodesSelectedItemsToolStripMenuItem.Image = Global.Add_Inventory.My.Resources.Resources.Print
+        Me.PrintBArcodesSelectedItemsToolStripMenuItem.Name = "PrintBArcodesSelectedItemsToolStripMenuItem"
+        Me.PrintBArcodesSelectedItemsToolStripMenuItem.Size = New System.Drawing.Size(471, 34)
+        Me.PrintBArcodesSelectedItemsToolStripMenuItem.Text = "Print Barcodes (Zebra) - Selected Items"
+        Me.PrintBArcodesSelectedItemsToolStripMenuItem.Visible = False
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(468, 6)
+        '
+        'ExitToolStripMenuItem
+        '
+        Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(471, 34)
+        Me.ExitToolStripMenuItem.Text = "E&xit"
+        '
+        'ViewToolStripMenuItem
+        '
+        Me.ViewToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AvailabilityCalendarToolStripMenuItem, Me.SchedulingBoardToolStripMenuItem, Me.UtilizationToolStripMenuItem, Me.ToolStripSeparator2, Me.PartMaintenanceToolStripMenuItem, Me.ToolStripSeparator3, Me.CycleCountUtilityToolStripMenuItem, Me.PartAttachmentMaintenanceToolStripMenuItem, Me.TransferToolsToolStripMenuItem})
+        Me.ViewToolStripMenuItem.Name = "ViewToolStripMenuItem"
+        Me.ViewToolStripMenuItem.Size = New System.Drawing.Size(65, 30)
+        Me.ViewToolStripMenuItem.Text = "View"
+        '
+        'AvailabilityCalendarToolStripMenuItem
+        '
+        Me.AvailabilityCalendarToolStripMenuItem.Image = Global.Add_Inventory.My.Resources.Resources.availability
+        Me.AvailabilityCalendarToolStripMenuItem.Name = "AvailabilityCalendarToolStripMenuItem"
+        Me.AvailabilityCalendarToolStripMenuItem.Size = New System.Drawing.Size(346, 34)
+        Me.AvailabilityCalendarToolStripMenuItem.Text = "Availability Calendar"
+        '
+        'SchedulingBoardToolStripMenuItem
+        '
+        Me.SchedulingBoardToolStripMenuItem.Image = Global.Add_Inventory.My.Resources.Resources.MOVE
+        Me.SchedulingBoardToolStripMenuItem.Name = "SchedulingBoardToolStripMenuItem"
+        Me.SchedulingBoardToolStripMenuItem.Size = New System.Drawing.Size(346, 34)
+        Me.SchedulingBoardToolStripMenuItem.Text = "Scheduling Board"
+        '
+        'UtilizationToolStripMenuItem
+        '
+        Me.UtilizationToolStripMenuItem.Image = Global.Add_Inventory.My.Resources.Resources.utilization
+        Me.UtilizationToolStripMenuItem.Name = "UtilizationToolStripMenuItem"
+        Me.UtilizationToolStripMenuItem.Size = New System.Drawing.Size(346, 34)
+        Me.UtilizationToolStripMenuItem.Text = "Utilization"
+        '
+        'ToolStripSeparator2
+        '
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(343, 6)
+        '
+        'PartMaintenanceToolStripMenuItem
+        '
+        Me.PartMaintenanceToolStripMenuItem.Image = Global.Add_Inventory.My.Resources.Resources.Cube
+        Me.PartMaintenanceToolStripMenuItem.Name = "PartMaintenanceToolStripMenuItem"
+        Me.PartMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(346, 34)
+        Me.PartMaintenanceToolStripMenuItem.Text = "Part Maintenance"
+        '
+        'ToolStripSeparator3
+        '
+        Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(343, 6)
+        '
+        'CycleCountUtilityToolStripMenuItem
+        '
+        Me.CycleCountUtilityToolStripMenuItem.Image = Global.Add_Inventory.My.Resources.Resources.CheckmarkBox
+        Me.CycleCountUtilityToolStripMenuItem.Name = "CycleCountUtilityToolStripMenuItem"
+        Me.CycleCountUtilityToolStripMenuItem.Size = New System.Drawing.Size(346, 34)
+        Me.CycleCountUtilityToolStripMenuItem.Text = "Cycle Count Utility"
+        '
+        'PartAttachmentMaintenanceToolStripMenuItem
+        '
+        Me.PartAttachmentMaintenanceToolStripMenuItem.Image = Global.Add_Inventory.My.Resources.Resources.addin
+        Me.PartAttachmentMaintenanceToolStripMenuItem.Name = "PartAttachmentMaintenanceToolStripMenuItem"
+        Me.PartAttachmentMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(346, 34)
+        Me.PartAttachmentMaintenanceToolStripMenuItem.Text = "Part Attachment Maintenance"
+        '
+        'TransferToolsToolStripMenuItem
+        '
+        Me.TransferToolsToolStripMenuItem.Image = Global.Add_Inventory.My.Resources.Resources.MSPAINT2
+        Me.TransferToolsToolStripMenuItem.Name = "TransferToolsToolStripMenuItem"
+        Me.TransferToolsToolStripMenuItem.Size = New System.Drawing.Size(346, 34)
+        Me.TransferToolsToolStripMenuItem.Text = "Transfer Tools"
+        '
+        'MasterDataToolStripMenuItem
+        '
+        Me.MasterDataToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MainSubpartMaintenanceToolStripMenuItem})
+        Me.MasterDataToolStripMenuItem.Name = "MasterDataToolStripMenuItem"
+        Me.MasterDataToolStripMenuItem.Size = New System.Drawing.Size(124, 29)
+        Me.MasterDataToolStripMenuItem.Text = "Master Data"
+        Me.MasterDataToolStripMenuItem.Visible = False
+        '
+        'MainSubpartMaintenanceToolStripMenuItem
+        '
+        Me.MainSubpartMaintenanceToolStripMenuItem.Name = "MainSubpartMaintenanceToolStripMenuItem"
+        Me.MainSubpartMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(328, 34)
+        Me.MainSubpartMaintenanceToolStripMenuItem.Text = "Main/Subpart Maintenance"
+        '
+        'LAMEToolStripMenuItem
+        '
+        Me.LAMEToolStripMenuItem.Name = "LAMEToolStripMenuItem"
+        Me.LAMEToolStripMenuItem.Size = New System.Drawing.Size(79, 30)
+        Me.LAMEToolStripMenuItem.Text = "LAME!"
+        '
+        'tsMain
+        '
+        Me.tsMain.ImageScalingSize = New System.Drawing.Size(20, 20)
+        Me.tsMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tsbExcel, Me.tsbAvailability, Me.tsbSchedulingBoard, Me.tsbUtilization, Me.tsbPartMaintenance, Me.tsbBarcodeNinja, Me.QueryToolsToolStripDropDownButton})
+        Me.tsMain.Location = New System.Drawing.Point(0, 36)
+        Me.tsMain.Name = "tsMain"
+        Me.tsMain.Size = New System.Drawing.Size(2260, 38)
+        Me.tsMain.TabIndex = 10
+        Me.tsMain.Text = "Main Toolstrip"
+        '
+        'tsbExcel
+        '
+        Me.tsbExcel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me.tsbExcel.Image = Global.Add_Inventory.My.Resources.Resources.excel
+        Me.tsbExcel.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.tsbExcel.Name = "tsbExcel"
+        Me.tsbExcel.Size = New System.Drawing.Size(34, 29)
+        Me.tsbExcel.Text = "Export to Excel"
+        Me.tsbExcel.Visible = False
+        '
+        'tsbAvailability
+        '
+        Me.tsbAvailability.Image = Global.Add_Inventory.My.Resources.Resources.availability
+        Me.tsbAvailability.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.tsbAvailability.Name = "tsbAvailability"
+        Me.tsbAvailability.Size = New System.Drawing.Size(121, 33)
+        Me.tsbAvailability.Text = "Availability"
+        '
+        'tsbSchedulingBoard
+        '
+        Me.tsbSchedulingBoard.Image = Global.Add_Inventory.My.Resources.Resources.MOVE
+        Me.tsbSchedulingBoard.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.tsbSchedulingBoard.Name = "tsbSchedulingBoard"
+        Me.tsbSchedulingBoard.Size = New System.Drawing.Size(175, 33)
+        Me.tsbSchedulingBoard.Text = "Scheduling Board"
+        '
+        'tsbUtilization
+        '
+        Me.tsbUtilization.Image = Global.Add_Inventory.My.Resources.Resources.utilization
+        Me.tsbUtilization.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.tsbUtilization.Name = "tsbUtilization"
+        Me.tsbUtilization.Size = New System.Drawing.Size(114, 33)
+        Me.tsbUtilization.Text = "Utilization"
+        '
+        'tsbPartMaintenance
+        '
+        Me.tsbPartMaintenance.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me.tsbPartMaintenance.Image = Global.Add_Inventory.My.Resources.Resources.Cube
+        Me.tsbPartMaintenance.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.tsbPartMaintenance.Name = "tsbPartMaintenance"
+        Me.tsbPartMaintenance.Size = New System.Drawing.Size(171, 33)
+        Me.tsbPartMaintenance.Text = "Part Maintenance"
+        '
+        'tsbBarcodeNinja
+        '
+        Me.tsbBarcodeNinja.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me.tsbBarcodeNinja.Image = CType(resources.GetObject("tsbBarcodeNinja.Image"), System.Drawing.Image)
+        Me.tsbBarcodeNinja.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.tsbBarcodeNinja.Name = "tsbBarcodeNinja"
+        Me.tsbBarcodeNinja.Size = New System.Drawing.Size(145, 33)
+        Me.tsbBarcodeNinja.Text = "Barcode Ninja"
+        '
+        'QueryToolsToolStripDropDownButton
+        '
+        Me.QueryToolsToolStripDropDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.EquipmentLocationsToolStripMenuItem1, Me.TransactionsToolStripMenuItem1, Me.PhaseHistoryToolStripMenuItem1, Me.ToolStripSeparator14, Me.LateReturnsToolStripMenuItem1, Me.BatchLocationSummaryToolStripMenuItem1})
+        Me.QueryToolsToolStripDropDownButton.Image = Global.Add_Inventory.My.Resources.Resources.OrderDetails48
+        Me.QueryToolsToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me.QueryToolsToolStripDropDownButton.Name = "QueryToolsToolStripDropDownButton"
+        Me.QueryToolsToolStripDropDownButton.Size = New System.Drawing.Size(144, 33)
+        Me.QueryToolsToolStripDropDownButton.Tag = "Query Tools"
+        Me.QueryToolsToolStripDropDownButton.Text = "Query Tools"
+        '
+        'EquipmentLocationsToolStripMenuItem1
+        '
+        Me.EquipmentLocationsToolStripMenuItem1.Name = "EquipmentLocationsToolStripMenuItem1"
+        Me.EquipmentLocationsToolStripMenuItem1.Size = New System.Drawing.Size(310, 34)
+        Me.EquipmentLocationsToolStripMenuItem1.Tag = "Query Tools"
+        Me.EquipmentLocationsToolStripMenuItem1.Text = "Equipment Locations"
+        '
+        'TransactionsToolStripMenuItem1
+        '
+        Me.TransactionsToolStripMenuItem1.Name = "TransactionsToolStripMenuItem1"
+        Me.TransactionsToolStripMenuItem1.Size = New System.Drawing.Size(310, 34)
+        Me.TransactionsToolStripMenuItem1.Tag = "Query Tools"
+        Me.TransactionsToolStripMenuItem1.Text = "Transactions"
+        '
+        'PhaseHistoryToolStripMenuItem1
+        '
+        Me.PhaseHistoryToolStripMenuItem1.Name = "PhaseHistoryToolStripMenuItem1"
+        Me.PhaseHistoryToolStripMenuItem1.Size = New System.Drawing.Size(310, 34)
+        Me.PhaseHistoryToolStripMenuItem1.Tag = "Query Tools"
+        Me.PhaseHistoryToolStripMenuItem1.Text = "Phase History"
+        '
+        'ToolStripSeparator14
+        '
+        Me.ToolStripSeparator14.Name = "ToolStripSeparator14"
+        Me.ToolStripSeparator14.Size = New System.Drawing.Size(307, 6)
+        '
+        'LateReturnsToolStripMenuItem1
+        '
+        Me.LateReturnsToolStripMenuItem1.Name = "LateReturnsToolStripMenuItem1"
+        Me.LateReturnsToolStripMenuItem1.Size = New System.Drawing.Size(310, 34)
+        Me.LateReturnsToolStripMenuItem1.Tag = "Query Tools"
+        Me.LateReturnsToolStripMenuItem1.Text = "Late Returns"
+        '
+        'BatchLocationSummaryToolStripMenuItem1
+        '
+        Me.BatchLocationSummaryToolStripMenuItem1.Name = "BatchLocationSummaryToolStripMenuItem1"
+        Me.BatchLocationSummaryToolStripMenuItem1.Size = New System.Drawing.Size(310, 34)
+        Me.BatchLocationSummaryToolStripMenuItem1.Tag = "Query Tools"
+        Me.BatchLocationSummaryToolStripMenuItem1.Text = "Batch Location Summary"
+        '
+        'SplitContainer1
+        '
+        Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
+        Me.SplitContainer1.Location = New System.Drawing.Point(0, 74)
+        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.SplitContainer1.Name = "SplitContainer1"
+        Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'SplitContainer1.Panel1
+        '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.pnlDataEntry)
+        Me.SplitContainer1.Panel1MinSize = 330
+        '
+        'SplitContainer1.Panel2
+        '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.TabControl1)
+        Me.SplitContainer1.Panel2.Controls.Add(Me.Panel1)
+        Me.SplitContainer1.Size = New System.Drawing.Size(2260, 1128)
+        Me.SplitContainer1.SplitterDistance = 419
+        Me.SplitContainer1.SplitterWidth = 6
+        Me.SplitContainer1.TabIndex = 11
+        '
+        'pnlDataEntry
+        '
+        Me.pnlDataEntry.Controls.Add(Me.Panel8)
+        Me.pnlDataEntry.Controls.Add(Me.Panel7)
+        Me.pnlDataEntry.Controls.Add(Me.Panel2)
+        Me.pnlDataEntry.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.pnlDataEntry.Location = New System.Drawing.Point(0, 0)
+        Me.pnlDataEntry.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.pnlDataEntry.Name = "pnlDataEntry"
+        Me.pnlDataEntry.Size = New System.Drawing.Size(2260, 419)
+        Me.pnlDataEntry.TabIndex = 0
+        '
+        'Panel8
+        '
+        Me.Panel8.Controls.Add(Me.lblPoExistance)
+        Me.Panel8.Controls.Add(Me.ultraGridERPPurchaseOrders)
+        Me.Panel8.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel8.Location = New System.Drawing.Point(0, 122)
+        Me.Panel8.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.Panel8.Name = "Panel8"
+        Me.Panel8.Size = New System.Drawing.Size(980, 297)
+        Me.Panel8.TabIndex = 147
+        '
+        'lblPoExistance
+        '
+        Me.lblPoExistance.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblPoExistance.Location = New System.Drawing.Point(248, 143)
+        Me.lblPoExistance.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblPoExistance.Name = "lblPoExistance"
+        Me.lblPoExistance.Size = New System.Drawing.Size(530, 16)
+        Me.lblPoExistance.TabIndex = 3
+        Me.lblPoExistance.Text = "Existing POs from IFS will be shown here"
+        Me.lblPoExistance.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'ultraGridERPPurchaseOrders
+        '
+        Appearance1.BackColor = System.Drawing.SystemColors.Window
+        Appearance1.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Appearance = Appearance1
+        UltraGridColumn1.Header.VisiblePosition = 0
+        UltraGridColumn2.Header.VisiblePosition = 1
+        UltraGridColumn3.Header.VisiblePosition = 2
+        UltraGridColumn4.Header.VisiblePosition = 3
+        UltraGridColumn5.Header.VisiblePosition = 4
+        UltraGridColumn6.Header.VisiblePosition = 5
+        UltraGridColumn7.Header.VisiblePosition = 6
+        UltraGridColumn8.Header.VisiblePosition = 7
+        UltraGridColumn9.Header.VisiblePosition = 8
+        UltraGridColumn10.Header.VisiblePosition = 9
+        UltraGridColumn11.Header.VisiblePosition = 10
+        UltraGridColumn12.Header.VisiblePosition = 11
+        UltraGridColumn13.Header.VisiblePosition = 12
+        UltraGridColumn14.Header.VisiblePosition = 13
+        UltraGridColumn15.Header.VisiblePosition = 14
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15})
+        UltraGridColumn16.Header.VisiblePosition = 0
+        UltraGridColumn17.Header.VisiblePosition = 1
+        UltraGridColumn18.Header.VisiblePosition = 2
+        UltraGridColumn19.Header.VisiblePosition = 3
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19})
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
+        Appearance2.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance2.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance2.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance2.BorderColor = System.Drawing.SystemColors.Window
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.GroupByBox.Appearance = Appearance2
+        Appearance3.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance3
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.GroupByBox.Hidden = True
+        Appearance4.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance4.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance4.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance4.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.GroupByBox.PromptAppearance = Appearance4
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.MaxColScrollRegions = 1
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.MaxRowScrollRegions = 1
+        Appearance5.BackColor = System.Drawing.SystemColors.Window
+        Appearance5.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.ActiveCellAppearance = Appearance5
+        Appearance6.BackColor = System.Drawing.SystemColors.Highlight
+        Appearance6.ForeColor = System.Drawing.SystemColors.HighlightText
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.ActiveRowAppearance = Appearance6
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
+        Appearance7.BackColor = System.Drawing.SystemColors.Window
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.CardAreaAppearance = Appearance7
+        Appearance8.BorderColor = System.Drawing.Color.Silver
+        Appearance8.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.CellAppearance = Appearance8
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.CellPadding = 0
+        Appearance9.BackColor = System.Drawing.SystemColors.Control
+        Appearance9.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance9.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance9.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance9.BorderColor = System.Drawing.SystemColors.Window
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.GroupByRowAppearance = Appearance9
+        Appearance10.TextHAlignAsString = "Left"
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.HeaderAppearance = Appearance10
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
+        Appearance11.BackColor = System.Drawing.SystemColors.Window
+        Appearance11.BorderColor = System.Drawing.Color.Silver
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.RowAppearance = Appearance11
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
+        Appearance12.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.Override.TemplateAddRowAppearance = Appearance12
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
+        Me.ultraGridERPPurchaseOrders.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.ultraGridERPPurchaseOrders.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.ultraGridERPPurchaseOrders.Location = New System.Drawing.Point(0, 0)
+        Me.ultraGridERPPurchaseOrders.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.ultraGridERPPurchaseOrders.Name = "ultraGridERPPurchaseOrders"
+        Me.ultraGridERPPurchaseOrders.Size = New System.Drawing.Size(980, 297)
+        Me.ultraGridERPPurchaseOrders.TabIndex = 0
+        Me.ultraGridERPPurchaseOrders.Text = "UltraGrid1"
+        '
+        'Panel7
+        '
+        Me.Panel7.Controls.Add(Me.chkUnexistingParts)
+        Me.Panel7.Controls.Add(Me.Label4)
+        Me.Panel7.Controls.Add(Me.cboErpOwner)
+        Me.Panel7.Controls.Add(Me.chkRecievedOnly)
+        Me.Panel7.Controls.Add(Me.btnReloadIFS)
+        Me.Panel7.Controls.Add(Me.Label2)
+        Me.Panel7.Controls.Add(Me.cboErpWarehouse)
+        Me.Panel7.Controls.Add(Me.Label3)
+        Me.Panel7.Controls.Add(Me.txtERPPoNumber)
+        Me.Panel7.Dock = System.Windows.Forms.DockStyle.Top
+        Me.Panel7.Location = New System.Drawing.Point(0, 0)
+        Me.Panel7.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.Panel7.Name = "Panel7"
+        Me.Panel7.Size = New System.Drawing.Size(980, 122)
+        Me.Panel7.TabIndex = 146
+        '
+        'chkUnexistingParts
+        '
+        Me.chkUnexistingParts.AutoSize = True
+        Me.chkUnexistingParts.Location = New System.Drawing.Point(15, 86)
+        Me.chkUnexistingParts.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.chkUnexistingParts.Name = "chkUnexistingParts"
+        Me.chkUnexistingParts.Size = New System.Drawing.Size(309, 24)
+        Me.chkUnexistingParts.TabIndex = 159
+        Me.chkUnexistingParts.Text = "Show PO Lines for parts not in Finesse"
+        Me.chkUnexistingParts.UseVisualStyleBackColor = True
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(566, 58)
+        Me.Label4.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(59, 20)
+        Me.Label4.TabIndex = 158
+        Me.Label4.Text = "Owner:"
+        Me.Label4.TextAlign = System.Drawing.ContentAlignment.TopRight
+        '
+        'cboErpOwner
+        '
+        Me.cboErpOwner.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboErpOwner.FormattingEnabled = True
+        Me.cboErpOwner.Location = New System.Drawing.Point(628, 54)
+        Me.cboErpOwner.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.cboErpOwner.Name = "cboErpOwner"
+        Me.cboErpOwner.Size = New System.Drawing.Size(280, 28)
+        Me.cboErpOwner.TabIndex = 157
+        '
+        'chkRecievedOnly
+        '
+        Me.chkRecievedOnly.AutoSize = True
+        Me.chkRecievedOnly.Checked = True
+        Me.chkRecievedOnly.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkRecievedOnly.Enabled = False
+        Me.chkRecievedOnly.Location = New System.Drawing.Point(15, 57)
+        Me.chkRecievedOnly.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.chkRecievedOnly.Name = "chkRecievedOnly"
+        Me.chkRecievedOnly.Size = New System.Drawing.Size(201, 24)
+        Me.chkRecievedOnly.TabIndex = 156
+        Me.chkRecievedOnly.Text = "Show Received IFS PO"
+        Me.chkRecievedOnly.UseVisualStyleBackColor = True
+        '
+        'btnReloadIFS
+        '
+        Me.btnReloadIFS.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnReloadIFS.BackgroundImage = Global.Add_Inventory.My.Resources.Resources.refresh
+        Me.btnReloadIFS.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.btnReloadIFS.ImageAlign = System.Drawing.ContentAlignment.TopRight
+        Me.btnReloadIFS.Location = New System.Drawing.Point(920, 6)
+        Me.btnReloadIFS.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.btnReloadIFS.Name = "btnReloadIFS"
+        Me.btnReloadIFS.Size = New System.Drawing.Size(52, 43)
+        Me.btnReloadIFS.TabIndex = 155
+        Me.ToolTip1.SetToolTip(Me.btnReloadIFS, "" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Reload IFS Data")
+        Me.btnReloadIFS.UseVisualStyleBackColor = True
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(250, 62)
+        Me.Label2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(40, 20)
+        Me.Label2.TabIndex = 154
+        Me.Label2.Text = "WH:"
+        '
+        'cboErpWarehouse
+        '
+        Me.cboErpWarehouse.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboErpWarehouse.FormattingEnabled = True
+        Me.cboErpWarehouse.Location = New System.Drawing.Point(296, 54)
+        Me.cboErpWarehouse.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.cboErpWarehouse.Name = "cboErpWarehouse"
+        Me.cboErpWarehouse.Size = New System.Drawing.Size(258, 28)
+        Me.cboErpWarehouse.TabIndex = 153
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(8, 18)
+        Me.Label3.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(187, 20)
+        Me.Label3.TabIndex = 3
+        Me.Label3.Text = "Search Purchase Orders:"
+        '
+        'txtERPPoNumber
+        '
+        Me.txtERPPoNumber.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtERPPoNumber.Location = New System.Drawing.Point(196, 14)
+        Me.txtERPPoNumber.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.txtERPPoNumber.Name = "txtERPPoNumber"
+        Me.txtERPPoNumber.Size = New System.Drawing.Size(711, 26)
+        Me.txtERPPoNumber.TabIndex = 1
+        '
+        'Panel2
+        '
+        Me.Panel2.Controls.Add(Me.gbNewInventoryItemInfo)
+        Me.Panel2.Controls.Add(Me.PartImagePanel)
+        Me.Panel2.Dock = System.Windows.Forms.DockStyle.Right
+        Me.Panel2.Location = New System.Drawing.Point(980, 0)
+        Me.Panel2.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(1280, 419)
+        Me.Panel2.TabIndex = 144
+        '
+        'gbNewInventoryItemInfo
+        '
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.LblPermissionMsg)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.chkDeferEnteringMacAddress)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.txtMACAddress)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblMACAddress)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.chkAutoAssignIPAddress)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.btnPrintSingleBarcode)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.btnGetNextBarcode)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.btnPONumberSearch)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblPONumber)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.txtPONumber)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblNoteOptional)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblRevisionOptional)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.pb2Dbarcode)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.btnClearItem)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblPartDescEngOp)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.btnAddItemToList)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblPartNo)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblWarehouse)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.btnPartNoSearch)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.cboWarehouse)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.txtSerialNo)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.txtRevision)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.txtPartNo)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.Label5)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblRev)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.txtPartDescEngOp)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblOwner)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.cboOwner)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblQty)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblRef5)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.txtQty)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblRef4)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.lblBarcode)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.txtRef5)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.txtBarcode)
+        Me.gbNewInventoryItemInfo.Controls.Add(Me.cboRef4)
+        Me.gbNewInventoryItemInfo.Dock = System.Windows.Forms.DockStyle.Left
+        Me.gbNewInventoryItemInfo.Location = New System.Drawing.Point(0, 0)
+        Me.gbNewInventoryItemInfo.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.gbNewInventoryItemInfo.Name = "gbNewInventoryItemInfo"
+        Me.gbNewInventoryItemInfo.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.gbNewInventoryItemInfo.Size = New System.Drawing.Size(666, 419)
+        Me.gbNewInventoryItemInfo.TabIndex = 141
+        Me.gbNewInventoryItemInfo.TabStop = False
+        Me.gbNewInventoryItemInfo.Text = "Disassemble Parts"
+        '
+        'LblPermissionMsg
+        '
+        Me.LblPermissionMsg.AutoSize = True
+        Me.LblPermissionMsg.ForeColor = System.Drawing.Color.Red
+        Me.LblPermissionMsg.Location = New System.Drawing.Point(478, 608)
+        Me.LblPermissionMsg.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.LblPermissionMsg.Name = "LblPermissionMsg"
+        Me.LblPermissionMsg.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.LblPermissionMsg.Size = New System.Drawing.Size(0, 20)
+        Me.LblPermissionMsg.TabIndex = 152
+        Me.LblPermissionMsg.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        'chkDeferEnteringMacAddress
+        '
+        Me.chkDeferEnteringMacAddress.AutoSize = True
+        Me.chkDeferEnteringMacAddress.Location = New System.Drawing.Point(430, 355)
+        Me.chkDeferEnteringMacAddress.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.chkDeferEnteringMacAddress.Name = "chkDeferEnteringMacAddress"
+        Me.chkDeferEnteringMacAddress.Size = New System.Drawing.Size(236, 24)
+        Me.chkDeferEnteringMacAddress.TabIndex = 151
+        Me.chkDeferEnteringMacAddress.Text = "Defer Entering Mac Address"
+        Me.chkDeferEnteringMacAddress.UseVisualStyleBackColor = True
+        '
+        'txtMACAddress
+        '
+        Me.txtMACAddress.Location = New System.Drawing.Point(194, 391)
+        Me.txtMACAddress.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.txtMACAddress.Name = "txtMACAddress"
+        Me.txtMACAddress.Size = New System.Drawing.Size(226, 26)
+        Me.txtMACAddress.TabIndex = 5
+        '
+        'lblMACAddress
+        '
+        Me.lblMACAddress.AutoSize = True
+        Me.lblMACAddress.Location = New System.Drawing.Point(72, 397)
+        Me.lblMACAddress.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblMACAddress.Name = "lblMACAddress"
+        Me.lblMACAddress.Size = New System.Drawing.Size(111, 20)
+        Me.lblMACAddress.TabIndex = 150
+        Me.lblMACAddress.Text = "MAC Address:"
+        '
+        'chkAutoAssignIPAddress
+        '
+        Me.chkAutoAssignIPAddress.AutoSize = True
+        Me.chkAutoAssignIPAddress.Location = New System.Drawing.Point(430, 395)
+        Me.chkAutoAssignIPAddress.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.chkAutoAssignIPAddress.Name = "chkAutoAssignIPAddress"
+        Me.chkAutoAssignIPAddress.Size = New System.Drawing.Size(165, 24)
+        Me.chkAutoAssignIPAddress.TabIndex = 12
+        Me.chkAutoAssignIPAddress.Text = "Assign IP Address"
+        Me.chkAutoAssignIPAddress.UseVisualStyleBackColor = True
+        '
+        'btnPrintSingleBarcode
+        '
+        Me.btnPrintSingleBarcode.Location = New System.Drawing.Point(382, 477)
+        Me.btnPrintSingleBarcode.Margin = New System.Windows.Forms.Padding(0)
+        Me.btnPrintSingleBarcode.Name = "btnPrintSingleBarcode"
+        Me.btnPrintSingleBarcode.Size = New System.Drawing.Size(78, 34)
+        Me.btnPrintSingleBarcode.TabIndex = 149
+        Me.btnPrintSingleBarcode.Text = "Print"
+        Me.btnPrintSingleBarcode.UseVisualStyleBackColor = True
+        '
+        'btnGetNextBarcode
+        '
+        Me.btnGetNextBarcode.Location = New System.Drawing.Point(346, 477)
+        Me.btnGetNextBarcode.Margin = New System.Windows.Forms.Padding(0)
+        Me.btnGetNextBarcode.Name = "btnGetNextBarcode"
+        Me.btnGetNextBarcode.Size = New System.Drawing.Size(30, 34)
+        Me.btnGetNextBarcode.TabIndex = 8
+        Me.btnGetNextBarcode.Text = "+"
+        Me.btnGetNextBarcode.UseVisualStyleBackColor = True
+        Me.btnGetNextBarcode.Visible = False
+        '
+        'btnPONumberSearch
+        '
+        Me.btnPONumberSearch.Location = New System.Drawing.Point(345, 348)
+        Me.btnPONumberSearch.Margin = New System.Windows.Forms.Padding(0)
+        Me.btnPONumberSearch.Name = "btnPONumberSearch"
+        Me.btnPONumberSearch.Size = New System.Drawing.Size(30, 34)
+        Me.btnPONumberSearch.TabIndex = 148
+        Me.btnPONumberSearch.Text = "..."
+        Me.btnPONumberSearch.UseVisualStyleBackColor = True
+        Me.btnPONumberSearch.Visible = False
+        '
+        'lblPONumber
+        '
+        Me.lblPONumber.AutoSize = True
+        Me.lblPONumber.Location = New System.Drawing.Point(130, 354)
+        Me.lblPONumber.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblPONumber.Name = "lblPONumber"
+        Me.lblPONumber.Size = New System.Drawing.Size(48, 20)
+        Me.lblPONumber.TabIndex = 147
+        Me.lblPONumber.Text = "PO #:"
+        '
+        'lblNoteOptional
+        '
+        Me.lblNoteOptional.AutoSize = True
+        Me.lblNoteOptional.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblNoteOptional.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.lblNoteOptional.Location = New System.Drawing.Point(105, 318)
+        Me.lblNoteOptional.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblNoteOptional.Name = "lblNoteOptional"
+        Me.lblNoteOptional.Size = New System.Drawing.Size(83, 20)
+        Me.lblNoteOptional.TabIndex = 145
+        Me.lblNoteOptional.Text = "(Optional)"
+        '
+        'lblRevisionOptional
+        '
+        Me.lblRevisionOptional.AutoSize = True
+        Me.lblRevisionOptional.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblRevisionOptional.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.lblRevisionOptional.Location = New System.Drawing.Point(112, 138)
+        Me.lblRevisionOptional.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblRevisionOptional.Name = "lblRevisionOptional"
+        Me.lblRevisionOptional.Size = New System.Drawing.Size(83, 20)
+        Me.lblRevisionOptional.TabIndex = 144
+        Me.lblRevisionOptional.Text = "(Optional)"
+        '
+        'pb2Dbarcode
+        '
+        Me.pb2Dbarcode.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pb2Dbarcode.ErrorImage = Nothing
+        Me.pb2Dbarcode.ImageLocation = ""
+        Me.pb2Dbarcode.Location = New System.Drawing.Point(9, 422)
+        Me.pb2Dbarcode.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.pb2Dbarcode.Name = "pb2Dbarcode"
+        Me.pb2Dbarcode.Size = New System.Drawing.Size(69, 0)
+        Me.pb2Dbarcode.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.pb2Dbarcode.TabIndex = 143
+        Me.pb2Dbarcode.TabStop = False
+        '
+        'btnClearItem
+        '
+        Me.btnClearItem.Location = New System.Drawing.Point(9, 595)
+        Me.btnClearItem.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.btnClearItem.Name = "btnClearItem"
+        Me.btnClearItem.Size = New System.Drawing.Size(87, 35)
+        Me.btnClearItem.TabIndex = 142
+        Me.btnClearItem.Text = "Clear"
+        Me.btnClearItem.UseVisualStyleBackColor = True
+        '
+        'lblPartDescEngOp
+        '
+        Me.lblPartDescEngOp.AutoSize = True
+        Me.lblPartDescEngOp.Location = New System.Drawing.Point(195, 172)
+        Me.lblPartDescEngOp.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblPartDescEngOp.Name = "lblPartDescEngOp"
+        Me.lblPartDescEngOp.Size = New System.Drawing.Size(287, 20)
+        Me.lblPartDescEngOp.TabIndex = 112
+        Me.lblPartDescEngOp.Text = "Part Description (English - Operational):"
+        '
+        'btnAddItemToList
+        '
+        Me.btnAddItemToList.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnAddItemToList.Location = New System.Drawing.Point(488, 600)
+        Me.btnAddItemToList.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.btnAddItemToList.Name = "btnAddItemToList"
+        Me.btnAddItemToList.Size = New System.Drawing.Size(164, 35)
+        Me.btnAddItemToList.TabIndex = 10
+        Me.btnAddItemToList.Text = "Add to Item List"
+        Me.btnAddItemToList.UseVisualStyleBackColor = True
+        '
+        'lblPartNo
+        '
+        Me.lblPartNo.AutoSize = True
+        Me.lblPartNo.Location = New System.Drawing.Point(10, 172)
+        Me.lblPartNo.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblPartNo.Name = "lblPartNo"
+        Me.lblPartNo.Size = New System.Drawing.Size(55, 20)
+        Me.lblPartNo.TabIndex = 113
+        Me.lblPartNo.Text = "Part #:"
+        '
+        'lblWarehouse
+        '
+        Me.lblWarehouse.AutoSize = True
+        Me.lblWarehouse.Location = New System.Drawing.Point(92, 77)
+        Me.lblWarehouse.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblWarehouse.Name = "lblWarehouse"
+        Me.lblWarehouse.Size = New System.Drawing.Size(95, 20)
+        Me.lblWarehouse.TabIndex = 137
+        Me.lblWarehouse.Text = "Warehouse:"
+        Me.lblWarehouse.TextAlign = System.Drawing.ContentAlignment.TopRight
+        '
+        'btnPartNoSearch
+        '
+        Me.btnPartNoSearch.Location = New System.Drawing.Point(165, 194)
+        Me.btnPartNoSearch.Margin = New System.Windows.Forms.Padding(0)
+        Me.btnPartNoSearch.Name = "btnPartNoSearch"
+        Me.btnPartNoSearch.Size = New System.Drawing.Size(30, 34)
+        Me.btnPartNoSearch.TabIndex = 3
+        Me.btnPartNoSearch.Text = "..."
+        Me.btnPartNoSearch.UseVisualStyleBackColor = True
+        '
+        'cboWarehouse
+        '
+        Me.cboWarehouse.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboWarehouse.FormattingEnabled = True
+        Me.cboWarehouse.Location = New System.Drawing.Point(200, 72)
+        Me.cboWarehouse.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.cboWarehouse.Name = "cboWarehouse"
+        Me.cboWarehouse.Size = New System.Drawing.Size(241, 28)
+        Me.cboWarehouse.TabIndex = 1
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(116, 440)
+        Me.Label5.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(66, 20)
+        Me.Label5.TabIndex = 140
+        Me.Label5.Text = "Serial #:"
+        '
+        'lblRev
+        '
+        Me.lblRev.AutoSize = True
+        Me.lblRev.Location = New System.Drawing.Point(112, 118)
+        Me.lblRev.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblRev.Name = "lblRev"
+        Me.lblRev.Size = New System.Drawing.Size(73, 20)
+        Me.lblRev.TabIndex = 135
+        Me.lblRev.Text = "Revision:"
+        '
+        'lblOwner
+        '
+        Me.lblOwner.AutoSize = True
+        Me.lblOwner.Location = New System.Drawing.Point(128, 35)
+        Me.lblOwner.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblOwner.Name = "lblOwner"
+        Me.lblOwner.Size = New System.Drawing.Size(59, 20)
+        Me.lblOwner.TabIndex = 133
+        Me.lblOwner.Text = "Owner:"
+        Me.lblOwner.TextAlign = System.Drawing.ContentAlignment.TopRight
+        '
+        'cboOwner
+        '
+        Me.cboOwner.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboOwner.FormattingEnabled = True
+        Me.cboOwner.Location = New System.Drawing.Point(200, 31)
+        Me.cboOwner.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.cboOwner.Name = "cboOwner"
+        Me.cboOwner.Size = New System.Drawing.Size(280, 28)
+        Me.cboOwner.TabIndex = 0
+        '
+        'lblQty
+        '
+        Me.lblQty.AutoSize = True
+        Me.lblQty.Location = New System.Drawing.Point(110, 523)
+        Me.lblQty.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblQty.Name = "lblQty"
+        Me.lblQty.Size = New System.Drawing.Size(72, 20)
+        Me.lblQty.TabIndex = 118
+        Me.lblQty.Text = "Quantity:"
+        '
+        'lblRef5
+        '
+        Me.lblRef5.AutoSize = True
+        Me.lblRef5.Location = New System.Drawing.Point(134, 298)
+        Me.lblRef5.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblRef5.Name = "lblRef5"
+        Me.lblRef5.Size = New System.Drawing.Size(47, 20)
+        Me.lblRef5.TabIndex = 122
+        Me.lblRef5.Text = "Note:"
+        '
+        'lblRef4
+        '
+        Me.lblRef4.AutoSize = True
+        Me.lblRef4.Location = New System.Drawing.Point(112, 257)
+        Me.lblRef4.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblRef4.Name = "lblRef4"
+        Me.lblRef4.Size = New System.Drawing.Size(69, 20)
+        Me.lblRef4.TabIndex = 121
+        Me.lblRef4.Text = "Reason:"
+        '
+        'lblBarcode
+        '
+        Me.lblBarcode.AutoSize = True
+        Me.lblBarcode.Location = New System.Drawing.Point(110, 483)
+        Me.lblBarcode.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblBarcode.Name = "lblBarcode"
+        Me.lblBarcode.Size = New System.Drawing.Size(73, 20)
+        Me.lblBarcode.TabIndex = 130
+        Me.lblBarcode.Text = "Barcode:"
+        '
+        'txtRef5
+        '
+        Me.txtRef5.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtRef5.Location = New System.Drawing.Point(194, 294)
+        Me.txtRef5.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.txtRef5.MaxLength = 100
+        Me.txtRef5.Name = "txtRef5"
+        Me.txtRef5.Size = New System.Drawing.Size(456, 26)
+        Me.txtRef5.TabIndex = 4
+        '
+        'cboRef4
+        '
+        Me.cboRef4.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboRef4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboRef4.FormattingEnabled = True
+        Me.cboRef4.Location = New System.Drawing.Point(194, 252)
+        Me.cboRef4.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.cboRef4.Name = "cboRef4"
+        Me.cboRef4.Size = New System.Drawing.Size(456, 28)
+        Me.cboRef4.TabIndex = 4
+        '
+        'PartImagePanel
+        '
+        Me.PartImagePanel.Controls.Add(Me.PartImageViewerControl1)
+        Me.PartImagePanel.Dock = System.Windows.Forms.DockStyle.Right
+        Me.PartImagePanel.Location = New System.Drawing.Point(676, 0)
+        Me.PartImagePanel.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.PartImagePanel.Name = "PartImagePanel"
+        Me.PartImagePanel.Size = New System.Drawing.Size(604, 419)
+        Me.PartImagePanel.TabIndex = 142
+        '
+        'TabControl1
+        '
+        Me.TabControl1.Controls.Add(Me.InfoTab)
+        Me.TabControl1.Controls.Add(Me.IFSMsgTab)
+        Me.TabControl1.Controls.Add(Me.ImagesTab)
+        Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TabControl1.Location = New System.Drawing.Point(0, 0)
+        Me.TabControl1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.TabControl1.Name = "TabControl1"
+        Me.TabControl1.SelectedIndex = 0
+        Me.TabControl1.Size = New System.Drawing.Size(2260, 651)
+        Me.TabControl1.TabIndex = 2
+        '
+        'InfoTab
+        '
+        Me.InfoTab.Controls.Add(Me.gbItemsForImport)
+        Me.InfoTab.Location = New System.Drawing.Point(4, 29)
+        Me.InfoTab.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.InfoTab.Name = "InfoTab"
+        Me.InfoTab.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.InfoTab.Size = New System.Drawing.Size(2252, 618)
+        Me.InfoTab.TabIndex = 0
+        Me.InfoTab.Text = "Info"
+        Me.InfoTab.UseVisualStyleBackColor = True
+        '
+        'gbItemsForImport
+        '
+        Me.gbItemsForImport.Controls.Add(Me.Panel6)
+        Me.gbItemsForImport.Controls.Add(Me.gbCurrentInventory)
+        Me.gbItemsForImport.Controls.Add(Me.ssItemsForImport)
+        Me.gbItemsForImport.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.gbItemsForImport.Location = New System.Drawing.Point(4, 5)
+        Me.gbItemsForImport.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.gbItemsForImport.Name = "gbItemsForImport"
+        Me.gbItemsForImport.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.gbItemsForImport.Size = New System.Drawing.Size(2244, 608)
+        Me.gbItemsForImport.TabIndex = 3
+        Me.gbItemsForImport.TabStop = False
+        Me.gbItemsForImport.Text = "Items For Import"
+        '
+        'Panel6
+        '
+        Me.Panel6.Controls.Add(Me.OrderSerialNumbers)
+        Me.Panel6.Controls.Add(Me.dgvItemsForImport)
+        Me.Panel6.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel6.Location = New System.Drawing.Point(4, 24)
+        Me.Panel6.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.Panel6.Name = "Panel6"
+        Me.Panel6.Size = New System.Drawing.Size(1561, 547)
+        Me.Panel6.TabIndex = 3
+        '
+        'OrderSerialNumbers
+        '
+        Me.OrderSerialNumbers.Controls.Add(Me.DgvInventoryInStock)
+        Me.OrderSerialNumbers.Controls.Add(Me.StatusStrip1)
+        Me.OrderSerialNumbers.Dock = System.Windows.Forms.DockStyle.Right
+        Me.OrderSerialNumbers.Location = New System.Drawing.Point(1252, 0)
+        Me.OrderSerialNumbers.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.OrderSerialNumbers.Name = "OrderSerialNumbers"
+        Me.OrderSerialNumbers.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.OrderSerialNumbers.Size = New System.Drawing.Size(309, 547)
+        Me.OrderSerialNumbers.TabIndex = 3
+        Me.OrderSerialNumbers.TabStop = False
+        Me.OrderSerialNumbers.Text = "PO Inventory Stock"
+        '
+        'DgvInventoryInStock
+        '
+        Me.DgvInventoryInStock.AllowUserToAddRows = False
+        Me.DgvInventoryInStock.AllowUserToDeleteRows = False
+        Me.DgvInventoryInStock.AllowUserToResizeColumns = False
+        Me.DgvInventoryInStock.AllowUserToResizeRows = False
+        Me.DgvInventoryInStock.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells
+        Me.DgvInventoryInStock.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells
+        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DgvInventoryInStock.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        Me.DgvInventoryInStock.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DgvInventoryInStock.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.SerialNo, Me.Qty})
+        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("Arial Narrow", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.DgvInventoryInStock.DefaultCellStyle = DataGridViewCellStyle2
+        Me.DgvInventoryInStock.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DgvInventoryInStock.Location = New System.Drawing.Point(4, 24)
+        Me.DgvInventoryInStock.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.DgvInventoryInStock.Name = "DgvInventoryInStock"
+        Me.DgvInventoryInStock.ReadOnly = True
+        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DgvInventoryInStock.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
+        Me.DgvInventoryInStock.RowHeadersVisible = False
+        Me.DgvInventoryInStock.RowHeadersWidth = 62
+        Me.DgvInventoryInStock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
+        Me.DgvInventoryInStock.Size = New System.Drawing.Size(301, 496)
+        Me.DgvInventoryInStock.TabIndex = 0
+        '
+        'SerialNo
+        '
+        Me.SerialNo.DataPropertyName = "SerialNo"
+        Me.SerialNo.HeaderText = "Serial No"
+        Me.SerialNo.MinimumWidth = 8
+        Me.SerialNo.Name = "SerialNo"
+        Me.SerialNo.ReadOnly = True
+        Me.SerialNo.Width = 114
+        '
+        'Qty
+        '
+        Me.Qty.DataPropertyName = "UnrecievedQty"
+        Me.Qty.HeaderText = "Qty"
+        Me.Qty.MinimumWidth = 8
+        Me.Qty.Name = "Qty"
+        Me.Qty.ReadOnly = True
+        Me.Qty.Width = 71
+        '
+        'StatusStrip1
+        '
+        Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(24, 24)
+        Me.StatusStrip1.Location = New System.Drawing.Point(4, 520)
+        Me.StatusStrip1.Name = "StatusStrip1"
+        Me.StatusStrip1.Padding = New System.Windows.Forms.Padding(2, 0, 21, 0)
+        Me.StatusStrip1.Size = New System.Drawing.Size(301, 22)
+        Me.StatusStrip1.TabIndex = 2
+        Me.StatusStrip1.Text = "StatusStrip1"
+        '
+        'dgvItemsForImport
+        '
+        Me.dgvItemsForImport.AllowUserToAddRows = False
+        Me.dgvItemsForImport.AllowUserToResizeRows = False
+        Me.dgvItemsForImport.AutoGenerateColumns = False
+        Me.dgvItemsForImport.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells
+        DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvItemsForImport.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle4
+        Me.dgvItemsForImport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvItemsForImport.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.PartnoDataGridViewTextBoxColumn, Me.partdesc, Me.PONumber, Me.dgcAddItemsSerialNo, Me.dgcAddItemsBarcode, Me.BatchnoDataGridViewTextBoxColumn, Me.dgcAddItemsDept, Me.dgcAddItemsBld, Me.RowDataGridViewTextBoxColumn, Me.dgcAddItemsQty, Me.ReceiptDataGridViewTextBoxColumn, Me.dgcAddItemRef4, Me.dgcAddItemsRef5, Me.RemoveNonCoded, Me.ShouldLinkChildParts})
+        Me.dgvItemsForImport.ContextMenuStrip = Me.mnuItemsForImport
+        Me.dgvItemsForImport.DataSource = Me.bsAddInventory
+        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvItemsForImport.DefaultCellStyle = DataGridViewCellStyle5
+        Me.dgvItemsForImport.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.dgvItemsForImport.Location = New System.Drawing.Point(0, 0)
+        Me.dgvItemsForImport.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.dgvItemsForImport.MinimumSize = New System.Drawing.Size(150, 0)
+        Me.dgvItemsForImport.Name = "dgvItemsForImport"
+        DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle6.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvItemsForImport.RowHeadersDefaultCellStyle = DataGridViewCellStyle6
+        Me.dgvItemsForImport.RowHeadersVisible = False
+        Me.dgvItemsForImport.RowHeadersWidth = 62
+        Me.dgvItemsForImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
+        Me.dgvItemsForImport.Size = New System.Drawing.Size(1561, 547)
+        Me.dgvItemsForImport.TabIndex = 0
+        '
+        'PartnoDataGridViewTextBoxColumn
+        '
+        Me.PartnoDataGridViewTextBoxColumn.DataPropertyName = "partno"
+        Me.PartnoDataGridViewTextBoxColumn.HeaderText = "Part No"
+        Me.PartnoDataGridViewTextBoxColumn.MaxInputLength = 50
+        Me.PartnoDataGridViewTextBoxColumn.MinimumWidth = 8
+        Me.PartnoDataGridViewTextBoxColumn.Name = "PartnoDataGridViewTextBoxColumn"
+        Me.PartnoDataGridViewTextBoxColumn.ReadOnly = True
+        Me.PartnoDataGridViewTextBoxColumn.Width = 76
+        '
+        'partdesc
+        '
+        Me.partdesc.DataPropertyName = "partdesc"
+        Me.partdesc.HeaderText = "Part Description"
+        Me.partdesc.MinimumWidth = 8
+        Me.partdesc.Name = "partdesc"
+        Me.partdesc.ReadOnly = True
+        Me.partdesc.Width = 153
+        '
+        'PONumber
+        '
+        Me.PONumber.DataPropertyName = "PONumber"
+        Me.PONumber.HeaderText = "PO #"
+        Me.PONumber.MinimumWidth = 8
+        Me.PONumber.Name = "PONumber"
+        Me.PONumber.Width = 70
+        '
+        'dgcAddItemsSerialNo
+        '
+        Me.dgcAddItemsSerialNo.DataPropertyName = "serial_no"
+        Me.dgcAddItemsSerialNo.HeaderText = "Serial #"
+        Me.dgcAddItemsSerialNo.MaxInputLength = 35
+        Me.dgcAddItemsSerialNo.MinimumWidth = 8
+        Me.dgcAddItemsSerialNo.Name = "dgcAddItemsSerialNo"
+        Me.dgcAddItemsSerialNo.Width = 95
+        '
+        'dgcAddItemsBarcode
+        '
+        Me.dgcAddItemsBarcode.DataPropertyName = "unique_no"
+        Me.dgcAddItemsBarcode.HeaderText = "Barcode"
+        Me.dgcAddItemsBarcode.MaxInputLength = 20
+        Me.dgcAddItemsBarcode.MinimumWidth = 8
+        Me.dgcAddItemsBarcode.Name = "dgcAddItemsBarcode"
+        Me.dgcAddItemsBarcode.Width = 108
+        '
+        'BatchnoDataGridViewTextBoxColumn
+        '
+        Me.BatchnoDataGridViewTextBoxColumn.DataPropertyName = "batchno"
+        Me.BatchnoDataGridViewTextBoxColumn.HeaderText = "batchno"
+        Me.BatchnoDataGridViewTextBoxColumn.MaxInputLength = 50
+        Me.BatchnoDataGridViewTextBoxColumn.MinimumWidth = 8
+        Me.BatchnoDataGridViewTextBoxColumn.Name = "BatchnoDataGridViewTextBoxColumn"
+        Me.BatchnoDataGridViewTextBoxColumn.ReadOnly = True
+        Me.BatchnoDataGridViewTextBoxColumn.Visible = False
+        Me.BatchnoDataGridViewTextBoxColumn.Width = 104
+        '
+        'dgcAddItemsDept
+        '
+        Me.dgcAddItemsDept.DataPropertyName = "dept"
+        Me.dgcAddItemsDept.HeaderText = "Owner"
+        Me.dgcAddItemsDept.MinimumWidth = 8
+        Me.dgcAddItemsDept.Name = "dgcAddItemsDept"
+        Me.dgcAddItemsDept.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgcAddItemsDept.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic
+        Me.dgcAddItemsDept.Width = 94
+        '
+        'dgcAddItemsBld
+        '
+        Me.dgcAddItemsBld.DataPropertyName = "bld"
+        Me.dgcAddItemsBld.HeaderText = "WH"
+        Me.dgcAddItemsBld.MinimumWidth = 8
+        Me.dgcAddItemsBld.Name = "dgcAddItemsBld"
+        Me.dgcAddItemsBld.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgcAddItemsBld.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic
+        Me.dgcAddItemsBld.Width = 74
+        '
+        'RowDataGridViewTextBoxColumn
+        '
+        Me.RowDataGridViewTextBoxColumn.DataPropertyName = "row"
+        Me.RowDataGridViewTextBoxColumn.HeaderText = "Rev"
+        Me.RowDataGridViewTextBoxColumn.MaxInputLength = 10
+        Me.RowDataGridViewTextBoxColumn.MinimumWidth = 8
+        Me.RowDataGridViewTextBoxColumn.Name = "RowDataGridViewTextBoxColumn"
+        Me.RowDataGridViewTextBoxColumn.Width = 74
+        '
+        'dgcAddItemsQty
+        '
+        Me.dgcAddItemsQty.DataPropertyName = "onhand"
+        Me.dgcAddItemsQty.HeaderText = "Qty"
+        Me.dgcAddItemsQty.MaxInputLength = 4
+        Me.dgcAddItemsQty.MinimumWidth = 8
+        Me.dgcAddItemsQty.Name = "dgcAddItemsQty"
+        Me.dgcAddItemsQty.Width = 71
+        '
+        'ReceiptDataGridViewTextBoxColumn
+        '
+        Me.ReceiptDataGridViewTextBoxColumn.DataPropertyName = "receipt"
+        Me.ReceiptDataGridViewTextBoxColumn.HeaderText = "receipt"
+        Me.ReceiptDataGridViewTextBoxColumn.MinimumWidth = 8
+        Me.ReceiptDataGridViewTextBoxColumn.Name = "ReceiptDataGridViewTextBoxColumn"
+        Me.ReceiptDataGridViewTextBoxColumn.ReadOnly = True
+        Me.ReceiptDataGridViewTextBoxColumn.Visible = False
+        Me.ReceiptDataGridViewTextBoxColumn.Width = 96
+        '
+        'dgcAddItemRef4
+        '
+        Me.dgcAddItemRef4.DataPropertyName = "ref4"
+        Me.dgcAddItemRef4.HeaderText = "Reason"
+        Me.dgcAddItemRef4.MinimumWidth = 8
+        Me.dgcAddItemRef4.Name = "dgcAddItemRef4"
+        Me.dgcAddItemRef4.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgcAddItemRef4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic
+        Me.dgcAddItemRef4.Width = 102
+        '
+        'dgcAddItemsRef5
+        '
+        Me.dgcAddItemsRef5.DataPropertyName = "ref5"
+        Me.dgcAddItemsRef5.HeaderText = "Note"
+        Me.dgcAddItemsRef5.MaxInputLength = 50
+        Me.dgcAddItemsRef5.MinimumWidth = 8
+        Me.dgcAddItemsRef5.Name = "dgcAddItemsRef5"
+        Me.dgcAddItemsRef5.Width = 80
+        '
+        'RemoveNonCoded
+        '
+        Me.RemoveNonCoded.DataPropertyName = "RemoveNonCoded"
+        Me.RemoveNonCoded.HeaderText = "Remove Non-Coded?"
+        Me.RemoveNonCoded.MinimumWidth = 8
+        Me.RemoveNonCoded.Name = "RemoveNonCoded"
+        Me.RemoveNonCoded.Width = 157
+        '
+        'ShouldLinkChildParts
+        '
+        Me.ShouldLinkChildParts.DataPropertyName = "ShouldLinkChildParts"
+        Me.ShouldLinkChildParts.HeaderText = "Consume Linked Inventory"
+        Me.ShouldLinkChildParts.MinimumWidth = 8
+        Me.ShouldLinkChildParts.Name = "ShouldLinkChildParts"
+        Me.ShouldLinkChildParts.ReadOnly = True
+        Me.ShouldLinkChildParts.Width = 191
+        '
+        'mnuItemsForImport
+        '
+        Me.mnuItemsForImport.ImageScalingSize = New System.Drawing.Size(24, 24)
+        Me.mnuItemsForImport.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ClearSelectedRowsToolStripMenuItem, Me.ClearAllToolStripMenuItem, Me.tsmPrintSelectedItemsForImport})
+        Me.mnuItemsForImport.Name = "mnuItemsForImport"
+        Me.mnuItemsForImport.Size = New System.Drawing.Size(269, 100)
+        '
+        'ClearSelectedRowsToolStripMenuItem
+        '
+        Me.ClearSelectedRowsToolStripMenuItem.Name = "ClearSelectedRowsToolStripMenuItem"
+        Me.ClearSelectedRowsToolStripMenuItem.Size = New System.Drawing.Size(268, 32)
+        Me.ClearSelectedRowsToolStripMenuItem.Text = "Clear Selected Rows"
+        '
+        'ClearAllToolStripMenuItem
+        '
+        Me.ClearAllToolStripMenuItem.Name = "ClearAllToolStripMenuItem"
+        Me.ClearAllToolStripMenuItem.Size = New System.Drawing.Size(268, 32)
+        Me.ClearAllToolStripMenuItem.Text = "Clear All"
+        '
+        'tsmPrintSelectedItemsForImport
+        '
+        Me.tsmPrintSelectedItemsForImport.Name = "tsmPrintSelectedItemsForImport"
+        Me.tsmPrintSelectedItemsForImport.Size = New System.Drawing.Size(268, 32)
+        Me.tsmPrintSelectedItemsForImport.Text = "Print Selected Barcodes"
+        '
+        'bsAddInventory
+        '
+        Me.bsAddInventory.DataMember = "inpartsub"
+        Me.bsAddInventory.DataSource = Me.DataSetAddInventory
+        '
+        'DataSetAddInventory
+        '
+        Me.DataSetAddInventory.DataSetName = "DataSetAddInventory"
+        Me.DataSetAddInventory.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        '
+        'gbCurrentInventory
+        '
+        Me.gbCurrentInventory.Controls.Add(Me.lblCurrentInventoryWarning)
+        Me.gbCurrentInventory.Controls.Add(Me.dgvCurrentInventory)
+        Me.gbCurrentInventory.Controls.Add(Me.ssCurrentInventory)
+        Me.gbCurrentInventory.Dock = System.Windows.Forms.DockStyle.Right
+        Me.gbCurrentInventory.Location = New System.Drawing.Point(1565, 24)
+        Me.gbCurrentInventory.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.gbCurrentInventory.Name = "gbCurrentInventory"
+        Me.gbCurrentInventory.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.gbCurrentInventory.Size = New System.Drawing.Size(675, 547)
+        Me.gbCurrentInventory.TabIndex = 2
+        Me.gbCurrentInventory.TabStop = False
+        Me.gbCurrentInventory.Text = "Current Inventory"
+        '
+        'lblCurrentInventoryWarning
+        '
+        Me.lblCurrentInventoryWarning.Location = New System.Drawing.Point(42, 209)
+        Me.lblCurrentInventoryWarning.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblCurrentInventoryWarning.Name = "lblCurrentInventoryWarning"
+        Me.lblCurrentInventoryWarning.Size = New System.Drawing.Size(555, 20)
+        Me.lblCurrentInventoryWarning.TabIndex = 1
+        Me.lblCurrentInventoryWarning.Text = "A part, ownership and warehouse must be selected to view current inventory."
+        Me.lblCurrentInventoryWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'dgvCurrentInventory
+        '
+        Me.dgvCurrentInventory.AllowUserToAddRows = False
+        Me.dgvCurrentInventory.AllowUserToDeleteRows = False
+        Me.dgvCurrentInventory.AllowUserToResizeColumns = False
+        Me.dgvCurrentInventory.AllowUserToResizeRows = False
+        Me.dgvCurrentInventory.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells
+        Me.dgvCurrentInventory.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells
+        DataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle7.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvCurrentInventory.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle7
+        Me.dgvCurrentInventory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle8.Font = New System.Drawing.Font("Arial Narrow", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvCurrentInventory.DefaultCellStyle = DataGridViewCellStyle8
+        Me.dgvCurrentInventory.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.dgvCurrentInventory.Location = New System.Drawing.Point(4, 24)
+        Me.dgvCurrentInventory.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.dgvCurrentInventory.Name = "dgvCurrentInventory"
+        Me.dgvCurrentInventory.ReadOnly = True
+        DataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle9.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvCurrentInventory.RowHeadersDefaultCellStyle = DataGridViewCellStyle9
+        Me.dgvCurrentInventory.RowHeadersVisible = False
+        Me.dgvCurrentInventory.RowHeadersWidth = 62
+        Me.dgvCurrentInventory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
+        Me.dgvCurrentInventory.Size = New System.Drawing.Size(667, 486)
+        Me.dgvCurrentInventory.TabIndex = 0
+        '
+        'ssCurrentInventory
+        '
+        Me.ssCurrentInventory.ImageScalingSize = New System.Drawing.Size(24, 24)
+        Me.ssCurrentInventory.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tsslCurrentInventoryTotalQty})
+        Me.ssCurrentInventory.Location = New System.Drawing.Point(4, 510)
+        Me.ssCurrentInventory.Name = "ssCurrentInventory"
+        Me.ssCurrentInventory.Padding = New System.Windows.Forms.Padding(2, 0, 21, 0)
+        Me.ssCurrentInventory.Size = New System.Drawing.Size(667, 32)
+        Me.ssCurrentInventory.TabIndex = 2
+        Me.ssCurrentInventory.Text = "StatusStrip1"
+        '
+        'tsslCurrentInventoryTotalQty
+        '
+        Me.tsslCurrentInventoryTotalQty.Name = "tsslCurrentInventoryTotalQty"
+        Me.tsslCurrentInventoryTotalQty.Size = New System.Drawing.Size(104, 25)
+        Me.tsslCurrentInventoryTotalQty.Text = "Total Qty: ..."
+        '
+        'ssItemsForImport
+        '
+        Me.ssItemsForImport.ImageScalingSize = New System.Drawing.Size(24, 24)
+        Me.ssItemsForImport.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tsslItemsForImportSelectedRowQty, Me.tsslItemsForImportTotalQty})
+        Me.ssItemsForImport.Location = New System.Drawing.Point(4, 571)
+        Me.ssItemsForImport.Name = "ssItemsForImport"
+        Me.ssItemsForImport.Padding = New System.Windows.Forms.Padding(2, 0, 21, 0)
+        Me.ssItemsForImport.Size = New System.Drawing.Size(2236, 32)
+        Me.ssItemsForImport.TabIndex = 1
+        '
+        'tsslItemsForImportSelectedRowQty
+        '
+        Me.tsslItemsForImportSelectedRowQty.Name = "tsslItemsForImportSelectedRowQty"
+        Me.tsslItemsForImportSelectedRowQty.Size = New System.Drawing.Size(133, 25)
+        Me.tsslItemsForImportSelectedRowQty.Text = "Selected Qty: ..."
+        '
+        'tsslItemsForImportTotalQty
+        '
+        Me.tsslItemsForImportTotalQty.Name = "tsslItemsForImportTotalQty"
+        Me.tsslItemsForImportTotalQty.Size = New System.Drawing.Size(104, 25)
+        Me.tsslItemsForImportTotalQty.Text = "Total Qty: ..."
+        '
+        'IFSMsgTab
+        '
+        Me.IFSMsgTab.Controls.Add(Me.lblIncomingMsgAlert)
+        Me.IFSMsgTab.Controls.Add(Me.Panel3)
+        Me.IFSMsgTab.Controls.Add(Me.dgvIFSMessages)
+        Me.IFSMsgTab.Location = New System.Drawing.Point(4, 29)
+        Me.IFSMsgTab.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.IFSMsgTab.Name = "IFSMsgTab"
+        Me.IFSMsgTab.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.IFSMsgTab.Size = New System.Drawing.Size(2252, 618)
+        Me.IFSMsgTab.TabIndex = 2
+        Me.IFSMsgTab.Text = "IFS Messages"
+        Me.IFSMsgTab.UseVisualStyleBackColor = True
+        '
+        'lblIncomingMsgAlert
+        '
+        Me.lblIncomingMsgAlert.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblIncomingMsgAlert.Location = New System.Drawing.Point(873, 260)
+        Me.lblIncomingMsgAlert.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblIncomingMsgAlert.Name = "lblIncomingMsgAlert"
+        Me.lblIncomingMsgAlert.Size = New System.Drawing.Size(370, 241)
+        Me.lblIncomingMsgAlert.TabIndex = 4
+        Me.lblIncomingMsgAlert.Text = "Messages for the supplied PO Number will appear here"
+        Me.lblIncomingMsgAlert.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'Panel3
+        '
+        Me.Panel3.Controls.Add(Me.BtnRefreshIfsMessages)
+        Me.Panel3.Dock = System.Windows.Forms.DockStyle.Top
+        Me.Panel3.Location = New System.Drawing.Point(4, 5)
+        Me.Panel3.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.Panel3.Name = "Panel3"
+        Me.Panel3.Size = New System.Drawing.Size(2244, 58)
+        Me.Panel3.TabIndex = 1
+        '
+        'BtnRefreshIfsMessages
+        '
+        Me.BtnRefreshIfsMessages.BackgroundImage = Global.Add_Inventory.My.Resources.Resources.refresh
+        Me.BtnRefreshIfsMessages.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.BtnRefreshIfsMessages.ImageAlign = System.Drawing.ContentAlignment.TopRight
+        Me.BtnRefreshIfsMessages.Location = New System.Drawing.Point(20, 8)
+        Me.BtnRefreshIfsMessages.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.BtnRefreshIfsMessages.Name = "BtnRefreshIfsMessages"
+        Me.BtnRefreshIfsMessages.Size = New System.Drawing.Size(52, 43)
+        Me.BtnRefreshIfsMessages.TabIndex = 156
+        Me.ToolTip1.SetToolTip(Me.BtnRefreshIfsMessages, "" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Reload IFS Data")
+        Me.BtnRefreshIfsMessages.UseVisualStyleBackColor = True
+        '
+        'dgvIFSMessages
+        '
+        Me.dgvIFSMessages.AllowUserToAddRows = False
+        Me.dgvIFSMessages.AllowUserToDeleteRows = False
+        Me.dgvIFSMessages.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        DataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle10.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvIFSMessages.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle10
+        Me.dgvIFSMessages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle11.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvIFSMessages.DefaultCellStyle = DataGridViewCellStyle11
+        Me.dgvIFSMessages.Location = New System.Drawing.Point(4, 65)
+        Me.dgvIFSMessages.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.dgvIFSMessages.Name = "dgvIFSMessages"
+        Me.dgvIFSMessages.ReadOnly = True
+        DataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle12.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvIFSMessages.RowHeadersDefaultCellStyle = DataGridViewCellStyle12
+        Me.dgvIFSMessages.RowHeadersWidth = 62
+        Me.dgvIFSMessages.Size = New System.Drawing.Size(1510, 571)
+        Me.dgvIFSMessages.TabIndex = 0
+        '
+        'ImagesTab
+        '
+        Me.ImagesTab.Controls.Add(Me.LblNonPartsImages)
+        Me.ImagesTab.Location = New System.Drawing.Point(4, 29)
+        Me.ImagesTab.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.ImagesTab.Name = "ImagesTab"
+        Me.ImagesTab.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.ImagesTab.Size = New System.Drawing.Size(2252, 618)
+        Me.ImagesTab.TabIndex = 1
+        Me.ImagesTab.Text = "Part Images"
+        Me.ImagesTab.UseVisualStyleBackColor = True
+        '
+        'LblNonPartsImages
+        '
+        Me.LblNonPartsImages.AutoSize = True
+        Me.LblNonPartsImages.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.LblNonPartsImages.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LblNonPartsImages.Location = New System.Drawing.Point(4, 5)
+        Me.LblNonPartsImages.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.LblNonPartsImages.Name = "LblNonPartsImages"
+        Me.LblNonPartsImages.Size = New System.Drawing.Size(934, 32)
+        Me.LblNonPartsImages.TabIndex = 0
+        Me.LblNonPartsImages.Text = "It is necessary to have a part added to the list and selected to add images"
+        '
+        'Panel1
+        '
+        Me.Panel1.Controls.Add(Me.btnClearItemsForImportList)
+        Me.Panel1.Controls.Add(Me.btnCommit)
+        Me.Panel1.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me.Panel1.Location = New System.Drawing.Point(0, 651)
+        Me.Panel1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(2260, 52)
+        Me.Panel1.TabIndex = 1
+        '
+        'btnClearItemsForImportList
+        '
+        Me.btnClearItemsForImportList.Location = New System.Drawing.Point(15, 9)
+        Me.btnClearItemsForImportList.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.btnClearItemsForImportList.Name = "btnClearItemsForImportList"
+        Me.btnClearItemsForImportList.Size = New System.Drawing.Size(87, 35)
+        Me.btnClearItemsForImportList.TabIndex = 143
+        Me.btnClearItemsForImportList.Text = "Clear"
+        Me.btnClearItemsForImportList.UseVisualStyleBackColor = True
+        '
+        'btnCommit
+        '
+        Me.btnCommit.Enabled = False
+        Me.btnCommit.Location = New System.Drawing.Point(132, 9)
+        Me.btnCommit.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.btnCommit.Name = "btnCommit"
+        Me.btnCommit.Size = New System.Drawing.Size(230, 35)
+        Me.btnCommit.TabIndex = 143
+        Me.btnCommit.Text = "Commit Items to Inventory"
+        Me.btnCommit.UseVisualStyleBackColor = True
+        '
+        'PrintDocument1
+        '
+        '
+        'PrintDialog1
+        '
+        Me.PrintDialog1.UseEXDialog = True
+        '
+        'PrintPreviewDialog1
+        '
+        Me.PrintPreviewDialog1.AutoScrollMargin = New System.Drawing.Size(0, 0)
+        Me.PrintPreviewDialog1.AutoScrollMinSize = New System.Drawing.Size(0, 0)
+        Me.PrintPreviewDialog1.ClientSize = New System.Drawing.Size(400, 300)
+        Me.PrintPreviewDialog1.Enabled = True
+        Me.PrintPreviewDialog1.Icon = CType(resources.GetObject("PrintPreviewDialog1.Icon"), System.Drawing.Icon)
+        Me.PrintPreviewDialog1.Name = "PrintPreviewDialog1"
+        Me.PrintPreviewDialog1.Visible = False
+        '
+        'UltraGridMenuStrip
+        '
+        Me.UltraGridMenuStrip.ImageScalingSize = New System.Drawing.Size(24, 24)
+        Me.UltraGridMenuStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CopyPONumberToolStripMenuItem, Me.CopyPartNumberToolStripMenuItem, Me.ToolStripSeparator5, Me.BtnAddSubparts, Me.ToolStripSeparator6})
+        Me.UltraGridMenuStrip.Name = "UltraGridMenuStrip"
+        Me.UltraGridMenuStrip.Size = New System.Drawing.Size(259, 145)
+        '
+        'CopyPONumberToolStripMenuItem
+        '
+        Me.CopyPONumberToolStripMenuItem.Name = "CopyPONumberToolStripMenuItem"
+        Me.CopyPONumberToolStripMenuItem.Size = New System.Drawing.Size(258, 32)
+        Me.CopyPONumberToolStripMenuItem.Text = "Copy PO Number"
+        '
+        'CopyPartNumberToolStripMenuItem
+        '
+        Me.CopyPartNumberToolStripMenuItem.Name = "CopyPartNumberToolStripMenuItem"
+        Me.CopyPartNumberToolStripMenuItem.Size = New System.Drawing.Size(258, 32)
+        Me.CopyPartNumberToolStripMenuItem.Text = "Copy Part Number"
+        '
+        'ToolStripSeparator5
+        '
+        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(255, 6)
+        '
+        'BtnAddSubparts
+        '
+        Me.BtnAddSubparts.Name = "BtnAddSubparts"
+        Me.BtnAddSubparts.Size = New System.Drawing.Size(258, 32)
+        Me.BtnAddSubparts.Text = "Add/Modify Subparts"
+        '
+        'bsClairNewSerialNos
+        '
+        Me.bsClairNewSerialNos.DataMember = "ClairNewSerialNos"
+        Me.bsClairNewSerialNos.DataSource = Me.DataSetAddInventory
+        '
+        'txtPONumber
+        '
+        Me.txtPONumber.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.txtPONumber.Location = New System.Drawing.Point(194, 349)
+        Me.txtPONumber.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.txtPONumber.MaxLength = 20
+        Me.txtPONumber.Name = "txtPONumber"
+        Me.txtPONumber.Size = New System.Drawing.Size(145, 26)
+        Me.txtPONumber.TabIndex = 146
+        Me.txtPONumber.TextToClear = Nothing
+        '
+        'txtSerialNo
+        '
+        Me.txtSerialNo.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.txtSerialNo.Location = New System.Drawing.Point(194, 435)
+        Me.txtSerialNo.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.txtSerialNo.MaxLength = 35
+        Me.txtSerialNo.Name = "txtSerialNo"
+        Me.txtSerialNo.Size = New System.Drawing.Size(360, 26)
+        Me.txtSerialNo.TabIndex = 6
+        Me.txtSerialNo.TextToClear = Nothing
+        '
+        'txtRevision
+        '
+        Me.txtRevision.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.txtRevision.Location = New System.Drawing.Point(200, 114)
+        Me.txtRevision.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.txtRevision.MaxLength = 20
+        Me.txtRevision.Name = "txtRevision"
+        Me.txtRevision.Size = New System.Drawing.Size(360, 26)
+        Me.txtRevision.TabIndex = 2
+        Me.txtRevision.TextToClear = Nothing
+        '
+        'txtPartNo
+        '
+        Me.txtPartNo.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.txtPartNo.Location = New System.Drawing.Point(15, 197)
+        Me.txtPartNo.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.txtPartNo.MaxLength = 50
+        Me.txtPartNo.Name = "txtPartNo"
+        Me.txtPartNo.ReadOnly = True
+        Me.txtPartNo.Size = New System.Drawing.Size(144, 26)
+        Me.txtPartNo.TabIndex = 115
+        Me.txtPartNo.TabStop = False
+        Me.txtPartNo.TextToClear = Nothing
+        '
+        'txtPartDescEngOp
+        '
+        Me.txtPartDescEngOp.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtPartDescEngOp.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.txtPartDescEngOp.Location = New System.Drawing.Point(200, 197)
+        Me.txtPartDescEngOp.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.txtPartDescEngOp.MaxLength = 100
+        Me.txtPartDescEngOp.Name = "txtPartDescEngOp"
+        Me.txtPartDescEngOp.ReadOnly = True
+        Me.txtPartDescEngOp.Size = New System.Drawing.Size(456, 26)
+        Me.txtPartDescEngOp.TabIndex = 116
+        Me.txtPartDescEngOp.TabStop = False
+        Me.txtPartDescEngOp.TextToClear = Nothing
+        '
+        'txtQty
+        '
+        Me.txtQty.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.txtQty.Location = New System.Drawing.Point(194, 518)
+        Me.txtQty.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.txtQty.MaxLength = 4
+        Me.txtQty.Name = "txtQty"
+        Me.txtQty.Size = New System.Drawing.Size(40, 26)
+        Me.txtQty.TabIndex = 9
+        Me.txtQty.TextToClear = Nothing
+        '
+        'txtBarcode
+        '
+        Me.txtBarcode.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.txtBarcode.Location = New System.Drawing.Point(194, 478)
+        Me.txtBarcode.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.txtBarcode.MaxLength = 20
+        Me.txtBarcode.Name = "txtBarcode"
+        Me.txtBarcode.Size = New System.Drawing.Size(145, 26)
+        Me.txtBarcode.TabIndex = 7
+        Me.txtBarcode.TextToClear = Nothing
+        '
+        'PartImageViewerControl1
+        '
+        Me.PartImageViewerControl1.Location = New System.Drawing.Point(0, 0)
+        Me.PartImageViewerControl1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.PartImageViewerControl1.Name = "PartImageViewerControl1"
+        Me.PartImageViewerControl1.Size = New System.Drawing.Size(604, 645)
+        Me.PartImageViewerControl1.TabIndex = 0
+        '
+        'ToolStripSeparator6
+        '
+        Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(255, 6)
+        '
+        'frmAddInventory
+        '
+        Me.AcceptButton = Me.btnAddItemToList
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 20.0!)
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.ClientSize = New System.Drawing.Size(2260, 1202)
+        Me.Controls.Add(Me.SplitContainer1)
+        Me.Controls.Add(Me.tsMain)
+        Me.Controls.Add(Me.MenuStrip)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
+        Me.KeyPreview = True
+        Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.Name = "frmAddInventory"
+        Me.Text = "Add Inventory"
+        Me.MenuStrip.ResumeLayout(False)
+        Me.MenuStrip.PerformLayout()
+        Me.tsMain.ResumeLayout(False)
+        Me.tsMain.PerformLayout()
+        Me.SplitContainer1.Panel1.ResumeLayout(False)
+        Me.SplitContainer1.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer1.ResumeLayout(False)
+        Me.pnlDataEntry.ResumeLayout(False)
+        Me.Panel8.ResumeLayout(False)
+        CType(Me.ultraGridERPPurchaseOrders, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Panel7.ResumeLayout(False)
+        Me.Panel7.PerformLayout()
+        Me.Panel2.ResumeLayout(False)
+        Me.gbNewInventoryItemInfo.ResumeLayout(False)
+        Me.gbNewInventoryItemInfo.PerformLayout()
+        CType(Me.pb2Dbarcode, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.PartImagePanel.ResumeLayout(False)
+        Me.TabControl1.ResumeLayout(False)
+        Me.InfoTab.ResumeLayout(False)
+        Me.gbItemsForImport.ResumeLayout(False)
+        Me.gbItemsForImport.PerformLayout()
+        Me.Panel6.ResumeLayout(False)
+        Me.OrderSerialNumbers.ResumeLayout(False)
+        Me.OrderSerialNumbers.PerformLayout()
+        CType(Me.DgvInventoryInStock, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dgvItemsForImport, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.mnuItemsForImport.ResumeLayout(False)
+        CType(Me.bsAddInventory, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DataSetAddInventory, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.gbCurrentInventory.ResumeLayout(False)
+        Me.gbCurrentInventory.PerformLayout()
+        CType(Me.dgvCurrentInventory, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ssCurrentInventory.ResumeLayout(False)
+        Me.ssCurrentInventory.PerformLayout()
+        Me.ssItemsForImport.ResumeLayout(False)
+        Me.ssItemsForImport.PerformLayout()
+        Me.IFSMsgTab.ResumeLayout(False)
+        Me.Panel3.ResumeLayout(False)
+        CType(Me.dgvIFSMessages, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ImagesTab.ResumeLayout(False)
+        Me.ImagesTab.PerformLayout()
+        Me.Panel1.ResumeLayout(False)
+        Me.UltraGridMenuStrip.ResumeLayout(False)
+        CType(Me.bsClairNewSerialNos, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ResumeLayout(False)
+        Me.PerformLayout()
+
+    End Sub

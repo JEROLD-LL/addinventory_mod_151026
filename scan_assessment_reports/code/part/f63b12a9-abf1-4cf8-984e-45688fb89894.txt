@@ -1,0 +1,10 @@
+Private Sub tsmPrintBarcodes_Click(sender As Object, e As EventArgs) Handles tsmPrintBarcodes.Click
+        Dim itemsToImport = bsAddInventory.GetDataRows(Of inpartsubRow)()
+        Dim dtPrintItems As New List(Of ItemsToPrintRow)
+
+        For Each item In itemsToImport
+            dtPrintItems.Add(New ItemsToPrintRow(item.serial_no.ToString, item.unique_no.ToString))
+        Next
+
+        PrintBarcodes(dtPrintItems)
+    End Sub

@@ -1,0 +1,3 @@
+Private Sub CycleCountUtilityToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles CycleCountUtilityToolStripMenuItem.Click
+        StartFinesseProcess("Cycle Count.exe")
+    End Sub

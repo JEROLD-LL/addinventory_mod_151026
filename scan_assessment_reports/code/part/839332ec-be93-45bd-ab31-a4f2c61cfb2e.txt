@@ -1,0 +1,8 @@
+Public Property dtItemsToPrint As ItemsToPrintDataTable
+        Get
+            Return _dtItemsToPrint
+        End Get
+        Set(value As ItemsToPrintDataTable)
+            _dtItemsToPrint = value
+        End Set
+    End Property

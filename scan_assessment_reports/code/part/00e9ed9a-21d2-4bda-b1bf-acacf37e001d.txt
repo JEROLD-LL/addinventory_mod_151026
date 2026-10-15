@@ -1,0 +1,57 @@
+Private Function Print() As Boolean
+        Dim selectedBarcodeTemplate As BarcodeTemplate = cbBarcodeType.SelectedItem
+        Dim selectedPrinter As ZPrinter = cbPrinters.SelectedItem
+        Dim ZPLData As String
+        Dim blPrintSuccess = False
+        Cursor = Cursors.WaitCursor
+
+        Try
+            'print each item passed from parent form
+            For Each row As ItemsToPrintRow In _dtItemsToPrint.Rows
+                ZPLData = ""
+
+                ZPLData = selectedBarcodeTemplate.GetZPLData(row.Barcode, row.SerialNumber)
+
+                If ZPLData = "" Then
+                    MsgBox("This barcode type has no template file or data. Select another barcode type and contact IT for help." + vbCrLf + "Expected template file: " + selectedBarcodeTemplate.Path, MsgBoxStyle.OkOnly)
+                    Return False
+                End If
+
+                'repeat print * # Copies
+                Dim copies = nupPrintCopies.Value
+                For n As Integer = 1 To copies
+#If DEBUG Then
+                    MsgBox(ZPLData)
+#Else
+                    'do the print stuff
+                    Try
+                        Dim buffer = Encoding.ASCII.GetBytes(ZPLData)
+
+                        Dim client = New Sockets.TcpClient(selectedPrinter.Address, selectedPrinter.Port)
+
+                        Dim clientStream = client.GetStream()
+                        clientStream.Write(buffer, 0, buffer.Length)
+                        clientStream.Flush()
+                        clientStream.Close()
+                    Catch ex As Exception
+                        MsgBox(ex.Message, MsgBoxStyle.OkOnly)
+                    End Try
+#End If
+
+                    'this is a total guess on sleep time and if its even needed.
+                    Threading.Thread.Sleep(1000)
+                Next
+            Next
+        Catch ex As Exception
+            MsgBox("Failed to print." + vbCrLf + "Error: " + ex.Message, MsgBoxStyle.Critical)
+            Return False
+        End Try
+
+        Cursor = Cursors.Default
+
+        selectedBarcodeTemplate.CurrentTemplate = True
+        selectedPrinter.CurrentPrinter = True
+
+        Return True
+
+    End Function

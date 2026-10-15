@@ -1,0 +1,5 @@
+Private Sub textBox_KeyDown(sender As Object, e As KeyEventArgs) Handles txtQuantityMessage.KeyDown
+        If (e.KeyCode = Keys.Enter) Then
+            SendIFSToFinesseMessage()
+        End If
+    End Sub

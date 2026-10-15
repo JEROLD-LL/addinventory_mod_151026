@@ -1,0 +1,103 @@
+Private Sub AddItemRow(ByVal ShouldLinkChildParts As Boolean, ByVal POValidation As (Boolean, String))
+        Dim ipAddress = Nothing
+
+        If chkAutoAssignIPAddress.Checked Then
+            ipAddress = getNextAvailableIPAddress(txtPartNo.Text)
+        End If
+
+
+        Dim batchno As String
+        Dim internalCustomerResult As (String, String) 'Result, Error
+        Dim ActiveRow = ultraGridERPPurchaseOrders.ActiveRow
+
+        Dim isIFSPOLine = _selected_ifs_po IsNot Nothing AndAlso ActiveRow IsNot Nothing AndAlso cboRef4.SelectedValue = "PURCADD" AndAlso _selected_ifs_po.PartNo = txtPartNo.Text AndAlso _selected_ifs_po.OrderNo = txtPONumber.Text
+
+
+        Dim _partno = txtPartNo.Text
+        Dim _partdesc = txtPartDescEngOp.Text
+        Dim _poPartNo = _partno
+
+        Dim parentPartNo As String
+
+        Dim POToWorkWith As QuickReportSchema = _selected_ifs_po
+        Dim parent = Nothing
+
+        If (ActiveRow IsNot Nothing AndAlso ActiveRow.HasParent) Then
+            parent = TryCast(ActiveRow.ParentRow.ListObject, QuickReportSchema)
+        End If
+
+        If (IsDisassemblyPart) Then
+            parentPartNo = parent.PartNo
+            _poPartNo = parent.PartNo
+            If Not IsSelfContainedDisassembly Then
+                POToWorkWith = parent
+                _poPartNo = parent.PartNo
+            End If
+        End If
+
+        If (Not IsDisassemblyPart AndAlso parent IsNot Nothing) Then
+            POToWorkWith = parent
+            _poPartNo = parent.PartNo
+        End If
+
+
+        If (isIFSPOLine AndAlso (Not IsDisassemblyPart Or Not IsSelfContainedDisassembly)) Then
+            batchno = POToWorkWith.GetBatchNo(txtSerialNo.Text)
+            internalCustomerResult = POToWorkWith.GetInternalCustomer(_dtCurrency)
+            Console.WriteLine($"Line Internal Customer: {internalCustomerResult.Item1}")
+            If (Not IsDisassemblyPart) Then
+                If (internalCustomerResult.Item1 Is Nothing) Then
+                    MsgBox(internalCustomerResult.Item2, MsgBoxStyle.Exclamation)
+                End If
+                If (Not POToWorkWith.IsValidSchema) Then
+                    MsgBox(POToWorkWith.SchemaError, MsgBoxStyle.Exclamation)
+                End If
+                If (String.IsNullOrEmpty(batchno) AndAlso POToWorkWith.IsSerializedPo) Then
+                    MsgBox("The supplied serial number does not exists on the IFS Inventory.", MsgBoxStyle.Exclamation)
+                End If
+                If Not String.IsNullOrEmpty(POValidation.Item2) AndAlso POValidation.Item2 <> "FULL_ACCESS" Then
+                    Exit Sub
+                End If
+            End If
+        End If
+
+
+        Dim r = DataSetAddInventory.inpartsub.AddinpartsubRow(partno:=_partno,
+                                                          partdesc:=_partdesc,
+                                                          unique_no:=txtBarcode.Text,
+                                                          batchno:="INSTOCK",
+                                                          dept:=cboOwner.SelectedValue,
+                                                          bld:=cboWarehouse.SelectedValue,
+                                                          row:=txtRevision.Text,
+                                                          PONumber:=txtPONumber.Text,
+                                                          serial_no:=txtSerialNo.Text,
+                                                          receipt:=DateTime.Now,
+                                                          onhand:=IIf(String.IsNullOrEmpty(txtQty.Text), "0", txtQty.Text),
+                                                          acctno:=String.Empty, ' this field is obsolete
+                                                          ref4:=cboRef4.SelectedValue,
+                                                          ref5:=txtRef5.Text,
+                                                          ShouldLinkChildParts:=ShouldLinkChildParts,
+                                                          RemoveNonCoded:=IIf(cboRef4.SelectedValue = "NONTOBAR", True, False),
+                                                          IPAddress:=ipAddress,
+                                                          MACAddress:=txtMACAddress.Text,
+                                                          PODateEntered:=If(isIFSPOLine, POToWorkWith.DateEntered, DateTime.Now),
+                                                          POSite:=If(isIFSPOLine, POToWorkWith.Contract, Nothing),
+                                                          POInternalCustomer:=If(isIFSPOLine, internalCustomerResult.Item1, Nothing),
+                                                          POInternalDestination:=If(isIFSPOLine, POToWorkWith.InternalDestination, Nothing),
+                                                          POLineNo:=If(isIFSPOLine, POToWorkWith.LineNo, Nothing),
+                                                          POReleaseNo:=If(isIFSPOLine, POToWorkWith.ReleaseNo, Nothing),
+                                                          POLocationNo:=If(isIFSPOLine, POToWorkWith.LocationNo, Nothing),
+                                                          POLotBatchNo:=If(isIFSPOLine, batchno, Nothing),
+                                                          PONoteText:=If(isIFSPOLine, POToWorkWith.NoteText, Nothing),
+                                                          POInternalDestinationId:=If(isIFSPOLine, POToWorkWith.DestinationId, Nothing),
+                                                          POIsSerialized:=If(isIFSPOLine, POToWorkWith.IsSerializedPo, Nothing),
+                                                          IsDisassembly:=If(isIFSPOLine, ultraGridERPPurchaseOrders.ActiveRow.HasParent, False),
+                                                          ParentPartNo:=If(isIFSPOLine, parentPartNo, Nothing),
+                                                          POPartNo:=If(isIFSPOLine, _poPartNo, Nothing),
+                                                          POQtyArrived:=If(isIFSPOLine AndAlso parent IsNot Nothing, parent.InvQtyArrived.ToString(), Nothing),
+                                                          POBuyUnitPrice:=If(isIFSPOLine, POToWorkWith.BuyUnitPrice, Nothing)
+                                                           )
+
+        r.EndEdit()
+
+    End Sub

@@ -1,0 +1,8 @@
+Private Sub bsAddInventory_CurrentChanged(ByVal sender As Object, ByVal e As EventArgs) Handles bsAddInventory.CurrentChanged
+        If bsAddInventory.Current Is Nothing Then Exit Sub
+        If bsAddInventory.Current("partno") Is DBNull.Value Then Exit Sub
+        Selected_PartNo = bsAddInventory.Current("partno")
+        Selected_Barcode = bsAddInventory.Current("unique_no")
+        Selected_Warehouse = bsAddInventory.Current("bld")
+
+    End Sub

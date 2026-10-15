@@ -1,0 +1,10 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Friend Sub InitVars()
+            Me.columnParentPartNo = MyBase.Columns("ParentPartNo")
+            Me.columnChildPartNo = MyBase.Columns("ChildPartNo")
+            Me.columnQuantity = MyBase.Columns("Quantity")
+            Me.columnPricePercentage = MyBase.Columns("PricePercentage")
+            Me.columnChildPartDescription = MyBase.Columns("ChildPartDescription")
+            Me.columnOld_ChildPartNo = MyBase.Columns("Old_ChildPartNo")
+        End Sub

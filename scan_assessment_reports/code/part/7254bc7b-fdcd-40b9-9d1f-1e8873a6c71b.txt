@@ -1,0 +1,7 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Overrides Function Clone() As Global.System.Data.DataTable
+            Dim cln As inpartsubDataTable = CType(MyBase.Clone,inpartsubDataTable)
+            cln.InitVars
+            Return cln
+        End Function

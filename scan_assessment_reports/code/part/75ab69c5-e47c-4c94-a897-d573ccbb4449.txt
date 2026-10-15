@@ -1,0 +1,15 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+    Private Sub InitClass()
+        Me.DataSetName = "DataSetAddInventory"
+        Me.Prefix = ""
+        Me.Namespace = "http://tempuri.org/DataSetAddInventory.xsd"
+        Me.EnforceConstraints = true
+        Me.SchemaSerializationMode = Global.System.Data.SchemaSerializationMode.IncludeSchema
+        Me.tableinpartsub = New inpartsubDataTable()
+        MyBase.Tables.Add(Me.tableinpartsub)
+        Me.tableClairNewSerialNos = New ClairNewSerialNosDataTable()
+        MyBase.Tables.Add(Me.tableClairNewSerialNos)
+        Me.tableDisassemblyParts = New DisassemblyPartsDataTable()
+        MyBase.Tables.Add(Me.tableDisassemblyParts)
+    End Sub

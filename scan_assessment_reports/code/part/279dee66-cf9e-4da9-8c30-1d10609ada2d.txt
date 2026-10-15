@@ -1,0 +1,17 @@
+Private Sub cboOwner_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboOwner.SelectedIndexChanged, cboWarehouse.SelectedIndexChanged, cboRef4.SelectedIndexChanged, txtPartNo.TextChanged
+        If (_selected_ifs_po Is Nothing OrElse (sender.Name = cboRef4.Name)) Then
+            If (cboRef4.SelectedValue <> "PURCADD") Then
+                _selected_ifs_po = Nothing
+                ultraGridERPPurchaseOrders.ActiveRow = Nothing
+                txtPONumber.Text = String.Empty
+            End If
+
+            ReloadPermissions()
+        End If
+
+
+        Dim enableChildPartLinking As Boolean = DirectCast(cboOwner.SelectedItem, DataRowView)("EnableInpartsubRefChildLinking")
+
+        dgvItemsForImport.Columns("ShouldLinkChildParts").Visible = enableChildPartLinking
+
+    End Sub

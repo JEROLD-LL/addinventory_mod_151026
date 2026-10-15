@@ -1,0 +1,4 @@
+Private Sub PartAttachmentMaintenanceToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles PartAttachmentMaintenanceToolStripMenuItem.Click
+        Dim commandArgs As String = Selected_PartNo
+        StartFinesseProcess("Part Attachments Maintenance.exe", commandArgs)
+    End Sub

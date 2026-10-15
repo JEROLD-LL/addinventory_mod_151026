@@ -1,0 +1,17 @@
+Public Sub ReapplySettings()
+                _BindingSource.RaiseListChangedEvents = True
+                _BindingSource.ResetBindings(False)
+
+                Dim rowToSetAsCurrent As DataGridViewRow = Nothing
+
+                For Each r As DataGridViewRow In _grid.Rows
+                    r.Selected = _SelectedDataRows.Contains(r.DataBoundItem)
+                    If _CurrentCellDataRow IsNot Nothing AndAlso r.DataBoundItem Is _CurrentCellDataRow Then
+                        rowToSetAsCurrent = r
+                    End If
+                Next
+
+                If rowToSetAsCurrent IsNot Nothing Then
+                    _grid.CurrentCell = rowToSetAsCurrent.Cells(_CurrentCellColumnIndex)
+                End If
+            End Sub

@@ -1,0 +1,9 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Overloads Function AddDisassemblyPartsRow(ByVal ParentPartNo As String, ByVal ChildPartNo As String, ByVal Quantity As String, ByVal PricePercentage As String, ByVal ChildPartDescription As String, ByVal Old_ChildPartNo As String) As DisassemblyPartsRow
+            Dim rowDisassemblyPartsRow As DisassemblyPartsRow = CType(Me.NewRow,DisassemblyPartsRow)
+            Dim columnValuesArray() As Object = New Object() {ParentPartNo, ChildPartNo, Quantity, PricePercentage, ChildPartDescription, Old_ChildPartNo}
+            rowDisassemblyPartsRow.ItemArray = columnValuesArray
+            Me.Rows.Add(rowDisassemblyPartsRow)
+            Return rowDisassemblyPartsRow
+        End Function

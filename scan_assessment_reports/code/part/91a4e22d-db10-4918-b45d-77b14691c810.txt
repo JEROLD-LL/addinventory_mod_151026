@@ -1,0 +1,7 @@
+Public Sub New(partno As String)
+
+        InitializeComponent()
+        _partno = partno
+        txtPartNo.Text = partno
+        SearchPartCatalog()
+    End Sub

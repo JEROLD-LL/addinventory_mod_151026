@@ -1,0 +1,11 @@
+Private Function PreparePrintDocument() As PrintDocument
+        ' Make the PrintDocument object.
+        Dim print_document As New PrintDocument
+
+        ' Install the PrintPage event handler.
+        AddHandler print_document.PrintPage, AddressOf _
+            PrintDocument1_PrintPage
+
+        ' Return the object.
+        Return print_document
+    End Function

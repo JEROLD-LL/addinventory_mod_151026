@@ -1,0 +1,8 @@
+Private Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
+        Dim selectedBarcodeTemplate As BarcodeTemplate = cbBarcodeType.SelectedItem
+        Dim selectedPrinter As ZPrinter = cbPrinters.SelectedItem
+
+        selectedBarcodeTemplate.CurrentTemplate = True
+        selectedPrinter.CurrentPrinter = True
+        Me.Close()
+    End Sub

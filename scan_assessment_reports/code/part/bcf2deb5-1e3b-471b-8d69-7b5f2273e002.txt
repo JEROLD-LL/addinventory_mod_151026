@@ -1,0 +1,178 @@
+'''<summary>
+    '''Represents strongly named DataRow class.
+    '''</summary>
+    Partial Public Class DisassemblyPartsRow
+        Inherits Global.System.Data.DataRow
+        
+        Private tableDisassemblyParts As DisassemblyPartsDataTable
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Friend Sub New(ByVal rb As Global.System.Data.DataRowBuilder)
+            MyBase.New(rb)
+            Me.tableDisassemblyParts = CType(Me.Table,DisassemblyPartsDataTable)
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property ParentPartNo() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableDisassemblyParts.ParentPartNoColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'ParentPartNo' in table 'DisassemblyParts' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableDisassemblyParts.ParentPartNoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property ChildPartNo() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableDisassemblyParts.ChildPartNoColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'ChildPartNo' in table 'DisassemblyParts' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableDisassemblyParts.ChildPartNoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property Quantity() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableDisassemblyParts.QuantityColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'Quantity' in table 'DisassemblyParts' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableDisassemblyParts.QuantityColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property PricePercentage() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableDisassemblyParts.PricePercentageColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'PricePercentage' in table 'DisassemblyParts' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableDisassemblyParts.PricePercentageColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property ChildPartDescription() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableDisassemblyParts.ChildPartDescriptionColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'ChildPartDescription' in table 'DisassemblyParts' is DBNull"& _ 
+                            ".", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableDisassemblyParts.ChildPartDescriptionColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property Old_ChildPartNo() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableDisassemblyParts.Old_ChildPartNoColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'Old_ChildPartNo' in table 'DisassemblyParts' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableDisassemblyParts.Old_ChildPartNoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsParentPartNoNull() As Boolean
+            Return Me.IsNull(Me.tableDisassemblyParts.ParentPartNoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetParentPartNoNull()
+            Me(Me.tableDisassemblyParts.ParentPartNoColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsChildPartNoNull() As Boolean
+            Return Me.IsNull(Me.tableDisassemblyParts.ChildPartNoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetChildPartNoNull()
+            Me(Me.tableDisassemblyParts.ChildPartNoColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsQuantityNull() As Boolean
+            Return Me.IsNull(Me.tableDisassemblyParts.QuantityColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetQuantityNull()
+            Me(Me.tableDisassemblyParts.QuantityColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPricePercentageNull() As Boolean
+            Return Me.IsNull(Me.tableDisassemblyParts.PricePercentageColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPricePercentageNull()
+            Me(Me.tableDisassemblyParts.PricePercentageColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsChildPartDescriptionNull() As Boolean
+            Return Me.IsNull(Me.tableDisassemblyParts.ChildPartDescriptionColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetChildPartDescriptionNull()
+            Me(Me.tableDisassemblyParts.ChildPartDescriptionColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsOld_ChildPartNoNull() As Boolean
+            Return Me.IsNull(Me.tableDisassemblyParts.Old_ChildPartNoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetOld_ChildPartNoNull()
+            Me(Me.tableDisassemblyParts.Old_ChildPartNoColumn) = Global.System.Convert.DBNull
+        End Sub
+    End Class

@@ -1,0 +1,170 @@
+Private Sub frmAddInventory_Load(ByVal sender As Object, ByVal e As EventArgs) Handles MyBase.Load
+        DgvInventoryInStock.AutoGenerateColumns = False
+        Try
+            Dim bandChild = ultraGridERPPurchaseOrders.DisplayLayout.Bands(1)
+            bandChild.Override.AllowColSizing = Infragistics.Win.UltraWinGrid.AllowColSizing.Free
+        Catch ex As Exception
+
+        End Try
+
+        InitializeMenuStripMessage()
+        'DgvERPPurchaseOrders.VirtualMode = True
+        Dim args As ObjectModel.ReadOnlyCollection(Of String) = My.Application.CommandLineArgs
+        Dim argSerialNo As String = Nothing
+        Dim argPartNo As String = Nothing
+
+        If args.Count > 0 Then
+            For Each arg In args
+                If InStr(arg.ToString(), "serialno=") Then argSerialNo = Replace(arg.ToString(), "serialno=", "")
+                If InStr(arg.ToString(), "serialno:") Then argSerialNo = Replace(arg.ToString(), "serialno:", "")
+                If InStr(arg.ToString(), "partno=") Then argPartNo = Replace(arg.ToString(), "partno=", "")
+                If InStr(arg.ToString(), "partno:") Then argPartNo = Replace(arg.ToString(), "partno:", "")
+            Next
+        End If
+
+        lblCurrentInventoryWarning.Dock = DockStyle.Fill
+
+        EnableDoubleBuffering(dgvCurrentInventory)
+
+        Dim jammer As New SQLJammer(New SqlConnection(FinesseConnectionString))
+
+        jammer.Add("select * from App_Config c where c.cmndsel = " & cmndsel.SQLQuote,
+                   Sub(t)
+                       AppConfig = t
+                       'zebraPrinterConfig = New ZebraPrinterConfig(AppConfig)
+                   End Sub)
+
+        jammer.Add("select 
+                        can_edit_inventory = dbo.can_edit_inventory(),
+                        can_add_inventory_without_restrictions = dbo.can_add_inventory_without_restrictions(),
+                        can_add_inventory_with_unrecieved_purchase_order = dbo.can_add_inventory_with_unrecieved_purchase_order(),
+                        can_add_inventory_only_recieved_purchase_order = dbo.can_add_inventory_only_recieved_purchase_order(),
+                        can_add_edit_disassemblies_subparts = dbo.can_add_edit_disassemblies_subparts(),
+                        owner_entity, warehouse_entity, currency, id_language, unitofweight = iuow.conversionLongname, unitoflength = iuol.conversionLongname, BarcodeSequenceType = isnull(p.BarcodeSequenceType, ''), p.user_name from dbo.pjtfrusr p join dbo.inUnitOfWeight iuow on p.unitofweight = iuow.conversionShortname join dbo.inUnitOfLength iuol on p.unitoflength = iuol.conversionShortname where p.user_name = suser_sname()",
+                   Sub(t)
+                       Dim row = t.Rows(0)
+                       _can_edit_inventory = row.Item("can_edit_inventory")
+                       Dim _can_edit_inventory_no_restrictions = row.Item("can_add_inventory_without_restrictions")
+                       Dim _can_edit_inventory_with_po = row.Item("can_add_inventory_with_unrecieved_purchase_order")
+                       Dim _can_edit_inventory_with_recieved_po = row.Item("can_add_inventory_only_recieved_purchase_order")
+                       _can_add_edit_disassemblies_subparts = row.Item("can_add_edit_disassemblies_subparts")
+                       Dim _can_edit_inventory_no_po = row.Item("can_edit_inventory")
+
+                       If (_can_edit_inventory_no_restrictions) Then
+                           UserPermission = UserAccess.FULL_ACCESS
+                       ElseIf (_can_edit_inventory_with_po) Then
+                           UserPermission = UserAccess.PO_MANDATORY
+                       ElseIf (_can_edit_inventory_with_recieved_po) Then
+                           UserPermission = UserAccess.RECIEVED_PO_MANDATORY
+                       ElseIf (_can_edit_inventory_no_po) Then
+                           UserPermission = UserAccess.GENERAL_USER
+                       Else
+                           UserPermission = UserAccess.NO_ACCESS
+                       End If
+
+
+                       MasterDataToolStripMenuItem.Visible = _can_add_edit_disassemblies_subparts
+                       USER_DEFAULT_COMPANY = row.Item("owner_entity")
+                       USER_DEFAULT_WAREHOUSE = row.Item("warehouse_entity")
+                       USER_DEFAULT_CURRENCY = row.Item("currency")
+                       USER_DEFAULT_ID_LANGUAGE = row.Item("id_language")
+                       ReloadPermissions()
+                   End Sub)
+
+        jammer.Add("select eo.OwnerCode, eo.OwnerDesc, EnableInpartsubRefChildLinking = isnull(c.EnableInpartsubRefChildLinking , 0), 
+                                EnableZebraPrinting = isnull(eo.EnableZebraPrinting, 0), eo.BarcodeSequenceType from EquipmentOwner eo 
+                       left join dbo.Company c on c.CompanyCode = eo.CompanyCode where eo.AllowAddNewEquipment = 1",
+                   Sub(t)
+                       _dtOwners = t
+                       Init_OwnersCombo()
+                       Init_ERP_OwnersCombo()
+                   End Sub)
+        jammer.Add("select currency, description, symbol, CapexThreshold from dbo.Currency",
+                   Sub(t)
+                       _dtCurrency = t
+                   End Sub)
+
+        'jammer.Add("select warehouse_code = WarehouseCode , warehouse_description = w.WarehouseDesc from dbo.warehouse w",
+        jammer.Add("select DISTINCT warehouse_code = WarehouseCode , warehouse_description = w.WarehouseDesc, IFSCompanyCd = ISNULL(c.IFSCompanyCd, WarehouseCode) from dbo.warehouse w
+                          LEFT JOIN dbo.Company c ON w.CompanyCode = c.CompanyCode
+                          WHERE w.WarehouseCode IN (select warehouse_code from dbo.warehouses)
+                    ORDER BY WarehouseCode",
+                   Sub(t)
+                       _dtWarehouses = t
+                       Init_WarehousesCombo()
+                       Init_ERP_WarehousesCombo()
+                   End Sub)
+
+        jammer.Add("select ref4, ref5desc, i.description from dbo.intransref4 i union all select ref4='', ref5desc='', description = '(none)' order by description",
+                   Sub(t)
+                       _dtReasonRef4 = t
+                       Init_Ref4Combo()
+                   End Sub)
+
+        jammer.Execute()
+
+        Init_dgcs()
+
+
+        'Dim foundRows = From row In _dtOwners.AsEnumerable()
+        '                Where row.Field(Of String)("OwnerCode") = USER_DEFAULT_COMPANY
+        'If (Not foundRows.Any) Then
+        '    cboOwner.SelectedValue = USER_DEFAULT_COMPANY
+        'End If 
+
+        Try
+            cboOwner.SelectedValue = USER_DEFAULT_COMPANY
+            cboWarehouse.SelectedValue = USER_DEFAULT_WAREHOUSE
+            cboErpWarehouse.SelectedValue = USER_DEFAULT_WAREHOUSE
+            cboErpOwner.SelectedValue = USER_DEFAULT_COMPANY
+        Catch ex As Exception
+
+        End Try
+
+
+        IsDataLoaded = True
+
+
+        FillERPGrid()
+
+        txtPartNo.Text = argPartNo
+
+        hideOrDisplayAutoIPAddressForPart(argPartNo)
+
+        Select Case IIf(Get_AppConfigSetting(AppConfig, "MainFormWindowState") IsNot Nothing, Get_AppConfigSetting(AppConfig, "MainFormWindowState"), Me.WindowState)
+            Case FormWindowState.Maximized.ToString
+                Dim MainFormLocation = Get_AppConfigSetting(AppConfig, "MainFormLocation")
+                If Not String.IsNullOrEmpty(MainFormLocation) Then Me.DesktopLocation = Get_LocationFromString(MainFormLocation)
+                Me.WindowState = FormWindowState.Maximized
+            Case FormWindowState.Normal.ToString
+                Me.WindowState = FormWindowState.Normal
+                Dim MainFormLocation = Get_AppConfigSetting(AppConfig, "MainFormLocation")
+                If Not String.IsNullOrEmpty(MainFormLocation) Then Me.DesktopLocation = Get_LocationFromString(MainFormLocation)
+                Dim MainFormSize = Get_AppConfigSetting(AppConfig, "MainFormSize")
+                If Not String.IsNullOrEmpty(MainFormSize) Then Me.Size = Get_SizeFromString(MainFormSize)
+        End Select
+
+
+        Dim lastOwner = Get_AppConfigSetting(AppConfig, "LastOwnerCode")
+        If lastOwner IsNot Nothing Then
+            Dim exists = _dtOwners.Select($"OwnerCode = '{lastOwner.ToString}'")
+            If exists.Count > 0 Then
+                cboOwner.SelectedValue = lastOwner
+                UpdatePrintBehavior()
+            End If
+        End If
+
+        Dim lastWarehouse = Get_AppConfigSetting(AppConfig, "LastSelectedWarehouse")
+        If lastWarehouse IsNot Nothing Then
+            Dim exists = _dtWarehouses.Select($"warehouse_code = '{lastWarehouse.ToString}'")
+            If exists.Count > 0 Then
+                cboWarehouse.SelectedValue = lastWarehouse
+            End If
+        End If
+
+        ShowButtonTooltip()
+        HandlePartImageGUI()
+
+        Dim activateZebraPrint As Boolean = EnabledZebraPrinting(cboOwner.SelectedValue)
+        btnGetNextBarcode.Visible = activateZebraPrint
+    End Sub

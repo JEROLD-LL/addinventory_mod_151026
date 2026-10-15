@@ -1,0 +1,3 @@
+Private Sub DeleteCurrentRow()
+        DisassemblyPartsBindingSource.CurrentDataRow(Of DataRow).Delete()
+    End Sub

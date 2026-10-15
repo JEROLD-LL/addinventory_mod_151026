@@ -1,0 +1,6 @@
+Private Sub ClearSelectedRowsToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ClearSelectedRowsToolStripMenuItem.Click
+        For Each r As DataGridViewRow In dgvItemsForImport.SelectedRows
+            bsAddInventory.Remove(r.DataBoundItem)
+        Next
+        ItemsForImportQtyUpdating()
+    End Sub

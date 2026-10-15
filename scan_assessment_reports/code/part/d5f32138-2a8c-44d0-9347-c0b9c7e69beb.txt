@@ -1,0 +1,10 @@
+Private Sub FilterInventoryInStock()
+        If (_selected_ifs_po Is Nothing OrElse String.IsNullOrEmpty(txtPartNo.Text) OrElse String.IsNullOrEmpty(txtPONumber.Text) OrElse cboRef4.SelectedValue <> "PURCADD") Then
+            Exit Sub
+        End If
+
+        Dim result = _selected_ifs_po.IFSInventory.Where(Function(item) item.AvailableQty > 0)
+        DgvInventoryInStock.DataSource = result.ToList()
+
+
+    End Sub

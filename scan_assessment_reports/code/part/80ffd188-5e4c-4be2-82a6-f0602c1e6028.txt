@@ -1,0 +1,14 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property onhand() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableClairNewSerialNos.onhandColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'onhand' in table 'ClairNewSerialNos' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableClairNewSerialNos.onhandColumn) = value
+            End Set
+        End Property

@@ -1,0 +1,14 @@
+Private Sub chkDeferEnteringMacAddress_CheckedChanged(sender As Object, e As EventArgs) Handles chkDeferEnteringMacAddress.CheckedChanged
+
+        If chkDeferEnteringMacAddress.Checked Then
+            txtMACAddress.Clear()
+            txtMACAddress.Enabled = False
+            txtSerialNo.Focus()
+        Else
+            txtMACAddress.Clear()
+            txtMACAddress.Enabled = True
+            txtMACAddress.Focus()
+        End If
+
+
+    End Sub

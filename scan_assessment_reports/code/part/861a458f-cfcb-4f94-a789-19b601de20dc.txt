@@ -1,0 +1,6 @@
+Private Function GetUserWarehouse()
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+            GetUserWarehouse = newConn.ExecuteScalar("select warehouse_code from warehouses where is_default = 1")
+        End Using
+    End Function

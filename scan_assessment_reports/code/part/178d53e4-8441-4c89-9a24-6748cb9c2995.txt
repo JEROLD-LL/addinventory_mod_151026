@@ -1,0 +1,757 @@
+'''<summary>
+    '''Represents strongly named DataRow class.
+    '''</summary>
+    Partial Public Class inpartsubRow
+        Inherits Global.System.Data.DataRow
+        
+        Private tableinpartsub As inpartsubDataTable
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Friend Sub New(ByVal rb As Global.System.Data.DataRowBuilder)
+            MyBase.New(rb)
+            Me.tableinpartsub = CType(Me.Table,inpartsubDataTable)
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property partno() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.partnoColumn),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.partnoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property partdesc() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableinpartsub.partdescColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'partdesc' in table 'inpartsub' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableinpartsub.partdescColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property unique_no() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.unique_noColumn),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.unique_noColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property batchno() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.batchnoColumn),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.batchnoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property dept() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.deptColumn),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.deptColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property bld() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.bldColumn),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.bldColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property row() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.rowColumn),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.rowColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property serial_no() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.serial_noColumn),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.serial_noColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property onhand() As Double
+            Get
+                Return CType(Me(Me.tableinpartsub.onhandColumn),Double)
+            End Get
+            Set
+                Me(Me.tableinpartsub.onhandColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property receipt() As Date
+            Get
+                Return CType(Me(Me.tableinpartsub.receiptColumn),Date)
+            End Get
+            Set
+                Me(Me.tableinpartsub.receiptColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property acctno() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.acctnoColumn),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.acctnoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property ref4() As String
+            Get
+                Return CType(Me(Me.tableinpartsub.ref4Column),String)
+            End Get
+            Set
+                Me(Me.tableinpartsub.ref4Column) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property ref5() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableinpartsub.ref5Column),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'ref5' in table 'inpartsub' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableinpartsub.ref5Column) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property RemoveNonCoded() As Boolean
+            Get
+                Try 
+                    Return CType(Me(Me.tableinpartsub.RemoveNonCodedColumn),Boolean)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'RemoveNonCoded' in table 'inpartsub' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableinpartsub.RemoveNonCodedColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property PONumber() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableinpartsub.PONumberColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'PONumber' in table 'inpartsub' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableinpartsub.PONumberColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property ShouldLinkChildParts() As Boolean
+            Get
+                Try 
+                    Return CType(Me(Me.tableinpartsub.ShouldLinkChildPartsColumn),Boolean)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'ShouldLinkChildParts' in table 'inpartsub' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableinpartsub.ShouldLinkChildPartsColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property IPAddress() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableinpartsub.IPAddressColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'IPAddress' in table 'inpartsub' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableinpartsub.IPAddressColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property MACAddress() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableinpartsub.MACAddressColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'MacAddress' in table 'inpartsub' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableinpartsub.MACAddressColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property PODateEntered() As String
+            Get
+                If Me.IsPODateEnteredNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.PODateEnteredColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.PODateEnteredColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POSite() As String
+            Get
+                If Me.IsPOSiteNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POSiteColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POSiteColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POInternalCustomer() As String
+            Get
+                If Me.IsPOInternalCustomerNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POInternalCustomerColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POInternalCustomerColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POInternalDestination() As String
+            Get
+                If Me.IsPOInternalDestinationNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POInternalDestinationColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POInternalDestinationColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POLineNo() As String
+            Get
+                If Me.IsPOLineNoNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POLineNoColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POLineNoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POReleaseNo() As String
+            Get
+                If Me.IsPOReleaseNoNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POReleaseNoColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POReleaseNoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POLocationNo() As String
+            Get
+                If Me.IsPOLocationNoNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POLocationNoColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POLocationNoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POLotBatchNo() As String
+            Get
+                If Me.IsPOLotBatchNoNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POLotBatchNoColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POLotBatchNoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property PONoteText() As String
+            Get
+                If Me.IsPONoteTextNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.PONoteTextColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.PONoteTextColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POInternalDestinationId() As String
+            Get
+                If Me.IsPOInternalDestinationIdNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POInternalDestinationIdColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POInternalDestinationIdColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POIsSerialized() As String
+            Get
+                If Me.IsPOIsSerializedNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableinpartsub.POIsSerializedColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POIsSerializedColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property IsDisassembly() As Boolean
+            Get
+                Try 
+                    Return CType(Me(Me.tableinpartsub.IsDisassemblyColumn),Boolean)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'IsDisassembly' in table 'inpartsub' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableinpartsub.IsDisassemblyColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property ParentPartNo() As String
+            Get
+                If Me.IsParentPartNoNull Then
+                    Return Nothing
+                Else
+                    Return CType(Me(Me.tableinpartsub.ParentPartNoColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.ParentPartNoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POPartNo() As String
+            Get
+                If Me.IsPOPartNoNull Then
+                    Return Nothing
+                Else
+                    Return CType(Me(Me.tableinpartsub.POPartNoColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POPartNoColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POQtyArrived() As String
+            Get
+                If Me.IsPOQtyArrivedNull Then
+                    Return Nothing
+                Else
+                    Return CType(Me(Me.tableinpartsub.POQtyArrivedColumn),String)
+                End If
+            End Get
+            Set
+                Me(Me.tableinpartsub.POQtyArrivedColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Property POBuyUnitPrice() As String
+            Get
+                Try 
+                    Return CType(Me(Me.tableinpartsub.POBuyUnitPriceColumn),String)
+                Catch e As Global.System.InvalidCastException
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'POBuyUnitPrice' in table 'inpartsub' is DBNull.", e)
+                End Try
+            End Get
+            Set
+                Me(Me.tableinpartsub.POBuyUnitPriceColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IspartdescNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.partdescColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetpartdescNull()
+            Me(Me.tableinpartsub.partdescColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function Isref5Null() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.ref5Column)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub Setref5Null()
+            Me(Me.tableinpartsub.ref5Column) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsRemoveNonCodedNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.RemoveNonCodedColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetRemoveNonCodedNull()
+            Me(Me.tableinpartsub.RemoveNonCodedColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPONumberNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.PONumberColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPONumberNull()
+            Me(Me.tableinpartsub.PONumberColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsShouldLinkChildPartsNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.ShouldLinkChildPartsColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetShouldLinkChildPartsNull()
+            Me(Me.tableinpartsub.ShouldLinkChildPartsColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsIPAddressNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.IPAddressColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetIPAddressNull()
+            Me(Me.tableinpartsub.IPAddressColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsMACAddressNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.MACAddressColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetMACAddressNull()
+            Me(Me.tableinpartsub.MACAddressColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPODateEnteredNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.PODateEnteredColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPODateEnteredNull()
+            Me(Me.tableinpartsub.PODateEnteredColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOSiteNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POSiteColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOSiteNull()
+            Me(Me.tableinpartsub.POSiteColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOInternalCustomerNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POInternalCustomerColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOInternalCustomerNull()
+            Me(Me.tableinpartsub.POInternalCustomerColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOInternalDestinationNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POInternalDestinationColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOInternalDestinationNull()
+            Me(Me.tableinpartsub.POInternalDestinationColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOLineNoNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POLineNoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOLineNoNull()
+            Me(Me.tableinpartsub.POLineNoColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOReleaseNoNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POReleaseNoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOReleaseNoNull()
+            Me(Me.tableinpartsub.POReleaseNoColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOLocationNoNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POLocationNoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOLocationNoNull()
+            Me(Me.tableinpartsub.POLocationNoColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOLotBatchNoNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POLotBatchNoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOLotBatchNoNull()
+            Me(Me.tableinpartsub.POLotBatchNoColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPONoteTextNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.PONoteTextColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPONoteTextNull()
+            Me(Me.tableinpartsub.PONoteTextColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOInternalDestinationIdNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POInternalDestinationIdColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOInternalDestinationIdNull()
+            Me(Me.tableinpartsub.POInternalDestinationIdColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOIsSerializedNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POIsSerializedColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOIsSerializedNull()
+            Me(Me.tableinpartsub.POIsSerializedColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsIsDisassemblyNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.IsDisassemblyColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetIsDisassemblyNull()
+            Me(Me.tableinpartsub.IsDisassemblyColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsParentPartNoNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.ParentPartNoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetParentPartNoNull()
+            Me(Me.tableinpartsub.ParentPartNoColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOPartNoNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POPartNoColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOPartNoNull()
+            Me(Me.tableinpartsub.POPartNoColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOQtyArrivedNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POQtyArrivedColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOQtyArrivedNull()
+            Me(Me.tableinpartsub.POQtyArrivedColumn) = Global.System.Convert.DBNull
+        End Sub
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Function IsPOBuyUnitPriceNull() As Boolean
+            Return Me.IsNull(Me.tableinpartsub.POBuyUnitPriceColumn)
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Public Sub SetPOBuyUnitPriceNull()
+            Me(Me.tableinpartsub.POBuyUnitPriceColumn) = Global.System.Convert.DBNull
+        End Sub
+    End Class

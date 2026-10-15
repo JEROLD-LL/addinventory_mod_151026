@@ -1,0 +1,5 @@
+Private Sub Init_Ref4Combo()
+        cboRef4.DisplayMember = "description"
+        cboRef4.ValueMember = "ref4"
+        cboRef4.DataSource = New DataView(_dtReasonRef4, "ref4 not in ('REVCHG','WHCHG','SCRAP','LOST','SALE','OWNERCHG','REPAIR','SN Chg','MAINT')", "description asc", DataViewRowState.CurrentRows)
+    End Sub

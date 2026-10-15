@@ -1,0 +1,3 @@
+Private Sub btnAddItemToList_Hover(ByVal sender As Object, ByVal e As EventArgs) Handles btnAddItemToList.MouseHover
+        ToolTip1.Show(If(btnAddItemToList.Enabled, "Add item to list", "You must input a part number"), btnAddItemToList)
+    End Sub

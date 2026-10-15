@@ -1,0 +1,10 @@
+Private Sub BtnAddSubparts_Click(sender As Object, e As EventArgs) Handles BtnAddSubparts.Click
+        Dim partno As String
+        If (clickedRow IsNot Nothing) Then
+            partno = clickedRow.Cells("PartNo").Value
+        End If
+
+
+        Dim mainPartMaintenance = New frmMainPartMaintenance(partno)
+        mainPartMaintenance.Show()
+    End Sub

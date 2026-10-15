@@ -1,0 +1,15 @@
+Private Sub frmPrintZPLDialog_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        LoadPrinters()
+        LoadBarcodeTemplates()
+        LoadPrintData()
+
+        'simplify ui if only a single item being printed
+        If _dtItemsToPrint.Count = 1 Then
+            btnPrintBarcode.Text = "Print"
+            btnPreviewNextBarcode.Visible = False
+            btnPreviewPrevBarcode.Visible = False
+            cbBarcode.Enabled = False
+        End If
+
+        GetPreview()
+    End Sub

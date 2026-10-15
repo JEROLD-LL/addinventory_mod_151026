@@ -1,0 +1,73 @@
+Private Sub dgvItemsForImport_CellEndEdit(sender As Object, e As DataGridViewCellEventArgs) Handles dgvItemsForImport.CellEndEdit
+        Dim index = 0 'Replacing the usage of this from old clair new usage: PartdescDataGridViewTextBoxColumn.Index
+        Select Case e.ColumnIndex
+            Case dgcAddItemsQty.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) And String.IsNullOrEmpty(dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value) <> 1 Then
+                    Beep_Fail()
+                    MsgBox("Only quantities of 1 can be entered for barcoded items.", vbOKOnly)
+                    dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value = 1
+                    ItemsForImportQtyUpdating()
+                End If
+                Dim orderNo = dgvItemsForImport.Item(PONumber.Index, e.RowIndex).Value
+                Dim partNumber = dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value
+                Dim POLimit = _ifs_data.Where(Function(item) item.OrderNo = orderNo AndAlso item.PartNo = partNumber).FirstOrDefault()
+                If String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) AndAlso POLimit IsNot Nothing AndAlso POLimit.UnrecievedQty < dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value Then
+                    Beep_Fail()
+                    MsgBox("Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order.", vbOKOnly)
+                    dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value = POLimit.UnrecievedQty
+                    ItemsForImportQtyUpdating()
+                End If
+
+            Case dgcAddItemsBarcode.Index, dgcAddItemsSerialNo.Index
+                If String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) And String.IsNullOrEmpty(dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value) <> 1 Then
+                    MsgBox("Only quantities of 1 can be entered for barcoded items.", vbOKOnly)
+                End If
+
+            Case dgcAddItemRef4.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) Then
+                    If dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False Then
+                        Dim result = MsgBox("You have changed your reason for adding inventory to '" & _dtReasonRef4.Select("ref4='NONTOBAR'")(0)("description") & "'" & vbCrLf & vbCrLf & "Would you like to attempt to remove a related non-barcoded item from " & dgvItemsForImport.Item(dgcAddItemsBld.Index, e.RowIndex).FormattedValue & " INSTOCK (Owner: " & dgvItemsForImport.Item(dgcAddItemsDept.Index, e.RowIndex).FormattedValue & ")?", vbYesNo)
+                        If result = MsgBoxResult.Yes Then
+                            dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True
+                            ValidateAddToInventoryItems()
+                        Else
+                            MsgBox("Select a different reason for adding inventory.", vbOKOnly)
+                        End If
+                    End If
+                    If Not dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True Then
+                        MsgBox("You have changed your reason for adding inventory from '" & _dtReasonRef4.Select("ref4='NONTOBAR'")(0)("description") & "'." & vbCrLf & vbCrLf & "The 'Remove Non-Coded' checkbox will be unchecked.", vbOKOnly)
+                        dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False
+                    End If
+                End If
+
+            Case dgcAddItemsDept.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) Then
+                    If dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" Then
+                        Dim result = MsgBox("You have changed the owner of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "Would you like to attempt to remove a related non-barcoded item from " & dgvItemsForImport.Item(dgcAddItemsBld.Index, e.RowIndex).FormattedValue & " INSTOCK (Owner: " & dgvItemsForImport.Item(dgcAddItemsDept.Index, e.RowIndex).FormattedValue & ")?", vbYesNo)
+                        If result = MsgBoxResult.Yes Then
+                            dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True
+                            ValidateAddToInventoryItems()
+                        End If
+                    End If
+                    If Not dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True Then
+                        MsgBox("You have changed the owner of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "The 'Remove Non-Coded' checkbox will be unchecked.", vbOKOnly)
+                        dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False
+                    End If
+                End If
+
+            Case dgcAddItemsBld.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) Then
+                    If dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False Then
+                        Dim result = MsgBox("You have changed the warehouse of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "Would you like to attempt to remove a related non-barcoded item from " & dgvItemsForImport.Item(dgcAddItemsBld.Index, e.RowIndex).FormattedValue & " INSTOCK (Owner: " & dgvItemsForImport.Item(dgcAddItemsDept.Index, e.RowIndex).FormattedValue & ")?", vbYesNo)
+                        If result = MsgBoxResult.Yes Then
+                            dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True
+                            ValidateAddToInventoryItems()
+                        End If
+                    End If
+                    If Not dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True Then
+                        MsgBox("You have changed the warehouse of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "The 'Remove Non-Coded' checkbox will be unchecked.", vbOKOnly)
+                        dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False
+                    End If
+                End If
+        End Select
+    End Sub

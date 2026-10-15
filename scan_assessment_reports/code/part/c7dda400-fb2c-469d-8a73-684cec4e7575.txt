@@ -1,0 +1,45 @@
+Private Sub PrintBarcodes(Optional ItemsToPrint As List(Of ItemsToPrintRow) = Nothing)
+        Dim owner = _dtOwners.Select($"OwnerCode = '{cboOwner.SelectedValue}'").FirstOrDefault
+
+        Dim useZebraPrint As Boolean = owner.Item("EnableZebraPrinting")
+
+        If Not useZebraPrint Then 'Special EDS Zebra printing
+            Try
+                If pb2Dbarcode.Image IsNot Nothing Then
+                    'Use default print behavior
+                    PrintDialog1.Document = PreparePrintDocument()
+                    PrintDialog1.Document.DefaultPageSettings.Landscape = True
+                    Dim results = PrintDialog1.ShowDialog()
+                    If results = DialogResult.OK Then
+                        PrintDocument1.PrinterSettings = PrintDialog1.PrinterSettings
+                        'PrintDocument1.Print()
+                    End If
+                Else
+                    MsgBox("Nothing to print.")
+                End If
+            Catch ex As Exception
+                MsgBox("Print Failed: " & ex.Message)
+            End Try
+        Else
+            'Use PrintZPL Zebra print dialog
+            ' Try
+            If ItemsToPrint.Count = 0 Then
+                MsgBox("There is nothing to print in the Items For Import grid.")
+                Exit Sub
+            End If
+
+            Dim printZPLDialog = New frmPrintZPLDialog(cmndsel)
+            printZPLDialog.dtItemsToPrint = ItemsToPrint
+            printZPLDialog.StartPosition = FormStartPosition.CenterParent
+
+            printZPLDialog.ShowDialog()
+
+            'get dialog state for reuse on next print
+            _PrintDialogState = printZPLDialog.PrintDialogState
+
+            printZPLDialog.Dispose()
+            'Catch ex As Exception
+            'MsgBox("Zebra Print Failed: " & ex.Message)
+            'End Try
+        End If
+    End Sub

@@ -1,0 +1,8 @@
+<Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")>  _
+        Protected Overrides Sub OnRowDeleted(ByVal e As Global.System.Data.DataRowChangeEventArgs)
+            MyBase.OnRowDeleted(e)
+            If (Not (Me.inpartsubRowDeletedEvent) Is Nothing) Then
+                RaiseEvent inpartsubRowDeleted(Me, New inpartsubRowChangeEvent(CType(e.Row,inpartsubRow), e.Action))
+            End If
+        End Sub

@@ -1,0 +1,15 @@
+Private Sub btnPartNoSearch_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnPartNoSearch.Click
+        Static picker As New PartPicker(Me, btnPartNoSearch, FinesseConnectionString)
+        picker.SearchForBarcode = False
+
+        If Not picker.GetPart() Then
+            Exit Sub
+        End If
+
+        txtPartNo.Text = picker.PartNumber
+        txtPartDescEngOp.Text = picker.PartDesc
+        txtPartNo_Validating(Nothing, Nothing)
+
+        hideOrDisplayAutoIPAddressForPart(picker.PartNumber)
+
+    End Sub

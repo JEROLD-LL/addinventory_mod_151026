@@ -1,0 +1,3 @@
+Private Sub HandlePartImageGUI()
+        PartImageViewerControl1.PartNumberChangeAsync(txtPartNo.Text)
+    End Sub

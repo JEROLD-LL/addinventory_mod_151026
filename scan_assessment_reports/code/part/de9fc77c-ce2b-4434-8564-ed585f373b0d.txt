@@ -1,0 +1,20 @@
+Private Sub LoadBarcodeTemplates()
+        Dim bs As New BindingSource
+        bs.DataSource = _printDialogState.BarcodeTemplates
+
+        cbBarcodeType.DataSource = bs
+
+        nupXCalibration.DataBindings.Add("Value", bs, "XOffset", False, DataSourceUpdateMode.OnPropertyChanged)
+        nupYCalibration.DataBindings.Add("Value", bs, "YOffset", False, DataSourceUpdateMode.OnPropertyChanged)
+
+        cbBarcodeType.DisplayMember = "Name"
+        cbBarcodeType.ValueMember = "Path"
+
+        For Each template In _printDialogState.BarcodeTemplates
+            If template.CurrentTemplate Then
+                cbBarcodeType.SelectedItem = template
+                template.CurrentTemplate = False
+            End If
+        Next
+
+    End Sub

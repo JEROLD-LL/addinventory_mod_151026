@@ -1,0 +1,18 @@
+Public Sub New(ByVal grid As DataGridView)
+                _grid = grid
+
+                _SelectedDataRows = New HashSet(Of Object)(
+                    From r As DataGridViewRow In grid.SelectedRows
+                    Select r.DataBoundItem
+                    )
+
+                Dim currentCell = grid.CurrentCellAddress
+                Dim currentRow = grid.CurrentRow
+                If currentCell.X >= 0 AndAlso currentCell.Y >= 0 Then
+                    _CurrentCellDataRow = currentRow.DataBoundItem
+                    _CurrentCellColumnIndex = currentCell.X
+                End If
+
+                _BindingSource = grid.DataSource
+                _BindingSource.RaiseListChangedEvents = False
+            End Sub

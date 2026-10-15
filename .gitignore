@@ -1,0 +1,3 @@
+# Local credentials — keep on disk, do not publish
+.legacyleap/leap.properties
+.legacyleap/metadata.json

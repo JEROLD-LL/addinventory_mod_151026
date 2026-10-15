@@ -1,0 +1,45 @@
+Private Sub BulkSave(ByVal tSource As DataTable, ByVal destinationTable As String)
+        Dim tTemp As New DataTable
+
+        tTemp.Columns.Add("is_insert", GetType(Boolean)).DefaultValue = False
+        tTemp.Columns.Add("is_update", GetType(Boolean)).DefaultValue = False
+        tTemp.Columns.Add("is_delete", GetType(Boolean)).DefaultValue = False
+
+        For Each c As DataColumn In tSource.Columns
+            If Not c.ReadOnly Then tTemp.Columns.Add(c.ColumnName, c.DataType) ' assuming that read-only columns will by calculated automatically by the DB
+        Next
+
+        For Each r As DataRow In tSource.Rows
+            Select Case r.RowState
+                Case DataRowState.Added, DataRowState.Deleted, DataRowState.Modified
+                    tTemp.ImportRow(r)
+                Case Else
+                    Debug.Assert(r.RowState = DataRowState.Unchanged)
+            End Select
+        Next
+
+        For Each r As DataRow In tTemp.Rows
+            Select Case r.RowState
+                Case DataRowState.Added
+                    r("is_insert") = True
+                Case DataRowState.Modified
+                    r("is_update") = True
+                Case DataRowState.Deleted
+                    r.RejectChanges() ' necessary so that we can look at and modify fields.
+                    r("is_delete") = True
+            End Select
+        Next
+
+        Using bulkCopy As New SqlBulkCopy(gConn)
+            bulkCopy.DestinationTableName = destinationTable
+            bulkCopy.BatchSize = 0
+            bulkCopy.ColumnMappings.Clear()
+
+            For Each c As DataColumn In tTemp.Columns
+                Debug.Print(c.ColumnName)
+                bulkCopy.ColumnMappings.Add(c.ColumnName, c.ColumnName)
+            Next
+
+            bulkCopy.WriteToServer(tTemp)
+        End Using
+    End Sub

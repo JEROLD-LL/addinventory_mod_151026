@@ -1,0 +1,54 @@
+Private Sub ultraGridERPPurchaseOrders_AfterRowActivate(sender As Object, e As EventArgs) Handles ultraGridERPPurchaseOrders.AfterRowActivate
+        Try
+            If (IsGridLoading) Then
+                Exit Sub
+            End If
+
+            Dim selectedRow As UltraGridRow = ultraGridERPPurchaseOrders.ActiveRow
+            Dim PoLine As QuickReportSchema
+            If (Not selectedRow.HasParent) Then
+                PoLine = TryCast(selectedRow.ListObject, QuickReportSchema)
+                Dim childBand = selectedRow.ChildBands(0)
+                If childBand.Rows.Count > 0 Then
+                    childBand.Rows(0).Activate()
+                    Exit Sub
+                End If
+            Else
+                Dim disassembly = TryCast(selectedRow.ListObject, DisassemblyPart)
+                Dim parent = TryCast(selectedRow.ParentRow.ListObject, QuickReportSchema).Clone()
+
+                If (parent.PartNo <> disassembly.ChildPartNo) Then
+                    parent.PartNo = disassembly.ChildPartNo
+                    parent.IFSInventory = parent.IFSInventory.Where(Function(item) item.PartNo = disassembly.ChildPartNo).ToList()
+                    parent.InvQtyArrived = disassembly.Quantity
+                    'parent.FinesseQty = 0
+                End If
+
+                If (parent IsNot Nothing AndAlso Not parent.IsSerializedPo) Then
+                    txtQty.Text = disassembly.Quantity
+                Else
+                    txtQty.Text = 1
+                End If
+                PoLine = parent
+            End If
+            _selected_ifs_po = PoLine
+            If (PoLine IsNot Nothing) Then
+                cboRef4.SelectedValue = "PURCADD"
+                If (Not String.IsNullOrEmpty(PoLine.Owner)) Then
+                    cboOwner.SelectedValue = PoLine.Owner
+                End If
+                If (Not String.IsNullOrEmpty(PoLine.Warehouse)) Then
+                    cboWarehouse.SelectedValue = PoLine.Warehouse
+                End If
+
+                txtPONumber.Text = PoLine.OrderNo
+                txtPartNo.Text = PoLine.PartNo
+                hideOrDisplayAutoIPAddressForPart(PoLine.PartNo)
+                ReloadPermissions()
+            End If
+
+        Catch ex As Exception
+            Console.WriteLine("Error Activating ultragrid row...")
+            Console.WriteLine(ex.Message)
+        End Try
+    End Sub

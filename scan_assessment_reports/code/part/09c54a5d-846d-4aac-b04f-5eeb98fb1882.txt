@@ -1,0 +1,35 @@
+Private Sub txtPartNo_TextChanged(ByVal sender As Object, ByVal e As EventArgs) Handles txtPartNo.TextChanged
+        If String.IsNullOrEmpty(txtPartNo.Text) Then
+            txtPartDescEngOp.Clear()
+
+        Else
+
+            ShowButtonTooltip()
+            Using newConn As New SqlConnection(FinesseConnectionString)
+                newConn.Open()
+
+                Dim t = newConn.GetDataTable("select p.partdesc, p.lead_source from inpart p where p.partno = " & SQLQuote(txtPartNo.Text))
+                If t.Rows.Count = 0 Then
+                    txtPartNo.Text = String.Empty
+                    Return
+                End If
+                txtPartDescEngOp.Text = t.Rows(0).Item("partdesc")
+
+                Selected_PartNo = txtPartNo.Text
+                Selected_PartDesc = txtPartDescEngOp.Text
+
+                If _selected_ifs_po Is Nothing And (cboRef4.SelectedIndex = 0 Or cboRef4.SelectedValue = "MANFADD" Or cboRef4.SelectedValue = "PURCADD") Then
+                    Select Case t.Rows(0).Item("lead_source")
+                        Case "M"
+                            cboRef4.SelectedValue = "MANFADD"
+                            txtPONumber.Text = String.Empty
+                        Case "P"
+                            cboRef4.SelectedValue = "PURCADD"
+                    End Select
+                End If
+            End Using
+        End If
+        FilterInventoryInStock()
+        RefreshCurrentInventory()
+        HandlePartImageGUI()
+    End Sub

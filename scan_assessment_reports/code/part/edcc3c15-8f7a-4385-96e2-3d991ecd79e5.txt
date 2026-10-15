@@ -1,0 +1,15 @@
+Private Sub SelectPreviousSelectionOnGrid(parent As QuickReportSchema, child As DisassemblyPart)
+        If (parent IsNot Nothing) Then
+            Dim IsChild = child IsNot Nothing
+            Dim row = ultraGridERPPurchaseOrders.Rows.FirstOrDefault(Function(item) item.Cells("OrderNo").Value = parent.OrderNo AndAlso item.Cells("PartNo").Value = parent.PartNo)
+            If (row IsNot Nothing) Then
+                If (IsChild) Then
+                    Dim childRow = row.ChildBands(0).Rows.FirstOrDefault(Function(item) item.Cells("ChildPartNo").Value = child.ChildPartNo)
+                    If (childRow IsNot Nothing) Then
+                        childRow.Activate()
+                    End If
+                End If
+                row.Activate()
+            End If
+        End If
+    End Sub

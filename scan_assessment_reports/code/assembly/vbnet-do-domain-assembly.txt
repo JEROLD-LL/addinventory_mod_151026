@@ -1,0 +1,3000 @@
+
+==================================================
+Part: frmAddInventory (CFG-024)
+Type: configuration
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Public Class frmAddInventory
+
+    Dim cmndsel As String = "INVADD"
+    Dim AppConfig As New DataTable
+
+#Region "Public Definitions"
+
+    Public Enum UserAccess
+        ''' <summary>
+        ''' User that can add inventory without a PO or restrictions
+        ''' </summary>
+        FULL_ACCESS
+        ''' <summary>
+        ''' User that can add inventory with an existing PO for the selected part
+        ''' </summary>
+        PO_MANDATORY
+        ''' <summary>
+        ''' User that can add inventory with a recieved PO for the selected part
+        ''' </summary>
+        RECIEVED_PO_MANDATORY
+        ''' <summary>
+        ''' User that can saved inventory with reasons diffrents than PURCADD
+        ''' </summary>
+        GENERAL_USER
+        ''' <summary>
+        ''' User that does not have access to save inventory
+        ''' </summary>
+        NO_ACCESS
+    End Enum
+
+    Private _expectedCommand As SqlCommand = Nothing
+
+    Private PartValidated As Boolean = False
+
+    Public Selected_Barcode As String
+    Public Selected_PartNo As String
+    Public Selected_PartDisassemblies As IEnumerable(Of DisassemblyPart)
+    Public Selected_PartDesc As String
+    Public Selected_Owner As String
+    Public Selected_Warehouse As String
+    Public _can_add_edit_disassemblies_subparts As Boolean = False
+    Private USER_DEFAULT_WAREHOUSE As String
+    Private USER_DEFAULT_CURRENCY As String
+    Private USER_DEFAULT_ID_LANGUAGE As String
+    Private USER_DEFAULT_COMPANY As String
+    'Private USER_DEFAULT_BARCODESEQUENCETYPE As String
+
+    Private IsDataLoaded As Boolean = False
+    Private IsManipulatingMultipleRows As Boolean = False
+    Private IgnoreLastSearchString As Boolean = False
+
+    Private WithEvents _dsDeviceMaintenanceStartUp As DataSet
+    Private cellValues As New List(Of Integer)
+
+    Private WithEvents _dtOwners As New DataTable
+    Private _dtCurrency As New DataTable
+    Private WithEvents _dtWarehouses As New DataTable
+    Public WithEvents _dtReasonRef4 As New DataTable
+
+    Private WithEvents _binding_lblBarcodePrint As Binding
+
+    Private WithEvents _dtClairNewSerialNos As New DataTable
+
+    Private _PrintDialogState As PrintDialogState
+    Private _useZebraPrinting As Boolean
+
+    Const WMCLOSE As String = "WmClose"
+
+    Private _searchDelay As Integer = 1000
+    Private _searchTimer As Threading.Timer
+
+    Private gConn As New SqlConnection(FinesseConnectionString) 'Must maintain global connection so @@SPID is maintained
+
+    Private WithEvents _FileExplorer As FileExplorer
+    Private WithEvents _PartImages As PartImagesPanel
+    Public Selected_GUID As String
+    Private _partImagesObject As PartFileExplorer = Nothing
+    Private _selected_image_index As Int16 = 0
+    Private _ifs_data As IEnumerable(Of QuickReportSchema) = New List(Of QuickReportSchema)()
+    Private _selected_ifs_po As QuickReportSchema
+    Public _can_edit_inventory As Boolean = False
+    Public _userPermission As UserAccess = UserAccess.NO_ACCESS
+
+    Private WithEvents menuItemSendMessage As ToolStripControlHost
+    Private WithEvents txtQuantityMessage As TextBox
+
+    Public ReadOnly Property IsDisassemblyPart() As Boolean
+        Get
+            If (ultraGridERPPurchaseOrders Is Nothing) Then
+                Throw New Exception("Unable to load the Infragistics package. =(")
+            End If
+            If (ultraGridERPPurchaseOrders.ActiveRow IsNot Nothing) Then
+                If (ultraGridERPPurchaseOrders.ActiveRow.HasParent()) Then
+                    Dim PoLine = TryCast(ultraGridERPPurchaseOrders.ActiveRow.ParentRow.ListObject, QuickReportSchema)
+                    Dim child = TryCast(ultraGridERPPurchaseOrders.ActiveRow.ListObject, DisassemblyPart)
+                    If (PoLine.PartNo = child.ChildPartNo) Then
+                        Return False
+                    End If
+                    Return True
+                End If
+            End If
+            Return False
+        End Get
+    End Property
+
+
+    Public ReadOnly Property IsSelfContainedDisassembly() As Boolean
+        Get
+            If (ultraGridERPPurchaseOrders Is Nothing) Then
+                Throw New Exception("Unable to load the Infragistics package. =(")
+            End If
+            If (ultraGridERPPurchaseOrders.ActiveRow IsNot Nothing AndAlso ultraGridERPPurchaseOrders.ActiveRow.HasParent()) Then
+                Dim PoLine = TryCast(ultraGridERPPurchaseOrders.ActiveRow.ParentRow.ListObject, QuickReportSchema)
+                Dim child = PoLine.Disassemblies.FirstOrDefault(Function(item) item.ChildPartNo = PoLine.PartNo)
+                Return child IsNot Nothing
+            End If
+
+            Return False
+        End Get
+    End Property
+
+    Public ReadOnly Property CurrentFinesseQty() As Integer
+        Get
+            If (_selected_ifs_po IsNot Nothing) Then
+                Dim partno = _selected_ifs_po.PartNo
+
+                Dim result = 0 '_selected_ifs_po.FinesseQty
+
+                'Dim ActualFinesseQty = 0
+                Dim inventoryQty = (New ReceivedInventory()).GetReceivedInventory(partno, _selected_ifs_po.OrderNo, _selected_ifs_po.LineNo.ToString, _selected_ifs_po.ReleaseNo.ToString).GetAwaiter().GetResult()
+                result += Integer.Parse(txtQty.Text) + inventoryQty.onhand
+                'If (Not IsDisassemblyPart) Then
+                '    result += Integer.Parse(txtQty.Text) + inventoryQty.onhand
+                'Else
+                '    'Dim row = ultraGridERPPurchaseOrders.ActiveRow.ParentRow
+                '    'partno = row.Cells("ChildPartNo").Value.ToString()
+                '    'Dim POElements = DataSetAddInventory.inpartsub.Where(Function(item) item.PONumber = _selected_ifs_po.OrderNo AndAlso item.partno = partno AndAlso item.POReleaseNo = partno)
+                '    'If (POElements IsNot Nothing AndAlso POElements.Count > 0) Then
+                '    '    result += POElements.Sum(Function(item) item.onhand)
+                '    'End If
+                '    result = 0
+                'End If
+
+                Return result
+            End If
+
+            Return dgvItemsForImport.Rows.Count
+        End Get
+    End Property
+
+    Public ReadOnly Property IsValidEntry() As (Boolean, String)
+        Get
+            Dim isValid = True
+            Dim msg As String
+
+            Dim po = _selected_ifs_po
+            Dim selectedRow
+            If (ultraGridERPPurchaseOrders.ActiveRow IsNot Nothing) Then
+                selectedRow = TryCast(ultraGridERPPurchaseOrders.ActiveRow.ListObject, QuickReportSchema)
+            End If
+
+
+            If (po Is Nothing AndAlso selectedRow IsNot Nothing) Then
+                po = selectedRow
+            End If
+
+            If (cboRef4.SelectedValue = "PURCADD" And Not IsDisassemblyPart) Then
+                If (_selected_ifs_po Is Nothing) Then
+                    _selected_ifs_po = po
+                End If
+
+                If ((po Is Nothing OrElse ultraGridERPPurchaseOrders.ActiveRow Is Nothing) OrElse po.PartNo <> txtPartNo.Text OrElse po.OrderNo <> txtPONumber.Text) Then
+                    isValid = False
+                    msg = "Is Mandatory to select a PO Line in order to add items to inventory."
+                    'ElseIf (po IsNot Nothing AndAlso CurrentFinesseQty > po.InvQtyArrived) Then
+                    '    isValid = False
+                    '    msg = "Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order."
+                ElseIf (po IsNot Nothing AndAlso Not po.IsValidSchema) Then
+                    isValid = False
+                    msg = po.SchemaError
+                End If
+            End If
+            If (_userPermission = UserAccess.FULL_ACCESS AndAlso Not isValid) Then
+                Dim result = MessageBox.Show($"The supplied PO information is not valid to be Proccessed. {vbNewLine}This won't send a succesfull message to IFS.{vbNewLine}Are you sure you want to continue?", "Info", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
+                If (result = DialogResult.Yes) Then
+                    Return (True, "FULL_ACCESS")
+                End If
+            End If
+
+            Return (isValid, msg)
+        End Get
+    End Property
+
+    Public Property UserPermission() As UserAccess
+        Get
+            Return _userPermission
+        End Get
+        Set(value As UserAccess)
+            _userPermission = value
+        End Set
+    End Property
+
+#End Region
+
+#Region "Functions"
+
+    Public Function IsFormClosing() As Boolean
+        Dim stackTrace As StackTrace = New StackTrace
+        For Each sf As StackFrame In stackTrace.GetFrames
+            If (sf.GetMethod.Name = WMCLOSE) Then Return True
+        Next
+        Return False
+    End Function
+
+    Private Function GetUserWarehouse()
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+            GetUserWarehouse = newConn.ExecuteScalar("select warehouse_code from warehouses where is_default = 1")
+        End Using
+    End Function
+
+    Private Function HasDataChanged() As Boolean
+
+        For Each r As DataRow In DataSetAddInventory.inpartsub
+            Select Case r.RowState
+                Case DataRowState.Unchanged
+                    'Nothing
+                Case Else
+                    Return True
+            End Select
+        Next
+
+        Return False
+    End Function
+
+#End Region
+
+#Region "Form New/Load/Unload"
+
+    Public Sub New()
+        ' This call is required by the designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+        gConn.Open()
+        'DgvERPPurchaseOrders.AutoGenerateColumns = False
+        DgvInventoryInStock.AutoGenerateColumns = False
+        dgvIFSMessages.AutoGenerateColumns = True
+
+        Me.Text = $"{Me.Text} ({GetEnvironmentVariable("ESSDB")})"
+    End Sub
+
+    Private Sub EnableDoubleBuffering(ByVal control As Control)
+        GetType(DataGridView).InvokeMember(
+                    "DoubleBuffered",
+                    Reflection.BindingFlags.NonPublic Or Reflection.BindingFlags.Instance Or Reflection.BindingFlags.SetProperty,
+                    Nothing,
+                    control,
+                    New Object() {True}
+                    )
+    End Sub
+
+    Private Sub frmAddInventory_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
+        If e.KeyCode = Keys.F5 Then RefreshCurrentInventory()
+    End Sub
+
+    Private Sub InitializeMenuStripMessage()
+        Dim panel As New FlowLayoutPanel()
+        panel.FlowDirection = FlowDirection.LeftToRight
+        panel.AutoSize = True
+        panel.WrapContents = False
+        panel.Margin = Padding.Empty
+        panel.Padding = Padding.Empty
+
+        panel.BackColor = UltraGridMenuStrip.BackColor
+
+        AddHandler panel.Click, AddressOf menuItemSendMessage_Click
+
+        Dim newLabel As New Label()
+        newLabel.Text = "Send Msg w/Qty:"
+        newLabel.AutoSize = True
+        newLabel.TextAlign = ContentAlignment.MiddleLeft
+        newLabel.Margin = New Padding(0, 3, 5, 0)
+        newLabel.BackColor = UltraGridMenuStrip.BackColor
+
+        AddHandler newLabel.Click, AddressOf menuItemSendMessage_Click
+
+        Dim textBox As New TextBox()
+        textBox.Width = 100
+        txtQuantityMessage = textBox
+        panel.Controls.Add(newLabel)
+        panel.Controls.Add(txtQuantityMessage)
+
+
+        Dim tsHost As New ToolStripControlHost(panel)
+        tsHost.Margin = Padding.Empty
+        menuItemSendMessage = tsHost
+
+
+        UltraGridMenuStrip.Items.Add(menuItemSendMessage)
+    End Sub
+
+    Private Sub textBox_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtQuantityMessage.KeyPress
+        If Char.IsControl(e.KeyChar) Then
+            Return
+        End If
+
+        If Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub textBox_KeyDown(sender As Object, e As KeyEventArgs) Handles txtQuantityMessage.KeyDown
+        If (e.KeyCode = Keys.Enter) Then
+            SendIFSToFinesseMessage()
+        End If
+    End Sub
+
+    Private Sub SendIFSToFinesseMessage()
+        If clickedRow IsNot Nothing Then
+            Dim row = TryCast(clickedRow.ListObject, QuickReportSchema)
+
+            Dim qty = 0
+            Integer.TryParse(txtQuantityMessage.Text, qty)
+            If (String.IsNullOrEmpty(txtQuantityMessage.Text) OrElse qty = 0) Then
+                Dim toast As New ToastNotification($"You need to specify a valid quantity!", Color.Red)
+                toast.Show()
+                Exit Sub
+            End If
+
+            Dim result = row.SendMessage(_dtCurrency, txtQuantityMessage.Text)
+            If (Not String.IsNullOrEmpty(result)) Then
+                Dim toast As New ToastNotification($"Message successfully Sent! [{result}]", Color.Green)
+                toast.Show()
+            Else
+                Dim toast As New ToastNotification($"Error sending the message!", Color.Red)
+                toast.Show()
+            End If
+            UltraGridMenuStrip.Close()
+        End If
+    End Sub
+
+    Private Sub menuItemSendMessage_Click(sender As Object, e As EventArgs)
+        SendIFSToFinesseMessage()
+    End Sub
+
+    Private Sub frmAddInventory_Load(ByVal sender As Object, ByVal e As EventArgs) Handles MyBase.Load
+        DgvInventoryInStock.AutoGenerateColumns = False
+        Try
+            Dim bandChild = ultraGridERPPurchaseOrders.DisplayLayout.Bands(1)
+            bandChild.Override.AllowColSizing = Infragistics.Win.UltraWinGrid.AllowColSizing.Free
+        Catch ex As Exception
+
+        End Try
+
+        InitializeMenuStripMessage()
+        'DgvERPPurchaseOrders.VirtualMode = True
+        Dim args As ObjectModel.ReadOnlyCollection(Of String) = My.Application.CommandLineArgs
+        Dim argSerialNo As String = Nothing
+        Dim argPartNo As String = Nothing
+
+        If args.Count > 0 Then
+            For Each arg In args
+                If InStr(arg.ToString(), "serialno=") Then argSerialNo = Replace(arg.ToString(), "serialno=", "")
+                If InStr(arg.ToString(), "serialno:") Then argSerialNo = Replace(arg.ToString(), "serialno:", "")
+                If InStr(arg.ToString(), "partno=") Then argPartNo = Replace(arg.ToString(), "partno=", "")
+                If InStr(arg.ToString(), "partno:") Then argPartNo = Replace(arg.ToString(), "partno:", "")
+            Next
+        End If
+
+        lblCurrentInventoryWarning.Dock = DockStyle.Fill
+
+        EnableDoubleBuffering(dgvCurrentInventory)
+
+        Dim jammer As New SQLJammer(New SqlConnection(FinesseConnectionString))
+
+        jammer.Add("select * from App_Config c where c.cmndsel = " & cmndsel.SQLQuote,
+                   Sub(t)
+                       AppConfig = t
+                       'zebraPrinterConfig = New ZebraPrinterConfig(AppConfig)
+                   End Sub)
+
+        jammer.Add("select 
+                        can_edit_inventory = dbo.can_edit_inventory(),
+                        can_add_inventory_without_restrictions = dbo.can_add_inventory_without_restrictions(),
+                        can_add_inventory_with_unrecieved_purchase_order = dbo.can_add_inventory_with_unrecieved_purchase_order(),
+                        can_add_inventory_only_recieved_purchase_order = dbo.can_add_inventory_only_recieved_purchase_order(),
+                        can_add_edit_disassemblies_subparts = dbo.can_add_edit_disassemblies_subparts(),
+                        owner_entity, warehouse_entity, currency, id_language, unitofweight = iuow.conversionLongname, unitoflength = iuol.conversionLongname, BarcodeSequenceType = isnull(p.BarcodeSequenceType, ''), p.user_name from dbo.pjtfrusr p join dbo.inUnitOfWeight iuow on p.unitofweight = iuow.conversionShortname join dbo.inUnitOfLength iuol on p.unitoflength = iuol.conversionShortname where p.user_name = suser_sname()",
+                   Sub(t)
+                       Dim row = t.Rows(0)
+                       _can_edit_inventory = row.Item("can_edit_inventory")
+                       Dim _can_edit_inventory_no_restrictions = row.Item("can_add_inventory_without_restrictions")
+                       Dim _can_edit_inventory_with_po = row.Item("can_add_inventory_with_unrecieved_purchase_order")
+                       Dim _can_edit_inventory_with_recieved_po = row.Item("can_add_inventory_only_recieved_purchase_order")
+                       _can_add_edit_disassemblies_subparts = row.Item("can_add_edit_disassemblies_subparts")
+                       Dim _can_edit_inventory_no_po = row.Item("can_edit_inventory")
+
+                       If (_can_edit_inventory_no_restrictions) Then
+                           UserPermission = UserAccess.FULL_ACCESS
+                       ElseIf (_can_edit_inventory_with_po) Then
+                           UserPermission = UserAccess.PO_MANDATORY
+                       ElseIf (_can_edit_inventory_with_recieved_po) Then
+                           UserPermission = UserAccess.RECIEVED_PO_MANDATORY
+                       ElseIf (_can_edit_inventory_no_po) Then
+                           UserPermission = UserAccess.GENERAL_USER
+                       Else
+                           UserPermission = UserAccess.NO_ACCESS
+                       End If
+
+
+                       MasterDataToolStripMenuItem.Visible = _can_add_edit_disassemblies_subparts
+                       USER_DEFAULT_COMPANY = row.Item("owner_entity")
+                       USER_DEFAULT_WAREHOUSE = row.Item("warehouse_entity")
+                       USER_DEFAULT_CURRENCY = row.Item("currency")
+                       USER_DEFAULT_ID_LANGUAGE = row.Item("id_language")
+                       ReloadPermissions()
+                   End Sub)
+
+        jammer.Add("select eo.OwnerCode, eo.OwnerDesc, EnableInpartsubRefChildLinking = isnull(c.EnableInpartsubRefChildLinking , 0), 
+                                EnableZebraPrinting = isnull(eo.EnableZebraPrinting, 0), eo.BarcodeSequenceType from EquipmentOwner eo 
+                       left join dbo.Company c on c.CompanyCode = eo.CompanyCode where eo.AllowAddNewEquipment = 1",
+                   Sub(t)
+                       _dtOwners = t
+                       Init_OwnersCombo()
+                       Init_ERP_OwnersCombo()
+                   End Sub)
+        jammer.Add("select currency, description, symbol, CapexThreshold from dbo.Currency",
+                   Sub(t)
+                       _dtCurrency = t
+                   End Sub)
+
+        'jammer.Add("select warehouse_code = WarehouseCode , warehouse_description = w.WarehouseDesc from dbo.warehouse w",
+        jammer.Add("select DISTINCT warehouse_code = WarehouseCode , warehouse_description = w.WarehouseDesc, IFSCompanyCd = ISNULL(c.IFSCompanyCd, WarehouseCode) from dbo.warehouse w
+                          LEFT JOIN dbo.Company c ON w.CompanyCode = c.CompanyCode
+                          WHERE w.WarehouseCode IN (select warehouse_code from dbo.warehouses)
+                    ORDER BY WarehouseCode",
+                   Sub(t)
+                       _dtWarehouses = t
+                       Init_WarehousesCombo()
+                       Init_ERP_WarehousesCombo()
+                   End Sub)
+
+        jammer.Add("select ref4, ref5desc, i.description from dbo.intransref4 i union all select ref4='', ref5desc='', description = '(none)' order by description",
+                   Sub(t)
+                       _dtReasonRef4 = t
+                       Init_Ref4Combo()
+                   End Sub)
+
+        jammer.Execute()
+
+        Init_dgcs()
+
+
+        'Dim foundRows = From row In _dtOwners.AsEnumerable()
+        '                Where row.Field(Of String)("OwnerCode") = USER_DEFAULT_COMPANY
+        'If (Not foundRows.Any) Then
+        '    cboOwner.SelectedValue = USER_DEFAULT_COMPANY
+        'End If 
+
+        Try
+            cboOwner.SelectedValue = USER_DEFAULT_COMPANY
+            cboWarehouse.SelectedValue = USER_DEFAULT_WAREHOUSE
+            cboErpWarehouse.SelectedValue = USER_DEFAULT_WAREHOUSE
+            cboErpOwner.SelectedValue = USER_DEFAULT_COMPANY
+        Catch ex As Exception
+
+        End Try
+
+
+        IsDataLoaded = True
+
+
+        FillERPGrid()
+
+        txtPartNo.Text = argPartNo
+
+        hideOrDisplayAutoIPAddressForPart(argPartNo)
+
+        Select Case IIf(Get_AppConfigSetting(AppConfig, "MainFormWindowState") IsNot Nothing, Get_AppConfigSetting(AppConfig, "MainFormWindowState"), Me.WindowState)
+            Case FormWindowState.Maximized.ToString
+                Dim MainFormLocation = Get_AppConfigSetting(AppConfig, "MainFormLocation")
+                If Not String.IsNullOrEmpty(MainFormLocation) Then Me.DesktopLocation = Get_LocationFromString(MainFormLocation)
+                Me.WindowState = FormWindowState.Maximized
+            Case FormWindowState.Normal.ToString
+                Me.WindowState = FormWindowState.Normal
+                Dim MainFormLocation = Get_AppConfigSetting(AppConfig, "MainFormLocation")
+                If Not String.IsNullOrEmpty(MainFormLocation) Then Me.DesktopLocation = Get_LocationFromString(MainFormLocation)
+                Dim MainFormSize = Get_AppConfigSetting(AppConfig, "MainFormSize")
+                If Not String.IsNullOrEmpty(MainFormSize) Then Me.Size = Get_SizeFromString(MainFormSize)
+        End Select
+
+
+        Dim lastOwner = Get_AppConfigSetting(AppConfig, "LastOwnerCode")
+        If lastOwner IsNot Nothing Then
+            Dim exists = _dtOwners.Select($"OwnerCode = '{lastOwner.ToString}'")
+            If exists.Count > 0 Then
+                cboOwner.SelectedValue = lastOwner
+                UpdatePrintBehavior()
+            End If
+        End If
+
+        Dim lastWarehouse = Get_AppConfigSetting(AppConfig, "LastSelectedWarehouse")
+        If lastWarehouse IsNot Nothing Then
+            Dim exists = _dtWarehouses.Select($"warehouse_code = '{lastWarehouse.ToString}'")
+            If exists.Count > 0 Then
+                cboWarehouse.SelectedValue = lastWarehouse
+            End If
+        End If
+
+        ShowButtonTooltip()
+        HandlePartImageGUI()
+
+        Dim activateZebraPrint As Boolean = EnabledZebraPrinting(cboOwner.SelectedValue)
+        btnGetNextBarcode.Visible = activateZebraPrint
+    End Sub
+
+    Private Sub ShowButtonTooltip()
+        If (btnAddItemToList.Enabled) Then
+            btnAddItemToList.Enabled = Not String.IsNullOrEmpty(txtPartNo.Text)
+        End If
+    End Sub
+    Private Sub ReloadPermissions()
+        If (UserPermission = UserAccess.FULL_ACCESS OrElse
+                    (UserPermission <> UserAccess.NO_ACCESS AndAlso cboRef4.SelectedValue <> "PURCADD") OrElse
+                    (UserPermission = UserAccess.PO_MANDATORY AndAlso _selected_ifs_po IsNot Nothing) OrElse
+                    (UserPermission = UserAccess.RECIEVED_PO_MANDATORY AndAlso _selected_ifs_po IsNot Nothing AndAlso _selected_ifs_po.IsRecieved)) Then
+            SaveToolStripMenuItem.Enabled = True
+            btnCommit.Enabled = True
+            btnAddItemToList.Enabled = True
+            txtPONumber.Enabled = cboRef4.SelectedValue = "MANFADD" OrElse (UserPermission = UserAccess.FULL_ACCESS)
+            LblPermissionMsg.Text = ""
+            If (cboRef4.SelectedValue <> "PURCADD" OrElse (_selected_ifs_po IsNot Nothing AndAlso txtPartNo.Text <> _selected_ifs_po.PartNo)) Then
+                _selected_ifs_po = Nothing
+                txtPONumber.Text = ""
+                txtQty.Text = ""
+            ElseIf (_selected_ifs_po IsNot Nothing) Then
+                txtPONumber.Text = _selected_ifs_po.OrderNo
+            End If
+        Else
+            SaveToolStripMenuItem.Enabled = False
+            btnCommit.Enabled = False
+            btnAddItemToList.Enabled = False
+            txtPONumber.Enabled = False
+
+            If (cboRef4.SelectedValue = "PURCADD") Then
+                If ((_selected_ifs_po Is Nothing OrElse ultraGridERPPurchaseOrders.ActiveRow Is Nothing) OrElse _selected_ifs_po IsNot Nothing AndAlso _selected_ifs_po.PartNo <> txtPartNo.Text) Then
+                    LblPermissionMsg.Text = "You need to select a PO"
+                Else
+
+                    If ({UserAccess.NO_ACCESS, UserAccess.GENERAL_USER}.Contains(UserPermission) OrElse
+                    UserPermission <> UserAccess.FULL_ACCESS AndAlso _selected_ifs_po Is Nothing OrElse
+                    UserPermission = UserAccess.RECIEVED_PO_MANDATORY AndAlso _selected_ifs_po IsNot Nothing AndAlso Not _selected_ifs_po.IsRecieved) Then
+                        LblPermissionMsg.Text = "You don't have permission to perform this operation"
+
+                    End If
+                End If
+            End If
+
+            '    If ((cboRef4.SelectedValue = "PURCADD" AndAlso Not {UserAccess.NO_ACCESS, UserAccess.GENERAL_USER}.Contains(UserPermission) AndAlso Not String.IsNullOrEmpty(txtPartNo.Text)) _
+            '        AndAlso (UserPermission = UserAccess.RECIEVED_PO_MANDATORY AndAlso _selected_ifs_po IsNot Nothing AndAlso _selected_ifs_po.IsRecieved) _
+            '        OrElse _selected_ifs_po IsNot Nothing AndAlso _selected_ifs_po.PartNo <> txtPartNo.Text) Then
+            '    LblPermissionMsg.Text = "You need to select a PO"
+            'Else
+            '    LblPermissionMsg.Text = "You don't have permission to perform this operation"
+            'End If
+
+            LblPermissionMsg.Location = New Point(btnAddItemToList.Location.X - LblPermissionMsg.Width - 10, btnAddItemToList.Location.Y)
+        End If
+    End Sub
+
+    Private Sub btnAddItemToList_Hover(ByVal sender As Object, ByVal e As EventArgs) Handles btnAddItemToList.MouseHover
+        ToolTip1.Show(If(btnAddItemToList.Enabled, "Add item to list", "You must input a part number"), btnAddItemToList)
+    End Sub
+
+    Private Sub btnAddItemToList_UnHover(ByVal sender As Object, ByVal e As EventArgs) Handles btnAddItemToList.MouseDown
+        ToolTip1.Hide(btnAddItemToList)
+    End Sub
+
+    Private Sub frmAddInventory_FormClosing(ByVal sender As Object, ByVal e As FormClosingEventArgs) Handles Me.FormClosing
+        Dim sw As New Stopwatch
+        sw.Start()
+
+        Debug.Print(sw.ElapsedMilliseconds & " Before DoYouWantToSave")
+
+        Dim lShouldReturn As Boolean
+        DoYouWantToSave(lShouldReturn)
+        If lShouldReturn Then Return
+
+        Debug.Print(sw.ElapsedMilliseconds & " After DoYouWantToSave")
+
+        Try
+            Debug.Print(sw.ElapsedMilliseconds & " Before OpenConnection")
+
+            Dim newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+
+            Debug.Print(sw.ElapsedMilliseconds & " After OpenConnection")
+
+            Dim SettingsToSave As New List(Of AppConfigState) From {
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormSize", .Rvalue = Me.Size.ToString},
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormLocation", .Rvalue = Me.Location.ToString},
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormWindowState", .Rvalue = Me.WindowState.ToString}
+            }
+
+            If (Not String.IsNullOrEmpty(cboOwner.SelectedValue)) Then
+                SettingsToSave.Add(New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "LastOwnerCode", .Rvalue = cboOwner.SelectedValue})
+            End If
+
+            If (Not String.IsNullOrEmpty(cboWarehouse.SelectedValue)) Then
+                SettingsToSave.Add(New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "LastSelectedWarehouse", .Rvalue = cboWarehouse.SelectedValue})
+            End If
+
+            Debug.Print(sw.ElapsedMilliseconds & " After array of settings")
+
+            SettingsToSave.SaveConfig()
+
+            newConn.Close()
+            newConn.Dispose()
+
+            Debug.Print(sw.ElapsedMilliseconds & " After Close Connection")
+
+        Catch ex As Exception
+            Console.WriteLine("Error saving App Configs: ")
+            Console.WriteLine(ex.Message)
+        End Try
+
+    End Sub
+
+#End Region
+
+#Region "Initializations"
+
+    Private Sub Init_OwnersCombo()
+        cboOwner.DisplayMember = "OwnerDesc"
+        cboOwner.ValueMember = "OwnerCode"
+        cboOwner.DataSource = New DataView(_dtOwners, "", "OwnerDesc asc", DataViewRowState.CurrentRows)
+    End Sub
+    Private Sub Init_ERP_OwnersCombo()
+        cboErpOwner.DisplayMember = "OwnerDesc"
+        cboErpOwner.ValueMember = "OwnerCode"
+        Dim table = _dtOwners.Copy()
+        Dim newRow As DataRow = table.NewRow()
+        newRow("OwnerCode") = ""
+        newRow("OwnerDesc") = "(All Owners)"
+        newRow("EnableInpartsubRefChildLinking") = False
+        newRow("EnableZebraPrinting") = False
+        newRow("BarcodeSequenceType") = ""
+        table.Rows.InsertAt(newRow, 0)
+
+        cboErpOwner.DataSource = New DataView(table, "", "OwnerDesc asc", DataViewRowState.CurrentRows)
+    End Sub
+
+    Private Sub Init_WarehousesCombo()
+        cboWarehouse.DisplayMember = "warehouse_description"
+        cboWarehouse.ValueMember = "warehouse_code"
+        cboWarehouse.DataSource = New DataView(_dtWarehouses, "", "warehouse_description asc", DataViewRowState.CurrentRows)
+    End Sub
+
+    Private Sub Init_ERP_WarehousesCombo()
+        cboErpWarehouse.DisplayMember = "warehouse_description"
+        cboErpWarehouse.ValueMember = "warehouse_code"
+        Dim table = _dtWarehouses.Copy()
+        Dim newRow As DataRow = table.NewRow()
+        newRow("warehouse_code") = ""
+        newRow("warehouse_description") = "(All warehouses)"
+        table.Rows.InsertAt(newRow, 0)
+        cboErpWarehouse.DataSource = New DataView(table, "", "warehouse_description asc", DataViewRowState.CurrentRows)
+    End Sub
+
+    Private Sub Init_Ref4Combo()
+        cboRef4.DisplayMember = "description"
+        cboRef4.ValueMember = "ref4"
+        cboRef4.DataSource = New DataView(_dtReasonRef4, "ref4 not in ('REVCHG','WHCHG','SCRAP','LOST','SALE','OWNERCHG','REPAIR','SN Chg','MAINT')", "description asc", DataViewRowState.CurrentRows)
+    End Sub
+
+    Private Sub Init_dgcs()
+        dgcAddItemsDept.DisplayMember = cboOwner.DisplayMember
+        dgcAddItemsDept.ValueMember = cboOwner.ValueMember
+        dgcAddItemsDept.DataSource = cboOwner.DataSource
+
+        dgcAddItemsBld.DisplayMember = cboWarehouse.DisplayMember
+        dgcAddItemsBld.ValueMember = cboWarehouse.ValueMember
+        dgcAddItemsBld.DataSource = cboWarehouse.DataSource
+
+        dgcAddItemRef4.DisplayMember = cboRef4.DisplayMember
+        dgcAddItemRef4.ValueMember = cboRef4.ValueMember
+        dgcAddItemRef4.DataSource = cboRef4.DataSource
+    End Sub
+
+#End Region
+
+#Region "File Menu"
+
+    Private Sub SaveToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles SaveToolStripMenuItem.Click, btnCommit.Click
+        If dgvItemsForImport.Rows.Count = 0 Then
+            Beep_Fail()
+            MsgBox("You do not have any items in your list to add into inventory." & vbCrLf & vbCrLf & "Commit has been aborted.", vbOKOnly)
+            Return
+        Else
+            'If (Not IsValidEntry) Then
+            '    Beep_Fail()
+            '    MsgBox("Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order." & vbCrLf & vbCrLf & "Commit has been aborted.", vbOKOnly)
+            '    Return
+            'End If
+            Dim uniqueRows = DataSetAddInventory.inpartsub.AsEnumerable() _
+                                .GroupBy(Function(row) New With {
+                                    Key .PartNo = row.Field(Of String)("partno"),
+                                    Key .PONumber = row.Field(Of String)("PONumber"),
+                                    Key .POLineNo = row.Field(Of String)("POLineNo"),
+                                    Key .POReleaseNo = row.Field(Of String)("POReleaseNo")
+                                }) _
+                                .Select(Function(g) g.First()) _
+                                .CopyToDataTable()
+            SaveData()
+            ReloadSavedPOs(uniqueRows)
+
+            RefreshCurrentInventory()
+            ItemsForImportQtyUpdating()
+        End If
+    End Sub
+
+
+    Private Function SaveData()
+        If Not Validate() Then Return False
+
+        bsAddInventory.EndEdit()
+
+        If ValidateAddToInventoryItems() = False Then Return False
+
+        SaveData = False
+        Cursor = Cursors.WaitCursor
+
+        Try
+            Dim sSQL As New StringBuilder
+
+            sSQL.AppendLine("delete inpsAddInventory where session_id = @@spid;")
+            gConn.ExecuteNonQuery(sSQL)
+
+            'Dim uniqueRows = DataSetAddInventory.inpartsub.AsEnumerable() _
+            '                    .GroupBy(Function(row) New With {
+            '                        Key .PartNo = row.Field(Of String)("partno"),
+            '                        Key .OrderNo = row.Field(Of String)("orderno")
+            '                    }) _
+            '                    .Select(Function(g) g.First()) _
+            '                    .CopyToDataTable()
+
+
+
+            BulkSave(DataSetAddInventory.inpartsub, "inpsAddInventory")
+            Dim cmd As New SqlCommand("exec commit_add_inventory", gConn)
+            cmd.CommandType = CommandType.Text
+            cmd.CommandTimeout = 120
+            cmd.ExecuteNonQuery()
+
+            For Each rv As DataGridViewRow In dgvItemsForImport.Rows
+                If rv.Cells(RemoveNonCoded.Index).EditedFormattedValue = True And Not String.IsNullOrEmpty(rv.Cells(dgcAddItemsBarcode.Index).Value) Then
+                    Dim sSQL2 As New StringBuilder
+                    sSQL2.AppendLine("if exists(select * from dbo.inpartsub ps where ps.partno = " & SQLQuote(rv.Cells(PartnoDataGridViewTextBoxColumn.Index).Value) & " and ps.bld = " & SQLQuote(rv.Cells(dgcAddItemsBld.Index).Value) & " and ps.dept = " & SQLQuote(rv.Cells(dgcAddItemsDept.Index).Value) & " and ps.batchno = 'INSTOCK' and ps.unique_no = '' and ps.parentunique_no = '' and onhand > 0)")
+                    sSQL2.AppendLine("begin")
+                    sSQL2.AppendLine("  insert dbo.intrans")
+                    sSQL2.AppendLine("        ( trantype , partno ,unique_no, onhand ,qty ,trandate ,ref4 ,ref5 ,batchno ,dept ,bld ,row ,serial_no ,enterdate, userid  )")
+                    sSQL2.AppendLine("  select top 1 'F', " & SQLQuote(rv.Cells(PartnoDataGridViewTextBoxColumn.Index).Value) & ",'', ps.onhand, -1, cast(floor(cast(getdate() as float)) as datetime), 'NONTOBAR', " & SQLQuote(rv.Cells(dgcAddItemsBarcode.Index).Value) & ",'INSTOCK', ps.dept, ps.bld, ps.row, ps.serial_no, getdate(), suser_sname()")
+                    sSQL2.AppendLine("  from dbo.inpartsub ps")
+                    sSQL2.AppendLine("  where ps.partno = " & SQLQuote(rv.Cells(PartnoDataGridViewTextBoxColumn.Index).Value) & " and ps.bld = " & SQLQuote(rv.Cells(dgcAddItemsBld.Index).Value) & " and ps.dept = " & SQLQuote(rv.Cells(dgcAddItemsDept.Index).Value) & " and ps.batchno = 'INSTOCK' and ps.unique_no = '' and ps.parentunique_no = '' and onhand > 0")
+                    sSQL2.AppendLine(" ")
+                    sSQL2.AppendLine("  update top (1) ps set onhand = onhand - 1")
+                    sSQL2.AppendLine("  from dbo.inpartsub ps ")
+                    sSQL2.AppendLine("  where ps.partno = " & SQLQuote(rv.Cells(PartnoDataGridViewTextBoxColumn.Index).Value) & " and ps.bld = " & SQLQuote(rv.Cells(dgcAddItemsBld.Index).Value) & " and ps.dept = " & SQLQuote(rv.Cells(dgcAddItemsDept.Index).Value) & " and ps.batchno = 'INSTOCK' and ps.unique_no = '' and ps.parentunique_no = '' and onhand > 0")
+                    sSQL2.AppendLine("end")
+                    gConn.ExecuteNonQuery(sSQL2)
+                End If
+            Next
+
+            DataSetAddInventory.inpartsub.AcceptChanges()
+            SaveData = True
+
+            'MsgBox("Inventory added successfully.", vbOKOnly)
+            Dim toast As New ToastNotification($"Inventory added successfully.", Color.Green)
+            toast.Show()
+            DataSetAddInventory.inpartsub.Clear()
+            'Return uniqueRows
+        Catch ex As Exception
+            Beep_Fail()
+            MsgBox("Error while saving: " & ex.Message, MsgBoxStyle.Exclamation)
+        End Try
+
+        Cursor = Cursors.Default
+    End Function
+
+    Private Sub RefreshCurrentInventory()
+        Dim currentTotal As String
+        Dim partno As String = txtPartNo.Text
+        Dim owner As String = cboOwner.SelectedValue
+        Dim warehouse As String = cboWarehouse.SelectedValue
+
+        If String.IsNullOrEmpty(partno) OrElse String.IsNullOrEmpty(owner) OrElse String.IsNullOrEmpty(warehouse) Then
+            lblCurrentInventoryWarning.Visible = True
+            Exit Sub
+        Else
+            lblCurrentInventoryWarning.Visible = False
+        End If
+
+        Dim sSQL As New StringBuilder
+        sSQL.AppendLine("select Qty = ps.onhand, Barcode = ps.unique_no, [Phase No] = ps.batchno, [Phase Desc] = g.entitydesc, WH = ps.bld, [Owner] = ps.dept, [Return] = pj.todate, ps.receipt")
+        sSQL.AppendLine("from dbo.inpartsub ps")
+        sSQL.AppendLine("join dbo.glentities g on ps.batchno = g.entityno")
+        sSQL.AppendLine("left outer join dbo.pjjobbudexp pj on g.entityno = pj.entityno and ps.partno = pj.partno")
+        sSQL.AppendLine("where ps.partno = " & partno.SQLQuote)
+        sSQL.AppendLine("and ps.dept = " & owner.SQLQuote)
+        sSQL.AppendLine("and ps.bld = " & warehouse.SQLQuote)
+        sSQL.AppendLine("and ps.onhand > 0")
+        sSQL.AppendLine("order by ps.receipt DESC, ps.unique_no")
+
+        Using newConn = New SqlConnection(FinesseConnectionString)
+            Dim t = newConn.GetDataTable(sSQL)
+            dgvCurrentInventory.DataSource = t
+            currentTotal = IIf(String.IsNullOrEmpty(t.Compute("Sum(qty)", "").ToString), "0", t.Compute("Sum(qty)", "").ToString)
+            newConn.Close()
+        End Using
+
+        tsslCurrentInventoryTotalQty.Text = $"Total Qty: {currentTotal}"
+        ItemsForImportQtyUpdating()
+    End Sub
+
+    Private Sub BulkSave(ByVal tSource As DataTable, ByVal destinationTable As String)
+        Dim tTemp As New DataTable
+
+        tTemp.Columns.Add("is_insert", GetType(Boolean)).DefaultValue = False
+        tTemp.Columns.Add("is_update", GetType(Boolean)).DefaultValue = False
+        tTemp.Columns.Add("is_delete", GetType(Boolean)).DefaultValue = False
+
+        For Each c As DataColumn In tSource.Columns
+            If Not c.ReadOnly Then tTemp.Columns.Add(c.ColumnName, c.DataType) ' assuming that read-only columns will by calculated automatically by the DB
+        Next
+
+        For Each r As DataRow In tSource.Rows
+            Select Case r.RowState
+                Case DataRowState.Added, DataRowState.Deleted, DataRowState.Modified
+                    tTemp.ImportRow(r)
+                Case Else
+                    Debug.Assert(r.RowState = DataRowState.Unchanged)
+            End Select
+        Next
+
+        For Each r As DataRow In tTemp.Rows
+            Select Case r.RowState
+                Case DataRowState.Added
+                    r("is_insert") = True
+                Case DataRowState.Modified
+                    r("is_update") = True
+                Case DataRowState.Deleted
+                    r.RejectChanges() ' necessary so that we can look at and modify fields.
+                    r("is_delete") = True
+            End Select
+        Next
+
+        Using bulkCopy As New SqlBulkCopy(gConn)
+            bulkCopy.DestinationTableName = destinationTable
+            bulkCopy.BatchSize = 0
+            bulkCopy.ColumnMappings.Clear()
+
+            For Each c As DataColumn In tTemp.Columns
+                Debug.Print(c.ColumnName)
+                bulkCopy.ColumnMappings.Add(c.ColumnName, c.ColumnName)
+            Next
+
+            bulkCopy.WriteToServer(tTemp)
+        End Using
+    End Sub
+
+    Private Sub ExitToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ExitToolStripMenuItem.Click
+        Dim lShouldReturn As Boolean
+        DoYouWantToSave(lShouldReturn)
+        If lShouldReturn Then Return
+        End
+    End Sub
+
+    Private Sub TransferToolsToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles TransferToolsToolStripMenuItem.Click
+        StartFinesseProcess("TransferInquiryTools.exe")
+    End Sub
+
+    Private Sub PartAttachmentMaintenanceToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles PartAttachmentMaintenanceToolStripMenuItem.Click
+        Dim commandArgs As String = Selected_PartNo
+        StartFinesseProcess("Part Attachments Maintenance.exe", commandArgs)
+    End Sub
+
+#End Region
+
+#Region "(Old Clair New Implementation) Serial Number Lookup"
+
+    'Private Sub txtClairNewSerialNoLookup_TextChanged(ByVal sender As Object, ByVal e As EventArgs)
+    '    If Not IsDataLoaded Then Exit Sub
+
+    '    If String.IsNullOrEmpty(txtClairNewSerialNoLookup.Text) Then
+    '        lblEnterClairNewSerialNo.Visible = True
+    '        _expectedCommand = Nothing
+    '        Exit Sub
+    '    End If
+
+    '    Static lastSearchText As String = ""
+    '    Dim newSearchText = txtClairNewSerialNoLookup.Text.Trim
+
+    '    If newSearchText <> lastSearchText Then
+    '        lastSearchText = newSearchText
+    '        _expectedCommand = Nothing
+    '    End If
+
+    '    txtClairNewSerialNoLookup.Text = Replace(txtClairNewSerialNoLookup.Text, vbTab.ToString, " ")
+
+    '    Timer_RefreshClairNewSerialNos.Stop()
+    '    Timer_RefreshClairNewSerialNos.Start()
+    'End Sub
+
+    'Private Sub Timer_RefreshClairNewSerialNos_Tick(ByVal sender As Object, ByVal e As EventArgs) Handles Timer_RefreshClairNewSerialNos.Tick
+    '    If Not IsDataLoaded Then Exit Sub
+
+    '    Cursor = Cursors.WaitCursor
+
+    '    Dim searchText = txtClairNewSerialNoLookup.Text
+
+    '    Dim sqlStr As New StringBuilder()
+    '    sqlStr.AppendLine("	select ps.partno, p.partdesc, ps.serial_no, ps.partentityno, ps.receipt, orderno = ''	")
+    '    sqlStr.AppendLine("	into #inventory_and_receipts	")
+    '    sqlStr.AppendLine("	from clairnew.dbo.inpartsub ps	")
+    '    sqlStr.AppendLine("	join clairnew.dbo.inpart p on ps.partno = p.partno and ps.partentityno = p.partentityno and ps.partrev = p.partrev 	")
+    '    sqlStr.AppendLine("	where ps.serial_no <> ''	")
+    '    sqlStr.AppendLine("	union all	")
+    '    sqlStr.AppendLine("	select t.partno, p.partdesc, t.serial_no, t.partentityno, t.trandate, t.orderno	")
+    '    sqlStr.AppendLine("	from clairnew.dbo.intrans t	")
+    '    sqlStr.AppendLine("	join clairnew.dbo.inpart p on t.partno = p.partno and t.partentityno = p.partentityno and t.partrev = p.partrev 	")
+    '    sqlStr.AppendLine("	where t.serial_no <> ''	")
+    '    sqlStr.AppendLine("	and t.trantype = 'D'	")
+    '    sqlStr.AppendLine("			")
+    '    sqlStr.AppendLine("	select *		")
+    '    sqlStr.AppendLine("	from #inventory_and_receipts iar		")
+    '    sqlStr.AppendLine("	where iar.serial_no <> ''		")
+
+    '    Dim pieces = txtClairNewSerialNoLookup.Text.Split(New Char() {" "c}, StringSplitOptions.RemoveEmptyEntries)
+    '    For Each piece In pieces
+    '        If piece <> "" And piece.Length > 1 Then
+    '            sqlStr.AppendLine("and (")
+    '            sqlStr.AppendLine(" iar.serial_no like " & ("%" & piece & "%").SQLQuote)
+    '            sqlStr.AppendLine(")")
+    '        End If
+    '    Next
+
+    '    sqlStr.AppendLine("	order by iar.receipt desc		")
+    '    sqlStr.AppendLine("	drop table #inventory_and_receipts		")
+
+    '    Static lastSearch As String = ""
+
+    '    If Not IgnoreLastSearchString Then
+    '        If lastSearch = sqlStr.ToString Then
+    '            Timer_RefreshClairNewSerialNos.Stop()
+    '            Cursor = Cursors.Default
+    '            Exit Sub
+    '        End If
+    '    End If
+
+    '    IsDataLoaded = False
+    '    dgvClairNewSerialNos.DataSource = Nothing
+
+    '    _dtClairNewSerialNos.Clear()
+    '    bsClairNewSerialNos.DataSource = _dtClairNewSerialNos
+    '    dgvClairNewSerialNos.DataSource = bsClairNewSerialNos
+
+    '    Dim newConn As New SqlConnection(FinesseConnectionString)
+    '    newConn.Open()
+
+    '    lastSearch = sqlStr.ToString
+    '    _expectedCommand = New SqlCommand(sqlStr.ToString, newConn)
+    '    _expectedCommand.BeginExecuteReader(AddressOf GotPartsAsync, _expectedCommand)
+
+    '    lblEnterClairNewSerialNo.Visible = False
+    '    IsDataLoaded = True
+
+    '    Cursor = Cursors.Default
+
+    '    IgnoreLastSearchString = False
+    '    Timer_RefreshClairNewSerialNos.Stop()
+    'End Sub
+
+    'Private Sub btnExplodeSerialNo_Click(ByVal sender As Object, ByVal e As EventArgs)
+    '    If String.IsNullOrEmpty(txtClairNewSerialNoLookup.Text) Then
+    '        MsgBox("No text to ex plo de.", vbOKOnly)
+    '        Return
+    '    End If
+
+    '    Dim newString As String = Nothing
+    '    For I = 1 To Len(txtClairNewSerialNoLookup.Text)
+    '        newString += (Mid$(txtClairNewSerialNoLookup.Text, I, 1))
+    '        If (I Mod 2 = 0) Then newString += " "
+    '        Debug.Print(newString)
+    '    Next
+
+    '    txtClairNewSerialNoLookup.Text = newString
+    'End Sub
+
+    'Private Sub btnSendDataToNewItemInfoFields_Click(ByVal sender As Object, ByVal e As EventArgs)
+    '    If dgvClairNewSerialNos.SelectedRows.Count = 0 Then
+    '        MsgBox("No serial number has been selected for populating the New Inventory Item fields.", vbOK)
+    '        Return
+    '    End If
+
+    '    Dim r = dgvClairNewSerialNos.SelectedRows(0)
+
+    '    txtPartNo.Text = r.DataBoundItem("partno")
+    '    txtSerialNo.Text = r.DataBoundItem("serial_no")
+    '    txtPONumber.Text = r.DataBoundItem("orderno")
+    '    txtQty.Text = 1
+    '    txtBarcode.Focus()
+    'End Sub
+
+#End Region
+
+#Region "Adding Items to List"
+
+    Private Async Sub btnAddItemToList_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnAddItemToList.Click
+        Dim Validation = IsValidEntry
+        If (Not Validation.Item1) Then
+            MsgBox(Validation.Item2, MsgBoxStyle.Critical)
+            Return
+        End If
+
+        If (String.IsNullOrEmpty(txtSerialNo.Text) And String.IsNullOrEmpty(txtBarcode.Text) And String.IsNullOrEmpty(txtQty.Text)) Then
+            txtBarcode.Focus()
+            Return
+        End If
+
+        If Not String.IsNullOrEmpty(txtSerialNo.Text) And String.IsNullOrEmpty(txtBarcode.Text) Then
+            txtBarcode.Focus()
+            Return
+        End If
+
+        Dim qty As Integer
+
+        Try
+            qty = CInt(txtQty.Text)
+        Catch ex As Exception
+            MsgBox("Quantity must be a whole number greater than zero.", vbOKOnly)
+            Return
+        End Try
+
+        If CInt(txtQty.Text) < 1 Then
+            MsgBox("Quantity must be a whole number greater than zero.", vbOKOnly)
+            Return
+        End If
+
+        Dim lShouldReturn As Boolean
+        ValidateNewInventoryItemInfo(lShouldReturn)
+        If lShouldReturn Then Return
+
+        'Set ShouldLinkChildParts to false as the default before any "add item" processing begins.
+        Dim ShouldLinkChildParts As Boolean = False
+        Dim dtLinkedParts As New DataTable
+
+        Try
+            Dim childPartLinkingAllowed As Boolean = DirectCast(cboOwner.SelectedItem, DataRowView)("EnableInpartsubRefChildLinking")
+
+            If Not childPartLinkingAllowed Then GoTo StagePartForAdd
+
+
+            Using conn As New SqlConnection(FinesseConnectionString), cmd As New SqlCommand("GetLinkedChildPartInformation", conn), ad As New SqlDataAdapter(cmd)
+                conn.Open()
+                cmd.CommandType = CommandType.StoredProcedure
+                With cmd.Parameters
+                    ''Set the size of VarChar max to -1
+                    .Add("@partno", SqlDbType.VarChar, 50).Value = txtPartNo.Text
+                    .Add("@qty", SqlDbType.Int).Value = qty
+                    .Add("@bld", SqlDbType.VarChar, 10).Value = cboWarehouse.SelectedValue
+                    .Add("@owner", SqlDbType.VarChar, 10).Value = cboOwner.SelectedValue
+                End With
+                ad.Fill(dtLinkedParts)
+            End Using
+
+
+            'Child Part Count
+            If dtLinkedParts IsNot Nothing AndAlso dtLinkedParts.Rows.Count > 0 Then
+                Dim msg As New StringBuilder
+                msg.AppendLine("Parent part " & txtPartNo.Text & ": " & txtPartDescEngOp.Text & " has linked parts associated with it.  By adding this part, you will be removing linked parts from working inventory:")
+                msg.AppendLine("") 'Add an empty space between the message and the parts
+                For Each r In dtLinkedParts.Rows
+                    msg.AppendLine(r("childPartQtyToLink") & " of " & r("childPartno") & ": " & r("childPartDesc"))
+                Next
+                msg.AppendLine("") 'Add an empty space between the parts and the working inventory question.
+                msg.AppendLine("Do you want to remove linked parts from working inventory?")
+
+
+                Dim result = MsgBox(msg.ToString, MsgBoxStyle.YesNoCancel, "Linked Parts")
+
+                Select Case result
+                    Case MsgBoxResult.Yes
+                        Dim childPartsGoingNegativeQty = From r In dtLinkedParts Where (r("childOnhand") - r("childPartQtyToLink")) < 0
+                        Dim errExists As Boolean = False
+                        For Each r In childPartsGoingNegativeQty
+                            'errMsg.AppendLine("There is not enough [Part Type] [Part Description] in [Warehouse] owned by [Owner] to be linked to [Parent Part Description].  The [Parent Part Description] will not be added to inventory.")
+                            Dim errMsg = "There are not enough " & r("childPartno") & ": " & r("childPartDesc") & " in " & cboWarehouse.Text & " owned by " & cboOwner.Text & " to be linked to " & txtPartDescEngOp.Text & ".  " & r("childPartQtyToLink") & " " & IsAre(r("childPartQtyToLink")) & " required to be linked to this part." & vbCrLf & vbCrLf & "The " & txtPartDescEngOp.Text & " will not be added to inventory."
+                            MsgBox(errMsg.ToString,, "Not Enough Linked Child Parts")
+                            errExists = True
+                        Next
+                        If errExists Then Exit Sub
+
+                        ShouldLinkChildParts = True
+                    Case MsgBoxResult.No
+                        ShouldLinkChildParts = False
+                    Case MsgBoxResult.Cancel
+                        'Quit, do nothing
+                        Exit Sub
+                End Select
+            End If
+
+            Dim IsValidPO As Boolean = cboRef4.SelectedValue = "PURCADD" AndAlso _selected_ifs_po IsNot Nothing AndAlso _selected_ifs_po.PartNo = txtPartNo.Text AndAlso _selected_ifs_po.OrderNo = txtPONumber.Text
+
+StagePartForAdd:
+            If (IsValidPO) Then
+                Dim FinesseInventory = Await (New ReceivedInventory).GetReceivedInventory(_selected_ifs_po.PartNo, _selected_ifs_po.OrderNo, _selected_ifs_po.LineNo.ToString, _selected_ifs_po.ReleaseNo.ToString)
+                If (FinesseInventory IsNot Nothing) Then
+                    Dim maxqty = _selected_ifs_po.InvQtyArrived
+
+                    If (IsDisassemblyPart) Then
+                        Dim parentExpectedqty = TryCast(ultraGridERPPurchaseOrders.ActiveRow.ParentRow.ListObject, QuickReportSchema)
+                        maxqty = maxqty * parentExpectedqty.InvQtyArrived
+                    End If
+
+                    Dim t = From r As DataGridViewRow In dgvItemsForImport.Rows
+                            Where r.DataBoundItem("partno") = _selected_ifs_po.PartNo AndAlso r.DataBoundItem("PONumber") = _selected_ifs_po.OrderNo
+                            Select total = r.DataBoundItem("onhand")
+
+                    Dim totalItemsAddedQty = t.Sum(Function(r) r)
+                    Dim onhand = FinesseInventory.onhand + CInt(txtQty.Text) + totalItemsAddedQty
+                    If (onhand > maxqty) Then
+                        If (UserPermission = UserAccess.FULL_ACCESS) Then
+                            Dim result = MessageBox.Show($"Overstocking inventory shouldn't be possible. The quantity added to the inventory should not exceed the quantity specified in the Purchase Order.{vbNewLine}Max quantity: [{maxqty}] Current Inventory [{FinesseInventory.onhand}].{vbNewLine}Adding: [{txtQty.Text}].{vbNewLine}Are you sure you want to continue?", "Info", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
+                            If (result <> DialogResult.Yes) Then
+                                Return
+                            End If
+                        Else
+                            MsgBox($"Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order.{vbNewLine}Max quantity: [{maxqty}] Current Inventory [{FinesseInventory.onhand}].{vbNewLine}Adding: [{txtQty.Text}].", MsgBoxStyle.Critical)
+                            Return
+                        End If
+                    End If
+                End If
+                'Else
+                '    If (cboRef4.SelectedValue = "PURCADD") Then
+                '        MsgBox("This won't send messages to IFS. Make sure you're doing the right thing!")
+
+                '        If (UserPermission <> UserAccess.FULL_ACCESS) Then
+                '            Return
+                '        End If
+                '    End If
+            End If
+
+
+            AddItemRow(ShouldLinkChildParts, Validation)
+
+            txtSerialNo.Clear()
+            txtBarcode.Clear()
+            txtRevision.Clear()
+            txtMACAddress.Clear()
+
+
+            If chkDeferEnteringMacAddress.Checked Then
+                txtSerialNo.Focus()
+            Else
+                txtMACAddress.Focus()
+            End If
+
+
+            txtQty.Text = 0
+
+        Catch ex As Exception
+            Beep_Fail()
+            MsgBox(ex.ToString)
+        End Try
+    End Sub
+
+    Private Sub AddItemRow(ByVal ShouldLinkChildParts As Boolean, ByVal POValidation As (Boolean, String))
+        Dim ipAddress = Nothing
+
+        If chkAutoAssignIPAddress.Checked Then
+            ipAddress = getNextAvailableIPAddress(txtPartNo.Text)
+        End If
+
+
+        Dim batchno As String
+        Dim internalCustomerResult As (String, String) 'Result, Error
+        Dim ActiveRow = ultraGridERPPurchaseOrders.ActiveRow
+
+        Dim isIFSPOLine = _selected_ifs_po IsNot Nothing AndAlso ActiveRow IsNot Nothing AndAlso cboRef4.SelectedValue = "PURCADD" AndAlso _selected_ifs_po.PartNo = txtPartNo.Text AndAlso _selected_ifs_po.OrderNo = txtPONumber.Text
+
+
+        Dim _partno = txtPartNo.Text
+        Dim _partdesc = txtPartDescEngOp.Text
+        Dim _poPartNo = _partno
+
+        Dim parentPartNo As String
+
+        Dim POToWorkWith As QuickReportSchema = _selected_ifs_po
+        Dim parent = Nothing
+
+        If (ActiveRow IsNot Nothing AndAlso ActiveRow.HasParent) Then
+            parent = TryCast(ActiveRow.ParentRow.ListObject, QuickReportSchema)
+        End If
+
+        If (IsDisassemblyPart) Then
+            parentPartNo = parent.PartNo
+            _poPartNo = parent.PartNo
+            If Not IsSelfContainedDisassembly Then
+                POToWorkWith = parent
+                _poPartNo = parent.PartNo
+            End If
+        End If
+
+        If (Not IsDisassemblyPart AndAlso parent IsNot Nothing) Then
+            POToWorkWith = parent
+            _poPartNo = parent.PartNo
+        End If
+
+
+        If (isIFSPOLine AndAlso (Not IsDisassemblyPart Or Not IsSelfContainedDisassembly)) Then
+            batchno = POToWorkWith.GetBatchNo(txtSerialNo.Text)
+            internalCustomerResult = POToWorkWith.GetInternalCustomer(_dtCurrency)
+            Console.WriteLine($"Line Internal Customer: {internalCustomerResult.Item1}")
+            If (Not IsDisassemblyPart) Then
+                If (internalCustomerResult.Item1 Is Nothing) Then
+                    MsgBox(internalCustomerResult.Item2, MsgBoxStyle.Exclamation)
+                End If
+                If (Not POToWorkWith.IsValidSchema) Then
+                    MsgBox(POToWorkWith.SchemaError, MsgBoxStyle.Exclamation)
+                End If
+                If (String.IsNullOrEmpty(batchno) AndAlso POToWorkWith.IsSerializedPo) Then
+                    MsgBox("The supplied serial number does not exists on the IFS Inventory.", MsgBoxStyle.Exclamation)
+                End If
+                If Not String.IsNullOrEmpty(POValidation.Item2) AndAlso POValidation.Item2 <> "FULL_ACCESS" Then
+                    Exit Sub
+                End If
+            End If
+        End If
+
+
+        Dim r = DataSetAddInventory.inpartsub.AddinpartsubRow(partno:=_partno,
+                                                          partdesc:=_partdesc,
+                                                          unique_no:=txtBarcode.Text,
+                                                          batchno:="INSTOCK",
+                                                          dept:=cboOwner.SelectedValue,
+                                                          bld:=cboWarehouse.SelectedValue,
+                                                          row:=txtRevision.Text,
+                                                          PONumber:=txtPONumber.Text,
+                                                          serial_no:=txtSerialNo.Text,
+                                                          receipt:=DateTime.Now,
+                                                          onhand:=IIf(String.IsNullOrEmpty(txtQty.Text), "0", txtQty.Text),
+                                                          acctno:=String.Empty, ' this field is obsolete
+                                                          ref4:=cboRef4.SelectedValue,
+                                                          ref5:=txtRef5.Text,
+                                                          ShouldLinkChildParts:=ShouldLinkChildParts,
+                                                          RemoveNonCoded:=IIf(cboRef4.SelectedValue = "NONTOBAR", True, False),
+                                                          IPAddress:=ipAddress,
+                                                          MACAddress:=txtMACAddress.Text,
+                                                          PODateEntered:=If(isIFSPOLine, POToWorkWith.DateEntered, DateTime.Now),
+                                                          POSite:=If(isIFSPOLine, POToWorkWith.Contract, Nothing),
+                                                          POInternalCustomer:=If(isIFSPOLine, internalCustomerResult.Item1, Nothing),
+                                                          POInternalDestination:=If(isIFSPOLine, POToWorkWith.InternalDestination, Nothing),
+                                                          POLineNo:=If(isIFSPOLine, POToWorkWith.LineNo, Nothing),
+                                                          POReleaseNo:=If(isIFSPOLine, POToWorkWith.ReleaseNo, Nothing),
+                                                          POLocationNo:=If(isIFSPOLine, POToWorkWith.LocationNo, Nothing),
+                                                          POLotBatchNo:=If(isIFSPOLine, batchno, Nothing),
+                                                          PONoteText:=If(isIFSPOLine, POToWorkWith.NoteText, Nothing),
+                                                          POInternalDestinationId:=If(isIFSPOLine, POToWorkWith.DestinationId, Nothing),
+                                                          POIsSerialized:=If(isIFSPOLine, POToWorkWith.IsSerializedPo, Nothing),
+                                                          IsDisassembly:=If(isIFSPOLine, ultraGridERPPurchaseOrders.ActiveRow.HasParent, False),
+                                                          ParentPartNo:=If(isIFSPOLine, parentPartNo, Nothing),
+                                                          POPartNo:=If(isIFSPOLine, _poPartNo, Nothing),
+                                                          POQtyArrived:=If(isIFSPOLine AndAlso parent IsNot Nothing, parent.InvQtyArrived.ToString(), Nothing),
+                                                          POBuyUnitPrice:=If(isIFSPOLine, POToWorkWith.BuyUnitPrice, Nothing)
+                                                           )
+
+        r.EndEdit()
+
+    End Sub
+
+
+    Private Sub hideOrDisplayAutoIPAddressForPart(partno As String)
+
+        Dim controls = {Label5, txtSerialNo, pb2Dbarcode, lblBarcode, txtBarcode, btnGetNextBarcode, btnPrintSingleBarcode, lblQty, txtQty}
+
+        If checkIfPartHasIPRangeSet(partno) Then
+
+            If Not txtMACAddress.Visible Then
+                For Each c As Control In controls
+                    c.Top = c.Top + txtMACAddress.Height
+                Next
+            End If
+
+
+
+            chkAutoAssignIPAddress.Checked = True
+            chkAutoAssignIPAddress.Visible = True
+            lblMACAddress.Visible = True
+            txtMACAddress.Visible = True
+            chkDeferEnteringMacAddress.Visible = True
+            chkDeferEnteringMacAddress.Checked = False
+
+
+        Else
+
+            If txtMACAddress.Visible Then
+                For Each c As Control In controls
+                    c.Top = c.Top - txtMACAddress.Height
+                Next
+            End If
+
+            chkAutoAssignIPAddress.Checked = False
+            chkAutoAssignIPAddress.Visible = False
+            lblMACAddress.Visible = False
+            txtMACAddress.Visible = False
+            txtMACAddress.Text = String.Empty
+
+            'force focus to the serial number after entering an item
+            chkDeferEnteringMacAddress.Checked = True
+            chkDeferEnteringMacAddress.Visible = False
+
+        End If
+
+
+    End Sub
+
+    Private Function checkIfPartHasIPRangeSet(partno As String) As Boolean
+        Dim conn As SqlConnection = GetOpenedFinesseConnection()
+        Dim isRangeSet As Boolean
+
+        isRangeSet = conn.ExecuteScalar($"SELECT CASE WHEN ip.RangeType IS NULL THEN 0
+                                          	   ELSE 1 END as isSet
+                                          FROM dbo.inpart ip
+                                          WHERE ip.partno = '{partno}'")
+        conn.Close()
+        conn.Dispose()
+
+        Return isRangeSet
+    End Function
+
+    Private Function getNextAvailableIPAddress(partno As String) As String
+
+        Dim IPAddress As String
+
+        Dim sqlComm As SqlCommand = New SqlCommand("dbo.Get_next_available_IPAddress", gConn)
+        sqlComm.CommandType = CommandType.StoredProcedure
+        sqlComm.Parameters.Add("@partno", SqlDbType.VarChar, 50).Value = txtPartNo.Text
+        sqlComm.Parameters.Add("@nextIPAddress", SqlDbType.VarChar, 15)
+        sqlComm.Parameters("@nextIPAddress").Direction = ParameterDirection.Output
+        sqlComm.ExecuteNonQuery()
+        IPAddress = sqlComm.Parameters.Item("@nextIPAddress").Value
+
+        Return IPAddress
+    End Function
+
+
+    Private Sub ValidateNewInventoryItemInfo(ByRef shouldReturn As Boolean)
+        shouldReturn = True
+
+        If Not String.IsNullOrEmpty(txtSerialNo.Text) And String.IsNullOrEmpty(txtBarcode.Text) Then
+            Beep_Fail()
+            MsgBox("You have entered a serial number, but no barcode.", vbOKOnly)
+            txtBarcode.Focus()
+            Return
+        End If
+
+        If Not String.IsNullOrEmpty(txtBarcode.Text) And String.IsNullOrEmpty(txtSerialNo.Text) Then
+            Beep_Fail()
+            MsgBox("You have entered a barcode, but no serial number.", vbOKOnly)
+            txtSerialNo.Focus()
+            Return
+        End If
+
+        If cboRef4.SelectedIndex = 0 Then
+            Beep_Fail()
+            MsgBox("Please select a reason for adding inventory.", vbOKOnly)
+            Return
+        End If
+
+        If Not String.IsNullOrEmpty(_dtReasonRef4.Select("ref4=" & SQLQuote(cboRef4.SelectedValue))(0)("ref5desc")) Then
+            If String.IsNullOrEmpty(txtRef5.Text) Then
+                Beep_Fail()
+                MsgBox("Please enter a note for reason for adding inventory: " & cboRef4.Text, vbOKOnly)
+                Return
+            End If
+        End If
+
+        If cboRef4.SelectedValue = "NONTOBAR" And String.IsNullOrEmpty(txtBarcode.Text) Then
+            Beep_Fail()
+            MsgBox("You have selected '" & _dtReasonRef4.Select("ref4='NONTOBAR'")(0)("description") & "' as the reason for adding inventory, but no barcode has been entered.", vbOKOnly)
+            Return
+        End If
+
+        Dim partno = txtPartNo.Text
+        Dim existsInList = DataSetAddInventory.inpartsub.Select("partno=" & SQLQuote(partno) &
+                                             " and serial_no=" & SQLQuote(txtSerialNo.Text) &
+                                             " and unique_no=" & SQLQuote(txtBarcode.Text) &
+                                             " and dept=" & SQLQuote(cboOwner.SelectedValue) &
+                                             " and bld=" & SQLQuote(cboWarehouse.SelectedValue) &
+                                             " and row=" & SQLQuote(txtRevision.Text))
+        '" and PONumber=" & SQLQuote(txtPONumber.Text) & TODO: Update the constraint to include the PO Number to allow same information but Diffrent PO Number
+        If existsInList.Length > 0 Then
+            Beep_Fail()
+            MsgBox("You've already entered this part (" & existsInList(0).Item("partno") & ": " & existsInList(0).Item("partdesc") & ") with the same PO Number, owner, warehouse and revision.  You can make changes to the list below if necessary.", vbOKOnly)
+            Return
+        End If
+
+        Dim barcodeExistsInList = DataSetAddInventory.inpartsub.Select("unique_no=" & SQLQuote(txtBarcode.Text))
+        If barcodeExistsInList.Length > 0 AndAlso Not String.IsNullOrEmpty(barcodeExistsInList(0).Item("unique_no")) Then
+            Beep_Fail()
+            MsgBox("You've already entered this barcode (" & barcodeExistsInList(0).Item("unique_no") & ").", vbOKOnly)
+            Return
+        End If
+
+        Dim serial_noExistsInList = DataSetAddInventory.inpartsub.Select("serial_no=" & SQLQuote(txtSerialNo.Text))
+        If serial_noExistsInList.Length > 0 AndAlso Not String.IsNullOrEmpty(serial_noExistsInList(0).Item("serial_no")) Then
+            Beep_Fail()
+            MsgBox("You've already entered this serial number (" & serial_noExistsInList(0).Item("serial_no") & ").", vbOKOnly)
+            Return
+        End If
+
+        shouldReturn = False
+    End Sub
+
+#End Region
+
+#Region "Barcode Printing"
+
+    Private Function PreparePrintDocument() As PrintDocument
+        ' Make the PrintDocument object.
+        Dim print_document As New PrintDocument
+
+        ' Install the PrintPage event handler.
+        AddHandler print_document.PrintPage, AddressOf _
+            PrintDocument1_PrintPage
+
+        ' Return the object.
+        Return print_document
+    End Function
+
+    Private Sub PrintDocument1_PrintPage(ByVal sender As Object, ByVal e As PrintPageEventArgs) Handles PrintDocument1.PrintPage
+
+        Dim Margin As Integer = 50
+        Dim paddingInfoBox As Integer = 25
+        Dim paddingText As Integer = 5
+        Dim paddingSmallText As Integer = 2
+        Dim r_uHeight = 25
+        Dim r_uWidth = r_uHeight * (19 / 1.75)
+        Dim Point As New Point
+        Point.X = 0
+        Point.Y = 0
+
+        Dim bcWidth2D As Integer = pb2Dbarcode.Image.Width * 0.5
+        Dim bcHeight2D As Integer = pb2Dbarcode.Image.Height * 0.5
+
+        Dim font2Dbarcode As New Font(FontFamily.GenericSansSerif, 5)
+
+        Dim font1Dbarcode As New Font("IDAutomationHC39M", 10)
+        'Dim bcWidth1D As Integer = e.Graphics.MeasureString(lblBarcodePrint.Text, font1Dbarcode).Width
+        'Dim bcHeight1D As Integer = e.Graphics.MeasureString(lblBarcodePrint.Text, font1Dbarcode).Height
+
+        For i = 0 To 5
+            e.Graphics.DrawImage(pb2Dbarcode.Image, Margin + (bcWidth2D * 2) * i, Margin, bcWidth2D, bcHeight2D)
+            e.Graphics.DrawString(txtBarcode.Text, font2Dbarcode, Brushes.Black, Margin + (bcWidth2D * 2) * i + (bcWidth2D - e.Graphics.MeasureString(txtBarcode.Text, font2Dbarcode).Width) * 0.5, Margin + bcHeight2D + 2)
+            'e.Graphics.DrawString(lblBarcodePrint.Text, font1Dbarcode, Brushes.Black, Margin + (bcWidth1D + 20) * i, Margin + bcHeight2D * 2)
+        Next
+
+    End Sub
+
+    Private Sub PrintBarcodes(Optional ItemsToPrint As List(Of ItemsToPrintRow) = Nothing)
+        Dim owner = _dtOwners.Select($"OwnerCode = '{cboOwner.SelectedValue}'").FirstOrDefault
+
+        Dim useZebraPrint As Boolean = owner.Item("EnableZebraPrinting")
+
+        If Not useZebraPrint Then 'Special EDS Zebra printing
+            Try
+                If pb2Dbarcode.Image IsNot Nothing Then
+                    'Use default print behavior
+                    PrintDialog1.Document = PreparePrintDocument()
+                    PrintDialog1.Document.DefaultPageSettings.Landscape = True
+                    Dim results = PrintDialog1.ShowDialog()
+                    If results = DialogResult.OK Then
+                        PrintDocument1.PrinterSettings = PrintDialog1.PrinterSettings
+                        'PrintDocument1.Print()
+                    End If
+                Else
+                    MsgBox("Nothing to print.")
+                End If
+            Catch ex As Exception
+                MsgBox("Print Failed: " & ex.Message)
+            End Try
+        Else
+            'Use PrintZPL Zebra print dialog
+            ' Try
+            If ItemsToPrint.Count = 0 Then
+                MsgBox("There is nothing to print in the Items For Import grid.")
+                Exit Sub
+            End If
+
+            Dim printZPLDialog = New frmPrintZPLDialog(cmndsel)
+            printZPLDialog.dtItemsToPrint = ItemsToPrint
+            printZPLDialog.StartPosition = FormStartPosition.CenterParent
+
+            printZPLDialog.ShowDialog()
+
+            'get dialog state for reuse on next print
+            _PrintDialogState = printZPLDialog.PrintDialogState
+
+            printZPLDialog.Dispose()
+            'Catch ex As Exception
+            'MsgBox("Zebra Print Failed: " & ex.Message)
+            'End Try
+        End If
+    End Sub
+
+    Private Sub btnPrintSingleBarcode_Click(sender As Object, e As EventArgs) Handles btnPrintSingleBarcode.Click, PrintToolStripMenuItem.Click
+        Dim cantValidate As Boolean
+        ValidateNewInventoryItemInfo(cantValidate)
+
+        If Not cantValidate Then
+            If Not String.IsNullOrEmpty(Trim(txtBarcode.Text)) Then
+                Dim dtPrintItems As New List(Of ItemsToPrintRow)
+                Dim ipAddress As String = ""
+                If chkAutoAssignIPAddress.Checked And txtMACAddress.Visible Then
+                    ipAddress = getNextAvailableIPAddress(txtPartNo.Text)
+                    ipAddress = If(ipAddress Is Nothing Or IsDBNull(ipAddress), "", ipAddress)
+                End If
+
+                dtPrintItems.Add(New ItemsToPrintRow(txtSerialNo.Text, txtBarcode.Text, "", ipAddress, txtMACAddress.Text))
+                PrintBarcodes(dtPrintItems)
+            Else
+                MsgBox("There is nothing to print in the New Inventory Item Barcode field.")
+            End If
+        End If
+    End Sub
+
+    Private Sub tsmPrintBarcodes_Click(sender As Object, e As EventArgs) Handles tsmPrintBarcodes.Click
+        Dim itemsToImport = bsAddInventory.GetDataRows(Of inpartsubRow)()
+        Dim dtPrintItems As New List(Of ItemsToPrintRow)
+
+        For Each item In itemsToImport
+            dtPrintItems.Add(New ItemsToPrintRow(item.serial_no.ToString, item.unique_no.ToString))
+        Next
+
+        PrintBarcodes(dtPrintItems)
+    End Sub
+
+    Private Sub PrintBArcodesSelectedItemsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PrintBArcodesSelectedItemsToolStripMenuItem.Click
+        Dim itemsToImport = dgvItemsForImport.SelectedRows
+        If (itemsToImport Is Nothing Or itemsToImport?.Count = 0) Then
+            MessageBox.Show("There is not selected items to print.")
+            Exit Sub
+        End If
+        'bsAddInventory.GetDataRows(Of inpartsubRow)()
+        Dim dtPrintItems As New List(Of ItemsToPrintRow)
+
+        For Each item In itemsToImport
+            Dim uniqueId = item.Cells("dgcAddItemsBarcode").Value.ToString
+            Dim serialNo = item.Cells("dgcAddItemsSerialNo").Value.ToString
+            Dim owner = item.Cells("dgcAddItemsDept").Value.ToString
+
+            dtPrintItems.Add(New ItemsToPrintRow(serialNo, uniqueId))
+        Next
+
+        PrintBarcodes(dtPrintItems)
+    End Sub
+
+    Private Sub tsmPrintSelectedItemsForImport_Click(sender As Object, e As EventArgs) Handles tsmPrintSelectedItemsForImport.Click
+        Dim selectedItemsToImport = dgvItemsForImport.SelectedRows
+        Dim dtPrintItems As New List(Of ItemsToPrintRow)
+
+        For Each item As DataGridViewRow In selectedItemsToImport
+            dtPrintItems.Add(New ItemsToPrintRow(item.Cells("dgcAddItemsSerialNo").Value.ToString, item.Cells("dgcAddItemsBarcode").Value.ToString))
+        Next
+
+        PrintBarcodes(dtPrintItems)
+    End Sub
+
+    Private Sub PrintPreviewToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles PrintPreviewToolStripMenuItem.Click
+        Try
+            PrintPreviewDialog1.Document = PreparePrintDocument()
+            PrintPreviewDialog1.Document.DefaultPageSettings.Landscape = True
+            PrintPreviewDialog1.WindowState = FormWindowState.Maximized
+            PrintPreviewDialog1.ShowDialog()
+        Catch ex As Exception
+            MsgBox("Nothing has been selected to be printed.")
+        End Try
+    End Sub
+
+#End Region
+
+#Region "General"
+
+    Private Function DoYouWantToSave(ByRef shouldReturn As Boolean)
+        shouldReturn = False
+        If HasDataChanged() Then
+            Dim result = MsgBox("Do you want to save/commit your changes?", vbYesNoCancel)
+            Select Case result
+                Case DialogResult.Yes
+                    Try
+                        DataSetAddInventory.AcceptChanges()
+                        SaveData()
+                        'Continue closing
+                    Catch ex As Exception
+                        MsgBox(ex.Message)
+                    End Try
+                Case DialogResult.No
+                    'DataSetAddInventory.AcceptChanges() ' why was this here?
+                    'Do Nothing and close
+                Case DialogResult.Cancel
+                    shouldReturn = True
+            End Select
+        End If
+        Return shouldReturn
+    End Function
+
+    Private Sub bsAddInventory_BindingComplete(ByVal sender As Object, ByVal e As BindingCompleteEventArgs) Handles bsAddInventory.BindingComplete
+        If bsAddInventory.Current("ref4") = "NONTOBAR" And Not String.IsNullOrEmpty(bsAddInventory.Current("unique_no")) And bsAddInventory.Current("RemoveNonCoded") = False Then
+            Dim result = MsgBox("You have changed your reason for adding inventory to '" & _dtReasonRef4.Select("ref4='NONTOBAR'")(0)("description") & "'.  Would you like to attempt to remove a related non-barcoded item from " & bsAddInventory.Current("bld") & " INSTOCK (Owner: " & bsAddInventory.Current("dept") & "?", vbYesNo)
+            If result = MsgBoxResult.Yes Then
+                bsAddInventory.Current("RemoveNonCoded") = True
+            End If
+        End If
+    End Sub
+
+    Private Sub bsAddInventory_CurrentChanged(ByVal sender As Object, ByVal e As EventArgs) Handles bsAddInventory.CurrentChanged
+        If bsAddInventory.Current Is Nothing Then Exit Sub
+        If bsAddInventory.Current("partno") Is DBNull.Value Then Exit Sub
+        Selected_PartNo = bsAddInventory.Current("partno")
+        Selected_Barcode = bsAddInventory.Current("unique_no")
+        Selected_Warehouse = bsAddInventory.Current("bld")
+
+    End Sub
+
+    Private Sub btnClearItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnClearItem.Click
+        For Each txt As TextBox In gbNewInventoryItemInfo.Controls.OfType(Of TextBox)()
+            txt.Clear()
+        Next
+        ItemsForImportQtyUpdating()
+        cboRef4.SelectedIndex = 0
+    End Sub
+
+    Private Sub btnPartNoSearch_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnPartNoSearch.Click
+        Static picker As New PartPicker(Me, btnPartNoSearch, FinesseConnectionString)
+        picker.SearchForBarcode = False
+
+        If Not picker.GetPart() Then
+            Exit Sub
+        End If
+
+        txtPartNo.Text = picker.PartNumber
+        txtPartDescEngOp.Text = picker.PartDesc
+        txtPartNo_Validating(Nothing, Nothing)
+
+        hideOrDisplayAutoIPAddressForPart(picker.PartNumber)
+
+    End Sub
+
+    Private Sub txtPartNo_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtPartNo.Validating
+        If txtPartNo.ReadOnly Then Exit Sub
+        If PartValidated Then Exit Sub
+
+        'Check to see if part number exists in ClairTour.
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+
+            Dim ClairTourPartNo = newConn.GetDataTable("select partdesc from dbo.inpart p where partno = " & SQLQuote(txtPartNo.Text))
+
+            Dim result_ClairTour As DialogResult = Nothing
+            If ClairTourPartNo.Rows.Count = 0 Then
+                Beep_Fail()
+                MsgBox("This part number does not exist in the rental inventory database.", vbOKOnly)
+                txtPartNo.Clear()
+                Return
+            End If
+        End Using
+        PartValidated = True
+    End Sub
+
+    'Private Sub DgvERPPurchaseOrders_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs) Handles DgvERPPurchaseOrders.CellClick
+    '    Try
+    '        cboRef4.SelectedValue = "PURCADD"
+    '        Dim selectedPO = DgvERPPurchaseOrders.SelectedRows(0)
+    '        Dim PoNumber = selectedPO.Cells(OrderNo.Name).Value
+    '        Dim partNumber = selectedPO.Cells(PartNo.Name).Value
+    '        Dim selected = _ifs_data.Where(Function(item) item.OrderNo = PoNumber And item.PartNo = partNumber).FirstOrDefault()
+    '        _selected_ifs_po = selected
+    '        cboOwner.SelectedValue = selected.Owner
+    '        cboWarehouse.SelectedValue = selected.Warehouse
+    '        txtPONumber.Text = PoNumber
+    '        txtPartNo.Text = selected.PartNo
+    '        ReloadPermissions()
+    '    Catch ex As Exception
+    '        Console.WriteLine("Error Getting the IFS Data...")
+    '        Console.WriteLine(ex.Message)
+    '    End Try
+    'End Sub
+
+    Private Sub txtPartNo_TextChanged(ByVal sender As Object, ByVal e As EventArgs) Handles txtPartNo.TextChanged
+        If String.IsNullOrEmpty(txtPartNo.Text) Then
+            txtPartDescEngOp.Clear()
+
+        Else
+
+            ShowButtonTooltip()
+            Using newConn As New SqlConnection(FinesseConnectionString)
+                newConn.Open()
+
+                Dim t = newConn.GetDataTable("select p.partdesc, p.lead_source from inpart p where p.partno = " & SQLQuote(txtPartNo.Text))
+                If t.Rows.Count = 0 Then
+                    txtPartNo.Text = String.Empty
+                    Return
+                End If
+                txtPartDescEngOp.Text = t.Rows(0).Item("partdesc")
+
+                Selected_PartNo = txtPartNo.Text
+                Selected_PartDesc = txtPartDescEngOp.Text
+
+                If _selected_ifs_po Is Nothing And (cboRef4.SelectedIndex = 0 Or cboRef4.SelectedValue = "MANFADD" Or cboRef4.SelectedValue = "PURCADD") Then
+                    Select Case t.Rows(0).Item("lead_source")
+                        Case "M"
+                            cboRef4.SelectedValue = "MANFADD"
+                            txtPONumber.Text = String.Empty
+                        Case "P"
+                            cboRef4.SelectedValue = "PURCADD"
+                    End Select
+                End If
+            End Using
+        End If
+        FilterInventoryInStock()
+        RefreshCurrentInventory()
+        HandlePartImageGUI()
+    End Sub
+    Private IsGridLoading As Boolean = False
+
+    Private Async Function GetAllIFSPOsData() As Task
+        Dim text = chkRecievedOnly.Text
+        Try
+            Me.Invoke(Sub()
+                          chkRecievedOnly.Enabled = False
+                          chkRecievedOnly.Text = "Loading Unreceived data..."
+                      End Sub)
+
+            Dim result = Await IFSDAL.GetPOLinesQuickReport()
+
+            If result IsNot Nothing Then
+                Me.Invoke(Sub()
+                              _ifs_data = result
+                          End Sub)
+            End If
+        Catch ex As Exception
+            Me.Invoke(Sub()
+                          Console.WriteLine($"PO Data Loading Error: {ex.Message}")
+                          Dim toast As New ToastNotification("Error loading the rest of the PO Data!", Color.Red)
+                          toast.Show()
+                      End Sub)
+        Finally
+            Me.Invoke(Sub()
+                          chkRecievedOnly.Enabled = True
+                          chkRecievedOnly.Text = text
+                      End Sub)
+        End Try
+    End Function
+
+
+    Private Async Function FillERPGrid() As Task
+        If (IsGridLoading) Then
+            Return
+        End If
+        Try
+            IsGridLoading = True
+            With ultraGridERPPurchaseOrders.DisplayLayout.Override
+                .AllowUpdate = DefaultableBoolean.False
+                .CellClickAction = CellClickAction.RowSelect
+                .SelectTypeRow = SelectType.Single
+                .SelectTypeCell = SelectType.None
+                .RowSelectors = DefaultableBoolean.True
+            End With
+
+            Me.Cursor = Cursors.WaitCursor
+            Dim result = Await IFSDAL.GetReceivedPOLinesQuickReport(Nothing)
+            Me.Cursor = Cursors.Default
+
+            If (result IsNot Nothing) Then
+                lblPoExistance.Visible = result.Count <= 0
+
+                _ifs_data = result
+                Dim data = GetErpBaseData()
+
+                ultraGridERPPurchaseOrders.DataSource = data.ToList()
+                ultraGridERPPurchaseOrders.Selected.Rows.Clear()
+                ultraGridERPPurchaseOrders.ActiveRow = Nothing
+
+                ultraGridERPPurchaseOrders.Rows.ExpandAll(True)
+                With ultraGridERPPurchaseOrders.DisplayLayout.Bands(0)
+                    .Columns("FinesseDescription").Width = 200
+                    .Columns("SupplierName").Width = 200
+                    .Columns("DateEntered").Width = 70
+                End With
+
+                ultraGridERPPurchaseOrders.DisplayLayout.Bands(1).Columns("ChildPartDescription").Width = 200
+
+                filter_ERP_DataGrid(txtERPPoNumber.Text)
+            End If
+            If (Not {UserAccess.RECIEVED_PO_MANDATORY, UserAccess.NO_ACCESS, UserAccess.GENERAL_USER}.Contains(UserPermission)) Then
+                Dim unused = Task.Run(Async Function()
+                                          Await GetAllIFSPOsData() 'This is way much slower than GetReceivedPOLinesQuickReport, loading first the received only to show something and load the rest of the data on the background.
+                                          'Me.Invoke(New Action(Sub()
+                                          '                         filter_ERP_DataGrid(txtERPPoNumber.Text)
+                                          '                     End Sub))
+                                      End Function)
+            End If
+
+
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            Console.WriteLine("Error loading PO Data")
+            MsgBox(ex.Message, MsgBoxStyle.Critical)
+        Finally
+            IsGridLoading = False
+            Me.Cursor = Cursors.Default
+        End Try
+
+
+    End Function
+
+    Private Sub ReloadSavedPOs(refreshedData As DataTable)
+        Try
+
+            Me.Cursor = Cursors.WaitCursor
+            If (refreshedData IsNot Nothing AndAlso refreshedData.Rows.Count > 0) Then
+                For Each item As DataRow In refreshedData.Rows
+                    Dim newQty
+                    Dim dataResult As DataTable
+                    Using conn = GetOpenedFinesseConnection()
+                        Dim cmd = conn.CreateCommand
+                        cmd.CommandText = "SELECT TOP(1) OrderNo, PartNumber, Qty, Line_No, Release_No 
+                                           FROM IFS.InventoryReceipts
+                                           WHERE OrderNo = @OrderNo
+                                             AND PartNumber = @PartNumber
+                                             AND Line_No = @LineNo
+                                             AND Release_No = @ReleaseNo"
+
+                        cmd.Parameters.Clear()
+                        cmd.Parameters.AddWithValue("@OrderNo", item("PONumber"))
+                        cmd.Parameters.AddWithValue("@PartNumber", item("partno"))
+                        cmd.Parameters.AddWithValue("@LineNo", item("POLineNo"))
+                        cmd.Parameters.AddWithValue("@ReleaseNo", item("POReleaseNo"))
+                        Using reader = cmd.ExecuteReader()
+                            If reader.Read() Then
+                                If Not reader.IsDBNull(reader.GetOrdinal("Qty")) Then
+                                    newQty = Integer.Parse(reader("Qty"))
+                                End If
+                            End If
+                        End Using
+                    End Using
+
+                    Dim element = _ifs_data.FirstOrDefault(Function(po) po.PartNo = item("partno") AndAlso po.OrderNo = item("PONumber") AndAlso po.LineNo = item("POLineNo") AndAlso po.ReleaseNo = item("POReleaseNo"))
+                    If (element IsNot Nothing AndAlso newQty IsNot Nothing) Then
+                        element.FinessePart.QtyInFinesse = newQty
+                    End If
+                Next
+                Dim selectedRow = GetParentchildSelectedRow()
+
+                ultraGridERPPurchaseOrders.DataSource = _ifs_data.ToList()
+                ultraGridERPPurchaseOrders.Selected.Rows.Clear()
+                ultraGridERPPurchaseOrders.ActiveRow = Nothing
+
+                filter_ERP_DataGrid(txtERPPoNumber.Text)
+                SelectPreviousSelectionOnGrid(selectedRow.Item1, selectedRow.Item2)
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            Console.WriteLine(ex.Message)
+            Dim toast As New ToastNotification("Error loading saved PO Data to the grid", Color.Red)
+            toast.Show()
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+
+    Private clickedRow As UltraGridRow = Nothing
+
+
+
+
+    Private Sub ultraGridERPPurchaseOrders_MouseDown(sender As Object, e As MouseEventArgs) Handles ultraGridERPPurchaseOrders.MouseDown
+        If e.Button = MouseButtons.Right Then
+            Dim uiElement = ultraGridERPPurchaseOrders.DisplayLayout.UIElement.ElementFromPoint(New Point(e.X, e.Y))
+            Dim row = TryCast(uiElement.GetContext(GetType(UltraGridRow)), UltraGridRow)
+
+
+            If row IsNot Nothing Then
+                clickedRow = row
+
+                Dim po = TryCast(clickedRow.ListObject, QuickReportSchema)
+
+                BtnAddSubparts.Visible = _can_add_edit_disassemblies_subparts
+                UltraGridMenuStrip.Show(ultraGridERPPurchaseOrders, New Point(e.X, e.Y))
+                menuItemSendMessage.Visible = _can_add_edit_disassemblies_subparts AndAlso po IsNot Nothing AndAlso po.IsRecieved
+                Dim qty = If(po.QtyOnHand < po.InvQtyArrived, po.QtyOnHand, po.InvQtyArrived)
+                txtQuantityMessage.Text = qty
+            End If
+        End If
+    End Sub
+
+
+    Private Sub CopyPONumberToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopyPONumberToolStripMenuItem.Click, CopyPartNumberToolStripMenuItem.Click
+        Dim clickedItem = CType(sender, ToolStripMenuItem)
+
+        Dim partno As String
+        Dim ponumber As String
+
+
+        If (clickedRow.HasParent) Then
+            Dim row = TryCast(clickedRow.ListObject, DisassemblyPart)
+            partno = row.ChildPartNo
+            ponumber = row.OrderNo
+        Else
+            Dim row = TryCast(clickedRow.ListObject, QuickReportSchema)
+            partno = row.PartNo
+            ponumber = row.OrderNo
+        End If
+
+        Dim copiedText As String
+        If clickedItem Is CopyPONumberToolStripMenuItem Then
+            copiedText = ponumber
+        ElseIf clickedItem Is CopyPartNumberToolStripMenuItem Then
+            copiedText = partno
+        End If
+        Clipboard.SetText(copiedText)
+
+        Dim toast As New ToastNotification($"{copiedText} Copied to clipboard!", Color.Green)
+        toast.Show()
+    End Sub
+
+    Private Sub ultraGridERPPurchaseOrders_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles ultraGridERPPurchaseOrders.InitializeRow
+
+        Dim row = e.Row
+        row.Selected = False
+        If row.Band.Index = 0 Then
+            Dim PoLine = TryCast(row.ListObject, QuickReportSchema)
+            If (PoLine.FinessePart Is Nothing) Then
+                If (PoLine.Disassemblies Is Nothing OrElse PoLine.Disassemblies.Count = 0) Then
+                    row.ToolTipText = "This part does not exist in Finesse, and no subparts have been added. Please create the part or add the required subparts."
+                End If
+                row.Appearance.BackColor = ColorPalette.DangerRow
+            End If
+
+            If (row.HasChild) Then
+                row.ToolTipText = "This PO Line contains Subparts. Please receive all the subparts."
+                row.Appearance.BackColor = ColorPalette.GrayRow
+            End If
+        End If
+
+    End Sub
+
+
+    Private Sub SelectPartOnErpGrid()
+        Try
+            If (ultraGridERPPurchaseOrders IsNot Nothing AndAlso ultraGridERPPurchaseOrders.Rows.Count = 1) Then
+                ultraGridERPPurchaseOrders.ActiveRow = Nothing
+                ultraGridERPPurchaseOrders.Rows(0).Activate()
+                Return
+            End If
+
+            If (_selected_ifs_po IsNot Nothing AndAlso txtPartNo.Text = _selected_ifs_po.PartNo) Then
+                Return
+            End If
+
+
+            'Dim erpData = ultraGridERPPurchaseOrders.Rows
+            'If (erpData IsNot Nothing) Then
+            '    Dim rows = erpData.ToList().Where(Function(item) item.Cells("OrderNo").Value.ToString = txtPONumber.Text)
+            '    For Each row In rows
+            '        row.Activated = (row.Cells("PartNo").Value.ToString = txtPartNo.Text)
+            '        If (row.HasChild) Then
+            '            For Each childBand In row.ChildBands
+            '                For Each childRow In childBand.Rows
+            '                    childRow.Activated = (childRow.Cells("ChildPartNo").Value.ToString = txtPartNo.Text)
+            '                Next
+            '            Next
+            '        End If
+            '    Next
+            'End If
+        Catch ex As Exception
+            Console.WriteLine("Error activating selected po line: " + ex.Message)
+        End Try
+    End Sub
+
+
+    Private Sub ultraGridERPPurchaseOrders_BeforeRowDeactivate(sender As Object, e As EventArgs) Handles ultraGridERPPurchaseOrders.BeforeRowDeactivate
+        Console.WriteLine("Deactivating selected row...")
+        _selected_ifs_po = Nothing
+        ReloadPermissions()
+    End Sub
+
+    Private Sub ultraGridERPPurchaseOrders_AfterRowActivate(sender As Object, e As EventArgs) Handles ultraGridERPPurchaseOrders.AfterRowActivate
+        Try
+            If (IsGridLoading) Then
+                Exit Sub
+            End If
+
+            Dim selectedRow As UltraGridRow = ultraGridERPPurchaseOrders.ActiveRow
+            Dim PoLine As QuickReportSchema
+            If (Not selectedRow.HasParent) Then
+                PoLine = TryCast(selectedRow.ListObject, QuickReportSchema)
+                Dim childBand = selectedRow.ChildBands(0)
+                If childBand.Rows.Count > 0 Then
+                    childBand.Rows(0).Activate()
+                    Exit Sub
+                End If
+            Else
+                Dim disassembly = TryCast(selectedRow.ListObject, DisassemblyPart)
+                Dim parent = TryCast(selectedRow.ParentRow.ListObject, QuickReportSchema).Clone()
+
+                If (parent.PartNo <> disassembly.ChildPartNo) Then
+                    parent.PartNo = disassembly.ChildPartNo
+                    parent.IFSInventory = parent.IFSInventory.Where(Function(item) item.PartNo = disassembly.ChildPartNo).ToList()
+                    parent.InvQtyArrived = disassembly.Quantity
+                    'parent.FinesseQty = 0
+                End If
+
+                If (parent IsNot Nothing AndAlso Not parent.IsSerializedPo) Then
+                    txtQty.Text = disassembly.Quantity
+                Else
+                    txtQty.Text = 1
+                End If
+                PoLine = parent
+            End If
+            _selected_ifs_po = PoLine
+            If (PoLine IsNot Nothing) Then
+                cboRef4.SelectedValue = "PURCADD"
+                If (Not String.IsNullOrEmpty(PoLine.Owner)) Then
+                    cboOwner.SelectedValue = PoLine.Owner
+                End If
+                If (Not String.IsNullOrEmpty(PoLine.Warehouse)) Then
+                    cboWarehouse.SelectedValue = PoLine.Warehouse
+                End If
+
+                txtPONumber.Text = PoLine.OrderNo
+                txtPartNo.Text = PoLine.PartNo
+                hideOrDisplayAutoIPAddressForPart(PoLine.PartNo)
+                ReloadPermissions()
+            End If
+
+        Catch ex As Exception
+            Console.WriteLine("Error Activating ultragrid row...")
+            Console.WriteLine(ex.Message)
+        End Try
+    End Sub
+
+    Private Function GetErpBaseData() As IEnumerable(Of QuickReportSchema)
+        If (_ifs_data IsNot Nothing AndAlso cboErpWarehouse.SelectedItem IsNot Nothing) Then
+            Dim selectedCompany = cboErpWarehouse.SelectedItem.Row("IFSCompanyCd").ToString
+            Dim result = _ifs_data.Where(Function(po) _
+                                        (String.IsNullOrEmpty(selectedCompany) OrElse String.IsNullOrEmpty(po.Contract) OrElse po.Contract = selectedCompany OrElse po.Warehouse = selectedCompany) AndAlso
+    (String.IsNullOrEmpty(cboErpOwner.SelectedValue) OrElse String.IsNullOrEmpty(po.Owner) OrElse po.Owner = cboErpOwner.SelectedValue) AndAlso
+                                        (chkUnexistingParts.Checked OrElse (Not chkUnexistingParts.Checked AndAlso (po.FinessePart IsNot Nothing OrElse (po.Disassemblies IsNot Nothing AndAlso po.Disassemblies.Count > 0)))) AndAlso
+    (Not chkRecievedOnly.Checked OrElse
+        (po.IsRecieved = True AndAlso
+         CInt(po.FinesseQty) < CInt(po.BuyQtyDue) AndAlso 'Filtering by Qty ordered instead of qty arrived to show rows that haven't been fully receipt.
+         (po.FinessePart IsNot Nothing OrElse po.Disassemblies IsNot Nothing)))
+)
+
+
+
+            Return result
+        End If
+
+        Return New List(Of QuickReportSchema)()
+    End Function
+
+
+
+    Private Sub filter_ERP_DataGrid(Optional search As String = Nothing)
+        If (_ifs_data IsNot Nothing) Then
+            Dim data = GetErpBaseData()
+            Dim dataResult As IEnumerable(Of QuickReportSchema) = data
+            If (Not String.IsNullOrEmpty(search)) Then
+                Dim lowerSearchText = search.ToLower()
+
+                Dim allWords = lowerSearchText.Split({" "}, StringSplitOptions.RemoveEmptyEntries)
+
+                dataResult = data.Where(Function(po) _
+                                        allWords.All(Function(word) _
+                                            (po.PartNo IsNot Nothing AndAlso po.PartNo.ToLower().Contains(word)) OrElse
+                                            (po.FinesseDescription IsNot Nothing AndAlso po.FinesseDescription.ToLower().Contains(word)) OrElse
+                                            (po.OrderNo IsNot Nothing AndAlso po.OrderNo.ToLower().Contains(word)) OrElse
+                                            (po.SupplierID IsNot Nothing AndAlso po.SupplierID.ToLower().Contains(word)) OrElse
+                                            (po.SupplierName IsNot Nothing AndAlso po.SupplierName.ToLower().Contains(word)) OrElse
+                                            (po.PoState IsNot Nothing AndAlso po.PoState.ToLower().Contains(word))
+                                        )
+                                    )
+
+            End If
+            ultraGridERPPurchaseOrders.DataSource = (dataResult.ToList())
+
+            ultraGridERPPurchaseOrders.Selected.Rows.Clear()
+            ultraGridERPPurchaseOrders.ActiveRow = Nothing
+
+            ultraGridERPPurchaseOrders.Rows.ExpandAll(True)
+
+            SelectPartOnErpGrid()
+            ReloadPermissions()
+        End If
+    End Sub
+
+    Private Sub txtBarcode_TextChanged(ByVal sender As Object, ByVal e As EventArgs) Handles txtBarcode.TextChanged, txtSerialNo.TextChanged
+        If Not String.IsNullOrEmpty(txtSerialNo.Text) Or Not String.IsNullOrEmpty(txtBarcode.Text) Then
+            txtQty.Text = 1
+            txtQty.ReadOnly = True
+        Else
+            txtQty.Clear()
+            txtQty.ReadOnly = False
+        End If
+        If Not String.IsNullOrEmpty(Trim(txtBarcode.Text)) Then
+            Dim enc As New DmtxImageEncoder
+            Dim dmOptions As New DmtxImageEncoderOptions
+
+            dmOptions.SizeIdx = DmtxSymbolSize.DmtxSymbol14x14
+            dmOptions.MarginSize = 5
+            dmOptions.Scheme = DmtxScheme.DmtxSchemeAscii
+            Try
+                Dim bcDataMatrix = enc.EncodeImage(txtBarcode.Text, dmOptions)
+                pb2Dbarcode.Image = bcDataMatrix
+            Catch ex As Exception
+
+            End Try
+
+        Else
+            pb2Dbarcode.Image = Nothing
+        End If
+    End Sub
+
+    Private Sub txtBarcode_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtBarcode.Validating
+        If IsFormClosing() = True Then Exit Sub
+        If String.IsNullOrEmpty(txtBarcode.Text) Then Exit Sub
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+
+            Dim exists = newConn.ExecuteScalar("select top 1 unique_no from inpartsub where unique_no = " & SQLQuote(txtBarcode.Text) & " and (onhand > 0 or parentunique_no <> '')")
+            If Not exists Is Nothing Then
+                Beep_Fail()
+                MsgBox("This barcode is already in use.  Please enter a valid barcode.", vbOKOnly)
+                txtBarcode.Clear()
+                txtBarcode.Focus()
+                txtBarcode.SelectAll()
+            End If
+        End Using
+    End Sub
+
+    Private Sub dgvItemsForImport_SelectionChanged(sender As Object, e As EventArgs) Handles dgvItemsForImport.SelectionChanged
+        ItemsForImportQtyUpdating()
+    End Sub
+
+    Private Sub dgvItemsForImport_CellEndEdit(sender As Object, e As DataGridViewCellEventArgs) Handles dgvItemsForImport.CellEndEdit
+        Dim index = 0 'Replacing the usage of this from old clair new usage: PartdescDataGridViewTextBoxColumn.Index
+        Select Case e.ColumnIndex
+            Case dgcAddItemsQty.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) And String.IsNullOrEmpty(dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value) <> 1 Then
+                    Beep_Fail()
+                    MsgBox("Only quantities of 1 can be entered for barcoded items.", vbOKOnly)
+                    dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value = 1
+                    ItemsForImportQtyUpdating()
+                End If
+                Dim orderNo = dgvItemsForImport.Item(PONumber.Index, e.RowIndex).Value
+                Dim partNumber = dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value
+                Dim POLimit = _ifs_data.Where(Function(item) item.OrderNo = orderNo AndAlso item.PartNo = partNumber).FirstOrDefault()
+                If String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) AndAlso POLimit IsNot Nothing AndAlso POLimit.UnrecievedQty < dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value Then
+                    Beep_Fail()
+                    MsgBox("Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order.", vbOKOnly)
+                    dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value = POLimit.UnrecievedQty
+                    ItemsForImportQtyUpdating()
+                End If
+
+            Case dgcAddItemsBarcode.Index, dgcAddItemsSerialNo.Index
+                If String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) And String.IsNullOrEmpty(dgvItemsForImport.Item(e.ColumnIndex, e.RowIndex).Value) <> 1 Then
+                    MsgBox("Only quantities of 1 can be entered for barcoded items.", vbOKOnly)
+                End If
+
+            Case dgcAddItemRef4.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) Then
+                    If dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False Then
+                        Dim result = MsgBox("You have changed your reason for adding inventory to '" & _dtReasonRef4.Select("ref4='NONTOBAR'")(0)("description") & "'" & vbCrLf & vbCrLf & "Would you like to attempt to remove a related non-barcoded item from " & dgvItemsForImport.Item(dgcAddItemsBld.Index, e.RowIndex).FormattedValue & " INSTOCK (Owner: " & dgvItemsForImport.Item(dgcAddItemsDept.Index, e.RowIndex).FormattedValue & ")?", vbYesNo)
+                        If result = MsgBoxResult.Yes Then
+                            dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True
+                            ValidateAddToInventoryItems()
+                        Else
+                            MsgBox("Select a different reason for adding inventory.", vbOKOnly)
+                        End If
+                    End If
+                    If Not dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True Then
+                        MsgBox("You have changed your reason for adding inventory from '" & _dtReasonRef4.Select("ref4='NONTOBAR'")(0)("description") & "'." & vbCrLf & vbCrLf & "The 'Remove Non-Coded' checkbox will be unchecked.", vbOKOnly)
+                        dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False
+                    End If
+                End If
+
+            Case dgcAddItemsDept.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) Then
+                    If dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" Then
+                        Dim result = MsgBox("You have changed the owner of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "Would you like to attempt to remove a related non-barcoded item from " & dgvItemsForImport.Item(dgcAddItemsBld.Index, e.RowIndex).FormattedValue & " INSTOCK (Owner: " & dgvItemsForImport.Item(dgcAddItemsDept.Index, e.RowIndex).FormattedValue & ")?", vbYesNo)
+                        If result = MsgBoxResult.Yes Then
+                            dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True
+                            ValidateAddToInventoryItems()
+                        End If
+                    End If
+                    If Not dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True Then
+                        MsgBox("You have changed the owner of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "The 'Remove Non-Coded' checkbox will be unchecked.", vbOKOnly)
+                        dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False
+                    End If
+                End If
+
+            Case dgcAddItemsBld.Index
+                If Not String.IsNullOrEmpty(dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value) Then
+                    If dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False Then
+                        Dim result = MsgBox("You have changed the warehouse of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "Would you like to attempt to remove a related non-barcoded item from " & dgvItemsForImport.Item(dgcAddItemsBld.Index, e.RowIndex).FormattedValue & " INSTOCK (Owner: " & dgvItemsForImport.Item(dgcAddItemsDept.Index, e.RowIndex).FormattedValue & ")?", vbYesNo)
+                        If result = MsgBoxResult.Yes Then
+                            dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True
+                            ValidateAddToInventoryItems()
+                        End If
+                    End If
+                    If Not dgvItemsForImport.Item(dgcAddItemRef4.Index, e.RowIndex).Value = "NONTOBAR" And dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = True Then
+                        MsgBox("You have changed the warehouse of " & dgvItemsForImport.Item(dgcAddItemsBarcode.Index, e.RowIndex).Value & ": (" & dgvItemsForImport.Item(PartnoDataGridViewTextBoxColumn.Index, e.RowIndex).Value & ") " & dgvItemsForImport.Item(index, e.RowIndex).Value & vbCrLf & vbCrLf & "The 'Remove Non-Coded' checkbox will be unchecked.", vbOKOnly)
+                        dgvItemsForImport.Item(RemoveNonCoded.Index, e.RowIndex).Value = False
+                    End If
+                End If
+        End Select
+    End Sub
+
+    Private Sub txtSerialNo_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles txtSerialNo.Validating
+        If IsFormClosing() = True Then Exit Sub
+        If String.IsNullOrEmpty(txtSerialNo.Text) Then Exit Sub
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+            Dim exists = newConn.ExecuteScalar("select top 1 serial_no from inpartsub where serial_no = " & SQLQuote(txtSerialNo.Text) & " and partno = " & SQLQuote(txtPartNo.Text) & " and (onhand > 0 or parentunique_no <> '')")
+            If Not exists Is Nothing Then
+                Beep_Fail()
+                MsgBox("This serial number is already in use for this part.  Please enter a valid serial number.", vbOKOnly)
+                txtSerialNo.Clear()
+                txtSerialNo.Focus()
+                txtSerialNo.SelectAll()
+            End If
+        End Using
+    End Sub
+
+    Private Sub ClearSelectedRowsToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ClearSelectedRowsToolStripMenuItem.Click
+        For Each r As DataGridViewRow In dgvItemsForImport.SelectedRows
+            bsAddInventory.Remove(r.DataBoundItem)
+        Next
+        ItemsForImportQtyUpdating()
+    End Sub
+
+    Private Sub ClearAllToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ClearAllToolStripMenuItem.Click
+        For Each r As DataGridViewRow In dgvItemsForImport.Rows
+            bsAddInventory.Remove(r.DataBoundItem)
+        Next
+        ItemsForImportQtyUpdating()
+    End Sub
+
+    Private Sub btnClearItemsForImportList_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnClearItemsForImportList.Click
+        DataSetAddInventory.inpartsub.Clear()
+        ItemsForImportQtyUpdating()
+    End Sub
+
+#End Region
+
+#Region "Utilities"
+
+    Private Sub GotPartsAsync(ByVal result As IAsyncResult)
+        Dim cmd As SqlCommand = CType(result.AsyncState, SqlCommand)
+        Dim reader As SqlDataReader = cmd.EndExecuteReader(result)
+        Invoke(
+            Sub()
+                Try
+                    If cmd Is _expectedCommand Then
+                        _dtClairNewSerialNos.Load(reader)
+
+                        'If (_dtClairNewSerialNos.Rows.Count > 0) Then
+                        '    lblEnterClairNewSerialNo.Visible = False
+                        'Else
+                        '    lblEnterClairNewSerialNo.Visible = True
+                        'End If
+                    End If
+
+                Catch ex As Exception
+                    Beep_Fail()
+                    MsgBox("WTF?" & ex.ToString, MsgBoxStyle.Critical)
+                Finally
+                    If Not reader Is Nothing Then
+                        reader.Close()
+                    End If
+                    cmd.Connection.Close()
+                    cmd.Connection.Dispose()
+                    cmd.Dispose()
+                End Try
+            End Sub)
+    End Sub
+
+    Public Sub Beep_Fail()
+        My.Computer.Audio.Play(GetEnvironmentVariable("ESSVBDir") + "\sounds\bad_beep.wav", AudioPlayMode.Background)
+    End Sub
+
+    Public Sub Beep_Success()
+        My.Computer.Audio.Play(GetEnvironmentVariable("ESSVBDir") + "\sounds\good_beep.wav", AudioPlayMode.Background)
+    End Sub
+
+#End Region
+
+#Region "Shortcuts"
+
+    Private Sub AvailabilityCalendarToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles AvailabilityCalendarToolStripMenuItem.Click, tsbAvailability.Click
+        Dim commandArgs As String = ""
+        If Not String.IsNullOrEmpty(Selected_PartNo) Then commandArgs = "partno=" + Selected_PartNo
+
+        StartFinesseProcess("prjpjinvcal.exe", commandArgs)
+    End Sub
+
+    Private Sub CycleCountUtilityToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles CycleCountUtilityToolStripMenuItem.Click
+        StartFinesseProcess("Cycle Count.exe")
+    End Sub
+
+    Private Sub UtilizationToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles UtilizationToolStripMenuItem.Click, tsbUtilization.Click
+        Dim commandArgs As String = ""
+        If Not String.IsNullOrEmpty(Selected_PartNo) Then commandArgs = "bld=" + GetUserWarehouse() + " partno=" + Selected_PartNo
+
+        StartFinesseProcess("utilization.exe", commandArgs)
+    End Sub
+
+    Private Sub tsbBarcodeNinja_Click(ByVal sender As Object, ByVal e As EventArgs) Handles tsbBarcodeNinja.Click
+        Dim commandArgs As String = Selected_Barcode
+        StartFinesseProcess("BarcodePrinting\EDS Apps\Barcode Ninja.exe", commandArgs)
+    End Sub
+
+    Private Sub tsbPartMaintenance_Click(ByVal sender As Object, ByVal e As EventArgs) Handles tsbPartMaintenance.Click
+        Dim commandArgs As String = "partno=" & Selected_PartNo
+        StartFinesseProcess("Part Maintenance.exe", commandArgs)
+    End Sub
+
+    Private Sub tsbSchedulingBoard_Click(ByVal sender As Object, ByVal e As EventArgs) Handles tsbSchedulingBoard.Click, SchedulingBoardToolStripMenuItem.Click
+        Dim commandArgs As String = ""
+        If Not String.IsNullOrEmpty(Selected_PartNo) Then commandArgs = "partno:" + Selected_PartNo
+        StartFinesseProcess("Scheduling Board.exe", commandArgs)
+    End Sub
+
+#End Region
+
+    Function ValidateAddToInventoryItems()
+        Dim dt = DataSetAddInventory.inpartsub
+        Dim NBCSummary = From r As DataSetAddInventory.inpartsubRow In dt.Rows
+                         Where r.RemoveNonCoded = True
+                         Group r By partno = r.partno, partdesc = r.partdesc, owner = r.dept, wh = r.bld Into Group
+                         Select partno, partdesc, owner, wh, totalonhand = Group.Sum(Function(r) r.onhand), count = Group.Count()
+        Dim dtNBCSummary = NBCSummary.ToDataTable
+
+        For Each dr As DataRow In dtNBCSummary.Rows
+            Dim sSQL As New StringBuilder
+            sSQL.AppendLine("select onhand from dbo.inpartsub ps where ps.partno = " & SQLQuote(dr.Item("partno")) & " and ps.dept = " & SQLQuote(dr.Item("owner")) & " and ps.bld = " & SQLQuote(dr.Item("wh")) & "  and ps.batchno = 'INSTOCK' and ps.unique_no = '' and ps.parentunique_no = '' and onhand > 0")
+            Dim qtyNBCtoRemove = gConn.GetDataTable(sSQL)
+            If qtyNBCtoRemove.Rows.Count = 0 OrElse qtyNBCtoRemove.Rows(0).Item("onhand") < dr.Item("totalonhand") Then
+                Beep_Fail()
+                MsgBox("You have intended to remove non-barcoded inventory when adding barcodes for " & dr.Item("partno") & ": " & dr.Item("partdesc") & ", but " & IIf(qtyNBCtoRemove.Rows.Count = 0 OrElse qtyNBCtoRemove.Rows(0).Item("onhand") = 0, "no", "not enough") & " non-barcoded items exist in INSTOCK (" & dr.Item("wh") & "), owned by " & dr.Item("owner") & "." & vbCrLf & vbCrLf & "Try to find a matching non-barcoded item in MIA or on Late Returns to check into your INSTOCK before adding this item, or uncheck the 'Remove Non-Coded' checkbox for this item to INCREASE inventory levels." & vbCrLf & vbCrLf & "Commit has been aborted.", vbOKOnly)
+                Return False
+            End If
+        Next
+        Return True
+    End Function
+
+    Function ItemsForImportQtyUpdating()
+        Dim totalItemsAddedQty As Integer = 0
+        Dim selectedItemsAddedQty As Integer = 0
+
+        If dgvItemsForImport.Rows.Count <> 0 Then
+            Dim t = From r As DataGridViewRow In dgvItemsForImport.Rows
+                    Select total = r.DataBoundItem("onhand")
+            totalItemsAddedQty = t.Sum(Function(r) r)
+
+            Dim s = From r As DataGridViewRow In dgvItemsForImport.SelectedRows
+                    Select total = r.DataBoundItem("onhand")
+            selectedItemsAddedQty = s.Sum(Function(r) r)
+        End If
+
+        tsslItemsForImportTotalQty.Text = $"Total Qty: {totalItemsAddedQty}"
+        tsslItemsForImportSelectedRowQty.Text = $"Selected Qty: {selectedItemsAddedQty}"
+        Return True
+    End Function
+
+    Private Sub cboOwner_SelectedValueChanged(sender As Object, e As EventArgs) Handles cboOwner.SelectedValueChanged, cboWarehouse.SelectedValueChanged
+        RefreshCurrentInventory()
+    End Sub
+
+    Private Sub dgvCurrentInventory_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles dgvCurrentInventory.CellFormatting
+        If e.ColumnIndex = dgvCurrentInventory.Columns("Return").Index Then
+            If Not IsDBNull(e.Value) AndAlso CDate(e.Value) < Today Then
+                dgvCurrentInventory.Rows(e.RowIndex).DefaultCellStyle.ForeColor = Color.Red
+            Else
+                dgvCurrentInventory.Rows(e.RowIndex).DefaultCellStyle.ForeColor = SystemColors.ControlText
+            End If
+        End If
+    End Sub
+
+    Private Sub LAMEToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LAMEToolStripMenuItem.Click
+        Dim sqlStr As New StringBuilder
+        sqlStr.AppendLine("select value")
+        sqlStr.AppendLine("from dbo.SysConfig sc")
+        sqlStr.AppendLine("where tag = 'PODIO_PUBLIC_ISSUE_TRACKING_URL'")
+
+        Dim lameURL As String = ""
+
+        Using conn As New SqlConnection(FinesseConnectionString)
+            conn.Open()
+            lameURL = conn.ExecuteScalar(sqlStr)
+        End Using
+
+        Process.Start(lameURL)
+    End Sub
+
+    Private Sub EquipmentLocationsToolStripMenuItem1_Click(ByVal sender As Object, ByVal e As EventArgs) Handles _
+        EquipmentLocationsToolStripMenuItem1.Click _
+        , TransactionsToolStripMenuItem1.Click _
+        , PhaseHistoryToolStripMenuItem1.Click _
+        , LateReturnsToolStripMenuItem1.Click _
+        , BatchLocationSummaryToolStripMenuItem1.Click
+
+        Dim commandArgs As String = ""
+        Dim selectedMenuItem = TryCast(sender, ToolStripMenuItem)
+
+        Select Case selectedMenuItem.Name
+            Case EquipmentLocationsToolStripMenuItem1.Name
+                commandArgs += "target:Locations"
+            Case TransactionsToolStripMenuItem1.Name
+                commandArgs += "target:Transactions"
+            Case PhaseHistoryToolStripMenuItem1.Name
+                commandArgs += "target:PhaseHistory"
+            Case LateReturnsToolStripMenuItem1.Name
+                commandArgs += "target:LateReturns"
+            Case BatchLocationSummaryToolStripMenuItem1.Name
+                commandArgs += "target:BatchLocationSummary"
+        End Select
+
+        If Not String.IsNullOrEmpty(txtPartNo.Text) Then commandArgs += " partno:" & txtPartNo.Text
+        If Not String.IsNullOrEmpty(Selected_Barcode) Then commandArgs += " barcode:" & Selected_Barcode
+        If Not String.IsNullOrEmpty(cboWarehouse.SelectedValue) Then commandArgs += " bld:" & cboWarehouse.SelectedValue
+        If Not String.IsNullOrEmpty(cboOwner.SelectedValue) Then commandArgs += " dept:" & cboOwner.SelectedValue
+
+        StartFinesseProcess("Query Tools.exe", commandArgs)
+    End Sub
+
+    Private Sub cboOwner_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboOwner.SelectedIndexChanged, cboWarehouse.SelectedIndexChanged, cboRef4.SelectedIndexChanged, txtPartNo.TextChanged
+        If (_selected_ifs_po Is Nothing OrElse (sender.Name = cboRef4.Name)) Then
+            If (cboRef4.SelectedValue <> "PURCADD") Then
+                _selected_ifs_po = Nothing
+                ultraGridERPPurchaseOrders.ActiveRow = Nothing
+                txtPONumber.Text = String.Empty
+            End If
+
+            ReloadPermissions()
+        End If
+
+
+        Dim enableChildPartLinking As Boolean = DirectCast(cboOwner.SelectedItem, DataRowView)("EnableInpartsubRefChildLinking")
+
+        dgvItemsForImport.Columns("ShouldLinkChildParts").Visible = enableChildPartLinking
+
+    End Sub
+
+    'Private Sub btnPONumberSearch_Click(sender As Object, e As EventArgs) Handles btnPONumberSearch.Click
+
+    '    If String.IsNullOrEmpty(txtPartNo.Text) Then Return
+
+    '    Dim picker As New GenericPicker(Me, lblClairNewSerialNo)
+    '    picker.Size = New Size(1000, 600)
+
+    '    Dim sSQL As New StringBuilder
+    '    sSQL.AppendLine("	with POLineItems as (			")
+    '    sSQL.AppendLine("		select pd.order_no ,		")
+    '    sSQL.AppendLine("			pd.partno ,	")
+    '    sSQL.AppendLine("			pd.description ,	")
+    '    sSQL.AppendLine("			pd.rev_duedate ,	")
+    '    sSQL.AppendLine("			pd.destinationcd ,	")
+    '    sSQL.AppendLine("			pd.fob_point ,	")
+    '    sSQL.AppendLine("			pd.attention ,	")
+    '    sSQL.AppendLine("			pd.req_no ,	")
+    '    sSQL.AppendLine("			pd.req_line ,	")
+    '    sSQL.AppendLine("			pd.mfg_no ,	")
+    '    sSQL.AppendLine("			pd.mfg_desc ,	")
+    '    sSQL.AppendLine("			pd.vend_partno 	")
+    '    sSQL.AppendLine("		from clairnew.dbo.po_detail pd		")
+    '    sSQL.AppendLine("	), POReceipts as (			")
+    '    sSQL.AppendLine("		select pr.order_no ,		")
+    '    sSQL.AppendLine("			pr.receipt_no ,	")
+    '    sSQL.AppendLine("			pr.partno ,	")
+    '    sSQL.AppendLine("			pr.vendno ,	")
+    '    sSQL.AppendLine("			pr.receive_date ,	")
+    '    sSQL.AppendLine("			pr.receipt_qty ,	")
+    '    sSQL.AppendLine("			pr.department ,	")
+    '    sSQL.AppendLine("			pr.serial_no ,	")
+    '    sSQL.AppendLine("			pr.mfg_no ,	")
+    '    sSQL.AppendLine("			pr.mfg_desc 	")
+    '    sSQL.AppendLine("		from clairnew.dbo.poreceipt pr		")
+    '    sSQL.AppendLine("	)			")
+    '    sSQL.AppendLine("	select  	")
+    '    'sSQL.AppendLine("			p.partno , p.partdesc ,	")
+    '    sSQL.AppendLine("			[PO Number] = poi.order_no , [Description] = poi.description, [Attention] = poi.attention, [Serial #] = por.serial_no ,	")
+    '    sSQL.AppendLine("			[Receive Date] = por.receive_date ,	")
+    '    sSQL.AppendLine("			[Days since Receive] = -dd.RecDateDelta ,	")
+    '    sSQL.AppendLine("			[Due Date] = poi.rev_duedate,	")
+    '    sSQL.AppendLine("			[Days since Due] = -dd.POdatedelta 	")
+    '    sSQL.AppendLine("	from POLineItems poi ")
+    '    'sSQL.AppendLine("	join inpart p on poi.partno = p.partno ")
+    '    sSQL.AppendLine("	left outer join POReceipts por on poi.partno = por.partno and poi.order_no = por.order_no ")
+    '    sSQL.AppendLine("	outer apply (			")
+    '    sSQL.AppendLine("		select POdatedelta = datediff(day,dbo.today(), poi.rev_duedate), RecDateDelta = datediff(day, dbo.today(), por.receive_date) ")
+    '    sSQL.AppendLine("	) dd			")
+    '    sSQL.AppendLine("	where 1=1 			")
+    '    sSQL.AppendLine("	and poi.partno = " & txtPartNo.Text.SQLQuote)
+    '    'sSQL.AppendLine("	and isnull(por.receive_date,poi.rev_duedate) between dateadd(month,-1,dbo.today()) and dateadd(month,1,dbo.today()) ")
+    '    sSQL.AppendLine("	order by case when abs(dd.POdatedelta) < abs(isnull(dd.RecDateDelta,-99999)) then abs(dd.POdatedelta) else abs(dd.RecDateDelta) end	")
+
+    '    Dim dt As New DataTable
+
+    '    Using newConn As New SqlConnection(FinesseConnectionString)
+    '        newConn.Open()
+    '        dt = newConn.GetDataTable(sSQL)
+    '    End Using
+
+    '    picker.ItemList = New DataView(dt)
+
+    '    If Not picker.GetItem Then
+    '        Return
+    '    End If
+
+    '    txtPONumber.Text = picker.SelectedItem("PO Number")
+
+    'End Sub
+
+    Private Sub btnGetNextBarcode_Click(sender As Object, e As EventArgs) Handles btnGetNextBarcode.Click
+        If txtBarcode.Text <> "" Then
+            Dim result = MsgBox("Would you like to clear the barcode and retrieve another?", MsgBoxStyle.OkCancel, "Clear barcode?")
+            If result = MsgBoxResult.Cancel Then
+                Exit Sub
+            End If
+        End If
+
+        Dim owner = _dtOwners.Select($"OwnerCode = '{cboOwner.SelectedValue}'").FirstOrDefault
+
+        Dim BarcodeSequenceType = owner("BarcodeSequenceType").ToString
+
+        Using newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+
+            Dim conn As SqlConnection = GetOpenedFinesseConnection()
+            Dim getSequenceCmd As SqlCommand = New SqlCommand("create_barcode", conn)
+            getSequenceCmd.CommandType = CommandType.StoredProcedure
+            getSequenceCmd.Parameters.Add("@SequenceType", SqlDbType.VarChar, 255).Value = BarcodeSequenceType
+            getSequenceCmd.Parameters.Add("@nextBarcode", SqlDbType.VarChar, 50)
+            getSequenceCmd.Parameters("@nextBarcode").Direction = ParameterDirection.Output
+            getSequenceCmd.ExecuteNonQuery()
+            txtBarcode.Text = getSequenceCmd.Parameters.Item("@nextBarcode").Value.ToString
+        End Using
+    End Sub
+
+    Private Function EnabledZebraPrinting(ownerCode As String) As Boolean
+        Dim selectedOwner = _dtOwners.Select($"OwnerCode = {ownerCode.SQLQuote}")?.FirstOrDefault()
+        If (selectedOwner IsNot Nothing And Not IsDBNull(selectedOwner("EnableZebraPrinting"))) Then
+            Dim EnableZebraPrinting As Boolean = Convert.ToBoolean(selectedOwner("EnableZebraPrinting"))
+            Return EnableZebraPrinting
+        End If
+        Return False
+    End Function
+
+    Private Sub UpdatePrintBehavior()
+        Dim activateZebraPrint As Boolean = EnabledZebraPrinting(cboOwner.SelectedValue)
+
+        _useZebraPrinting = activateZebraPrint
+        pb2Dbarcode.Visible = Not activateZebraPrint
+        btnGetNextBarcode.Visible = activateZebraPrint
+        tsmPrintSelectedItemsForImport.Visible = activateZebraPrint
+        PrintToolStripMenuItem.Visible = Not activateZebraPrint
+        PrintToolStripMenuItem.Enabled = Not activateZebraPrint
+        PrintPreviewToolStripMenuItem.Visible = Not activateZebraPrint
+
+        tsmPrintBarcodes.Visible = activateZebraPrint
+        tsmPrintBarcodes.Enabled = activateZebraPrint
+        PrintBArcodesSelectedItemsToolStripMenuItem.Enabled = activateZebraPrint
+        PrintBArcodesSelectedItemsToolStripMenuItem.Visible = activateZebraPrint
+
+        If activateZebraPrint Then
+            PrintToolStripMenuItem.ShortcutKeys = Nothing
+            PrintPreviewToolStripMenuItem.ShortcutKeys = Nothing
+            tsmPrintBarcodes.ShortcutKeys = Shortcut.CtrlP
+            PrintBArcodesSelectedItemsToolStripMenuItem.ShortcutKeys = Shortcut.CtrlShiftP
+        Else
+            tsmPrintBarcodes.ShortcutKeys = Nothing
+            PrintBArcodesSelectedItemsToolStripMenuItem.ShortcutKeys = Nothing
+            PrintToolStripMenuItem.ShortcutKeys = Shortcut.CtrlP
+            PrintPreviewToolStripMenuItem.ShortcutKeys = Shortcut.CtrlShiftP
+
+        End If
+
+    End Sub
+
+    Private Sub cboOwner_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cboOwner.SelectionChangeCommitted
+        UpdatePrintBehavior()
+    End Sub
+
+    Private Sub txtMACAddress_TextChanged(sender As Object, e As EventArgs) Handles txtMACAddress.TextChanged
+        If IsNothing(_searchTimer) Then
+            _searchTimer = New Threading.Timer(AddressOf invokeMACAddressValidation, Nothing, _searchDelay, Timeout.Infinite)
+        Else
+            _searchTimer.Change(_searchDelay, Timeout.Infinite)
+        End If
+    End Sub
+
+    Private Sub invokeMACAddressValidation(ByVal x As Object)
+        Dim mi = New MethodInvoker(AddressOf MACAddressValidationSurrogateFunction)
+        Invoke(mi)
+    End Sub
+
+    Private Sub MACAddressValidationSurrogateFunction()
+
+        If txtMACAddress.Text = String.Empty Then
+            Exit Sub
+        End If
+
+
+        'Dim hasLowerCaseLetters = Regex.Match(txtMACAddress.Text, "[a-f]")
+
+        'If hasLowerCaseLetters.Success Or txtMACAddress.Text.Length <> 17 Then
+        '    attemptParseMACAddress()
+        '    Exit Sub
+        'End If
+
+
+        If Not isValidMACAddress(txtMACAddress.Text) Then
+
+            Dim parsedMACAddress As String = attemptParseMACAddress(txtMACAddress.Text)
+
+            If Not isValidMACAddress(parsedMACAddress) Then
+                Beep_Fail()
+                MessageBox.Show("This is an invalid MAC address format. Please use the following format 12:34:56:78:9A:BC")
+            Else
+                txtMACAddress.Text = parsedMACAddress
+            End If
+
+        End If
+
+    End Sub
+
+    Private Function isValidMACAddress(MACAddress As String) As Boolean
+        Return Regex.IsMatch(MACAddress, "^[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}$")
+    End Function
+
+    Private Sub DgvInventoryInStock_SelectionChanged(sender As Object, e As EventArgs) Handles DgvInventoryInStock.SelectionChanged
+        If (DgvInventoryInStock.SelectedRows.Count = 0) Then
+            Exit Sub
+        End If
+
+        Dim selected As DataGridViewRow = DgvInventoryInStock.SelectedRows(0)
+
+        If selected.Cells("SerialNo").Value IsNot Nothing Then
+            If (selected.Cells("SerialNo").Value.ToString() <> "*") Then
+                txtSerialNo.Text = selected.Cells("SerialNo").Value.ToString()
+            Else
+                txtSerialNo.Text = String.Empty
+            End If
+            'txtQty.Text = selected.Cells("Qty").Value.ToString()
+            'Else
+            '    txtSerialNo.Text = String.Empty
+        End If
+        txtSerialNo.Text = String.Empty
+    End Sub
+    Private Sub chkDeferEnteringMacAddress_CheckedChanged(sender As Object, e As EventArgs) Handles chkDeferEnteringMacAddress.CheckedChanged
+
+        If chkDeferEnteringMacAddress.Checked Then
+            txtMACAddress.Clear()
+            txtMACAddress.Enabled = False
+            txtSerialNo.Focus()
+        Else
+            txtMACAddress.Clear()
+            txtMACAddress.Enabled = True
+            txtMACAddress.Focus()
+        End If
+
+
+    End Sub
+
+    Private Function attemptParseMACAddress(MACAddress As String) As String
+        Dim parsedMacAddress = txtMACAddress.Text.ToUpper
+
+        'get rid of all separators
+        parsedMacAddress = parsedMacAddress.Replace(".", "")
+        parsedMacAddress = parsedMacAddress.Replace("-", "")
+        parsedMacAddress = parsedMacAddress.Replace(":", "")
+        parsedMacAddress = parsedMacAddress.Replace(" ", "")
+
+        'if not 12 hexidecimal characters without separators then we cannot parse
+        If parsedMacAddress.Length = 12 Then
+            Dim i = parsedMacAddress.Length - 1
+            While i > 0
+
+                If i Mod 2 = 0 AndAlso i <> 0 Then
+                    parsedMacAddress = parsedMacAddress.Insert(i, ":")
+                End If
+
+                i -= 1
+            End While
+
+
+        Else
+            Return parsedMacAddress
+        End If
+
+        Return parsedMacAddress
+    End Function
+
+    Private Sub tabControl1_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles TabControl1.SelectedIndexChanged
+        If TabControl1.SelectedTab?.Name = ImagesTab.Name Then
+            InitPartImages()
+        End If
+    End Sub
+
+    Private Sub InitPartImages()
+        Try
+            If TabControl1.SelectedTab?.Name = ImagesTab.Name Then
+                If (_FileExplorer Is Nothing) Then
+                    InitPartFileExplorer()
+                End If
+                If (Not String.IsNullOrEmpty(Selected_PartNo) Or Not String.IsNullOrEmpty(txtPartNo.Text)) Then
+                    ImagesTab.Enabled = True
+                    LblNonPartsImages.SendToBack()
+                Else
+                    ImagesTab.Enabled = False
+                    LblNonPartsImages.BringToFront()
+                End If
+                ImagesTab.Controls.Clear()
+                _PartImages = New PartImagesPanel(_FileExplorer)
+                ImagesTab.Controls.Add(_PartImages)
+                _PartImages.Dock = DockStyle.Fill
+                _PartImages.Visible = True
+                _PartImages.InitTreeView()
+            End If
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
+
+    Private Sub InitPartFileExplorer()
+        If (_FileExplorer Is Nothing) Then
+            _FileExplorer = New FileExplorer("Parts")
+        End If
+        Dim newGUID = getPartGUID(If(String.IsNullOrEmpty(Selected_PartNo), txtPartNo.Text, Selected_PartNo))
+        If ((String.IsNullOrEmpty(_FileExplorer.currentGUID) Or Selected_Barcode <> newGUID) And Not String.IsNullOrEmpty(newGUID)) Then
+            Selected_GUID = newGUID
+            _FileExplorer.rootFolderChanged(Selected_GUID)
+            InitPartImages()
+        End If
+    End Sub
+
+    Private Function getPartGUID(partno As String) As String
+        If (String.IsNullOrEmpty(partno)) Then
+            Return ""
+        End If
+
+        Dim partGUID As String = String.Empty
+        Try
+            Dim jammer As New SQLJammer(GetOpenedFinesseConnection())
+            jammer.Add($"
+                SELECT TOP 1 GUID FROM dbo.inpart
+                WHERE partno =  {SQLQuote(partno)}",
+                     Sub(result)
+                         If result.Rows.Count > 0 Then
+                             partGUID = result.Rows(0).Item("GUID").ToString()
+                         End If
+                     End Sub)
+            jammer.Execute()
+        Catch ex As Exception
+            MessageBox.Show("Error Getting File Storage GUID: " & ex.Message)
+        End Try
+        Return partGUID
+    End Function
+
+
+    Private Sub FilterInventoryInStock()
+        If (_selected_ifs_po Is Nothing OrElse String.IsNullOrEmpty(txtPartNo.Text) OrElse String.IsNullOrEmpty(txtPONumber.Text) OrElse cboRef4.SelectedValue <> "PURCADD") Then
+            Exit Sub
+        End If
+
+        Dim result = _selected_ifs_po.IFSInventory.Where(Function(item) item.AvailableQty > 0)
+        DgvInventoryInStock.DataSource = result.ToList()
+
+
+    End Sub
+
+
+#Region "Part images viewer GUI Handler"
+    Private Sub HandlePartImageGUI()
+        PartImageViewerControl1.PartNumberChangeAsync(txtPartNo.Text)
+    End Sub
+
+    Private Async Sub btnReloadIFS_Click(sender As Object, e As EventArgs) Handles btnReloadIFS.Click
+        Dim selectedValues = GetParentchildSelectedRow()
+
+        Await FillERPGrid()
+        filter_ERP_DataGrid(txtERPPoNumber.Text)
+        SelectPreviousSelectionOnGrid(selectedValues.Item1, selectedValues.Item2)
+    End Sub
+
+    Private Function GetParentchildSelectedRow() As (QuickReportSchema, DisassemblyPart)
+        Dim Selected = ultraGridERPPurchaseOrders.ActiveRow
+        If (Selected Is Nothing) Then
+            Return (Nothing, Nothing)
+        End If
+        Dim IsChild = Selected.HasParent
+        Dim parent
+        Dim child
+        If (IsChild) Then
+            parent = TryCast(Selected.ParentRow.ListObject, QuickReportSchema)
+            child = TryCast(Selected.ListObject, DisassemblyPart)
+        Else
+            parent = TryCast(Selected.ListObject, QuickReportSchema)
+        End If
+
+        Return (parent, child)
+    End Function
+
+    Private Sub SelectPreviousSelectionOnGrid(parent As QuickReportSchema, child As DisassemblyPart)
+        If (parent IsNot Nothing) Then
+            Dim IsChild = child IsNot Nothing
+            Dim row = ultraGridERPPurchaseOrders.Rows.FirstOrDefault(Function(item) item.Cells("OrderNo").Value = parent.OrderNo AndAlso item.Cells("PartNo").Value = parent.PartNo)
+            If (row IsNot Nothing) Then
+                If (IsChild) Then
+                    Dim childRow = row.ChildBands(0).Rows.FirstOrDefault(Function(item) item.Cells("ChildPartNo").Value = child.ChildPartNo)
+                    If (childRow IsNot Nothing) Then
+                        childRow.Activate()
+                    End If
+                End If
+                row.Activate()
+            End If
+        End If
+    End Sub
+
+    Private Sub ErpData_SelectedValueChanged(sender As Object, e As EventArgs) Handles cboErpWarehouse.SelectedValueChanged, cboErpOwner.SelectedValueChanged, txtERPPoNumber.TextChanged, chkRecievedOnly.CheckedChanged, chkUnexistingParts.CheckedChanged
+        filter_ERP_DataGrid(txtERPPoNumber.Text)
+    End Sub
+
+    Private Sub txtPONumber_TextChanged(sender As Object, e As EventArgs) Handles txtPONumber.TextChanged
+        FilterInventoryInStock()
+        GetPOMessages()
+    End Sub
+#End Region
+
+#Region "IFS Messages Tab"
+    Private Async Sub GetPOMessages()
+        Try
+
+            lblIncomingMsgAlert.Visible = String.IsNullOrEmpty(txtPONumber.Text)
+            If (String.IsNullOrEmpty(txtPONumber.Text)) Then
+                Exit Sub
+            End If
+
+            Dim data = Await IFSDAL.GetIFSInventoryReceiptMessages(txtPONumber.Text)
+            lblIncomingMsgAlert.Visible = data.Count = 0
+            dgvIFSMessages.DataSource = data.ToList()
+            dgvIFSMessages.Columns("ErrorMessage").Width = 700
+
+        Catch ex As Exception
+            Console.WriteLine("Error loading Messages Data")
+        End Try
+    End Sub
+
+
+
+    Private Sub BtnRefreshIfsMessages_Click(sender As Object, e As EventArgs) Handles BtnRefreshIfsMessages.Click
+        GetPOMessages()
+    End Sub
+    Private Sub MainSubpartMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles MainSubpartMaintenanceToolStripMenuItem.Click
+        Dim mainPartMaintenance = New frmMainPartMaintenance()
+        mainPartMaintenance.Show()
+
+    End Sub
+
+    Private Sub BtnAddSubparts_Click(sender As Object, e As EventArgs) Handles BtnAddSubparts.Click
+        Dim partno As String
+        If (clickedRow IsNot Nothing) Then
+            partno = clickedRow.Cells("PartNo").Value
+        End If
+
+
+        Dim mainPartMaintenance = New frmMainPartMaintenance(partno)
+        mainPartMaintenance.Show()
+    End Sub
+
+#End Region
+
+End Class
+
+==================================================
+Part: DoYouWantToSave (PRT-032)
+Type: form
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Function DoYouWantToSave(ByRef shouldReturn As Boolean)
+        shouldReturn = False
+        If HasDataChanged() Then
+            Dim result = MsgBox("Do you want to save/commit your changes?", vbYesNoCancel)
+            Select Case result
+                Case DialogResult.Yes
+                    Try
+                        DataSetAddInventory.AcceptChanges()
+                        SaveData()
+                        'Continue closing
+                    Catch ex As Exception
+                        MsgBox(ex.Message)
+                    End Try
+                Case DialogResult.No
+                    'DataSetAddInventory.AcceptChanges() ' why was this here?
+                    'Do Nothing and close
+                Case DialogResult.Cancel
+                    shouldReturn = True
+            End Select
+        End If
+        Return shouldReturn
+    End Function
+
+==================================================
+Part: frmAddInventory_FormClosing (UI-055)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub frmAddInventory_FormClosing(ByVal sender As Object, ByVal e As FormClosingEventArgs) Handles Me.FormClosing
+        Dim sw As New Stopwatch
+        sw.Start()
+
+        Debug.Print(sw.ElapsedMilliseconds & " Before DoYouWantToSave")
+
+        Dim lShouldReturn As Boolean
+        DoYouWantToSave(lShouldReturn)
+        If lShouldReturn Then Return
+
+        Debug.Print(sw.ElapsedMilliseconds & " After DoYouWantToSave")
+
+        Try
+            Debug.Print(sw.ElapsedMilliseconds & " Before OpenConnection")
+
+            Dim newConn As New SqlConnection(FinesseConnectionString)
+            newConn.Open()
+
+            Debug.Print(sw.ElapsedMilliseconds & " After OpenConnection")
+
+            Dim SettingsToSave As New List(Of AppConfigState) From {
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormSize", .Rvalue = Me.Size.ToString},
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormLocation", .Rvalue = Me.Location.ToString},
+                New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "MainFormWindowState", .Rvalue = Me.WindowState.ToString}
+            }
+
+            If (Not String.IsNullOrEmpty(cboOwner.SelectedValue)) Then
+                SettingsToSave.Add(New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "LastOwnerCode", .Rvalue = cboOwner.SelectedValue})
+            End If
+
+            If (Not String.IsNullOrEmpty(cboWarehouse.SelectedValue)) Then
+                SettingsToSave.Add(New AppConfigState() With {.Cmndsel = cmndsel, .Tag = "LastSelectedWarehouse", .Rvalue = cboWarehouse.SelectedValue})
+            End If
+
+            Debug.Print(sw.ElapsedMilliseconds & " After array of settings")
+
+            SettingsToSave.SaveConfig()
+
+            newConn.Close()
+            newConn.Dispose()
+
+            Debug.Print(sw.ElapsedMilliseconds & " After Close Connection")
+
+        Catch ex As Exception
+            Console.WriteLine("Error saving App Configs: ")
+            Console.WriteLine(ex.Message)
+        End Try
+
+    End Sub
+
+==================================================
+Part: ExitToolStripMenuItem_Click (UI-065)
+Type: ui_screen
+File: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code/AddInventory-main/Add Inventory/Forms/frmAddInventory.vb
+==================================================
+Private Sub ExitToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ExitToolStripMenuItem.Click
+        Dim lShouldReturn As Boolean
+        DoYouWantToSave(lShouldReturn)
+        If lShouldReturn Then Return
+        End
+    End Sub
