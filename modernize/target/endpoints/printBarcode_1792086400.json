@@ -1,0 +1,533 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Add Inventory Barcode Printing API",
+    "description": "API for printing barcodes using ZPL (Zebra Programming Language) format to network-connected printers. This endpoint handles barcode generation and printing operations.",
+    "termsOfService": "https://example.com/terms",
+    "contact": {
+      "name": "IT Support",
+      "url": "https://example.com/support",
+      "email": "support@example.com"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://example.com/license"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "ZPL Programming Guide",
+    "url": "https://www.zebra.com/content/dam/zebra_new_ia/en-us/solutions/enterprise/zebra-programming-language-zpl.pdf"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Development server",
+      "variables": {
+        "port": {
+          "default": "5000",
+          "description": "API server port"
+        }
+      }
+    },
+    {
+      "url": "https://api.example.com/api",
+      "description": "Production server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Barcode",
+      "description": "Barcode printing and management operations",
+      "externalDocs": {
+        "description": "Barcode Operations Documentation",
+        "url": "https://example.com/docs/barcode"
+      }
+    }
+  ],
+  "paths": {
+    "/barcode/print": {
+      "summary": "Print barcodes to a network printer",
+      "description": "Prints one or more barcodes using ZPL format to a selected network printer. Supports multiple copies and barcode template selection.",
+      "post": {
+        "tags": [
+          "Barcode"
+        ],
+        "summary": "Print barcode labels",
+        "description": "Sends barcode data in ZPL format to a network-connected printer. Generates ZPL data from selected template and barcode information, then transmits via TCP to the printer. Supports printing multiple items with configurable copy counts.",
+        "operationId": "printBarcode[Add Inventory.Forms.frmPrintZPLDialog.frmPrintZPLDialog.btnPrintBarcode_Click.2.Object.EventArgs]",
+        "requestBody": {
+          "description": "Barcode print request containing items to print, printer selection, template selection, and print settings",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "items",
+                  "printerId",
+                  "templateId",
+                  "copies"
+                ],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "Collection of items to print barcodes for",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "barcode",
+                        "serialNumber"
+                      ],
+                      "properties": {
+                        "barcode": {
+                          "type": "string",
+                          "description": "The barcode value/identifier to print",
+                          "example": "SKU-12345-ABC"
+                        },
+                        "serialNumber": {
+                          "type": "string",
+                          "description": "The serial number associated with the barcode",
+                          "example": "SN-2024-001"
+                        }
+                      }
+                    }
+                  },
+                  "printerId": {
+                    "type": "string",
+                    "description": "Unique identifier or name of the target printer",
+                    "example": "Zebra-Printer-01"
+                  },
+                  "printerAddress": {
+                    "type": "string",
+                    "description": "Network IP address of the printer",
+                    "example": "192.168.1.100"
+                  },
+                  "printerPort": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "TCP port number for printer communication",
+                    "default": 9100,
+                    "minimum": 1,
+                    "maximum": 65535,
+                    "example": 9100
+                  },
+                  "templateId": {
+                    "type": "string",
+                    "description": "Unique identifier of the barcode template to use",
+                    "example": "template-standard-4x6"
+                  },
+                  "templateName": {
+                    "type": "string",
+                    "description": "Human-readable name of the barcode template",
+                    "example": "Standard 4x6 Label"
+                  },
+                  "templatePath": {
+                    "type": "string",
+                    "description": "File path to the barcode template",
+                    "example": "/templates/standard_4x6.zpl"
+                  },
+                  "copies": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Number of copies to print for each item",
+                    "default": 1,
+                    "minimum": 1,
+                    "maximum": 999,
+                    "example": 1
+                  },
+                  "xOffset": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "X-axis calibration offset in millimeters",
+                    "default": 0,
+                    "example": 0
+                  },
+                  "yOffset": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "Y-axis calibration offset in millimeters",
+                    "default": 0,
+                    "example": 0
+                  },
+                  "rememberSettings": {
+                    "type": "boolean",
+                    "description": "Whether to save printer and template selection for next use",
+                    "default": true,
+                    "example": true
+                  }
+                }
+              },
+              "example": {
+                "items": [
+                  {
+                    "barcode": "SKU-12345-ABC",
+                    "serialNumber": "SN-2024-001"
+                  },
+                  {
+                    "barcode": "SKU-12345-DEF",
+                    "serialNumber": "SN-2024-002"
+                  }
+                ],
+                "printerId": "Zebra-Printer-01",
+                "printerAddress": "192.168.1.100",
+                "printerPort": 9100,
+                "templateId": "template-standard-4x6",
+                "templateName": "Standard 4x6 Label",
+                "templatePath": "/templates/standard_4x6.zpl",
+                "copies": 1,
+                "xOffset": 0,
+                "yOffset": 0,
+                "rememberSettings": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Barcode print job completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "message"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Indicates whether the print operation was successful",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Descriptive message about the print operation result",
+                      "example": "Successfully printed 2 barcodes with 1 copy each"
+                    },
+                    "itemsPrinted": {
+                      "type": "integer",
+                      "description": "Number of items successfully printed",
+                      "example": 2
+                    },
+                    "totalCopies": {
+                      "type": "integer",
+                      "description": "Total number of labels printed (items × copies)",
+                      "example": 2
+                    },
+                    "printerUsed": {
+                      "type": "string",
+                      "description": "Name of the printer that was used",
+                      "example": "Zebra-Printer-01"
+                    },
+                    "templateUsed": {
+                      "type": "string",
+                      "description": "Name of the template that was used",
+                      "example": "Standard 4x6 Label"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "message": "Successfully printed 2 barcodes with 1 copy each",
+                  "itemsPrinted": 2,
+                  "totalCopies": 2,
+                  "printerUsed": "Zebra-Printer-01",
+                  "templateUsed": "Standard 4x6 Label"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input parameters or missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Error code or type",
+                      "example": "INVALID_REQUEST"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "Items array cannot be empty"
+                    },
+                    "details": {
+                      "type": "object",
+                      "description": "Additional error details",
+                      "example": {
+                        "field": "items",
+                        "reason": "minItems validation failed"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "INVALID_REQUEST",
+                  "message": "Items array cannot be empty",
+                  "details": {
+                    "field": "items",
+                    "reason": "minItems validation failed"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found - Template or printer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Error code",
+                      "example": "TEMPLATE_NOT_FOUND"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "Barcode template not found or has no template file"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "TEMPLATE_NOT_FOUND",
+                  "message": "Barcode template 'template-standard-4x6' not found or has no template file"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - Print operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Error code",
+                      "example": "PRINT_FAILED"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "Failed to connect to printer at 192.168.1.100:9100"
+                    },
+                    "details": {
+                      "type": "object",
+                      "description": "Additional error details",
+                      "example": {
+                        "printerAddress": "192.168.1.100",
+                        "printerPort": 9100,
+                        "reason": "Connection timeout"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "PRINT_FAILED",
+                  "message": "Failed to connect to printer at 192.168.1.100:9100",
+                  "details": {
+                    "printerAddress": "192.168.1.100",
+                    "printerPort": 9100,
+                    "reason": "Connection timeout"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ItemToPrint": {
+        "type": "object",
+        "required": [
+          "barcode",
+          "serialNumber"
+        ],
+        "properties": {
+          "barcode": {
+            "type": "string",
+            "description": "The barcode value/identifier to print",
+            "example": "SKU-12345-ABC"
+          },
+          "serialNumber": {
+            "type": "string",
+            "description": "The serial number associated with the barcode",
+            "example": "SN-2024-001"
+          }
+        }
+      },
+      "PrintRequest": {
+        "type": "object",
+        "required": [
+          "items",
+          "printerId",
+          "templateId",
+          "copies"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Collection of items to print barcodes for",
+            "items": {
+              "$ref": "#/components/schemas/ItemToPrint"
+            }
+          },
+          "printerId": {
+            "type": "string",
+            "description": "Unique identifier or name of the target printer"
+          },
+          "printerAddress": {
+            "type": "string",
+            "description": "Network IP address of the printer"
+          },
+          "printerPort": {
+            "type": "integer",
+            "format": "int32",
+            "description": "TCP port number for printer communication",
+            "default": 9100
+          },
+          "templateId": {
+            "type": "string",
+            "description": "Unique identifier of the barcode template to use"
+          },
+          "templateName": {
+            "type": "string",
+            "description": "Human-readable name of the barcode template"
+          },
+          "templatePath": {
+            "type": "string",
+            "description": "File path to the barcode template"
+          },
+          "copies": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of copies to print for each item",
+            "default": 1,
+            "minimum": 1,
+            "maximum": 999
+          },
+          "xOffset": {
+            "type": "number",
+            "format": "double",
+            "description": "X-axis calibration offset in millimeters",
+            "default": 0
+          },
+          "yOffset": {
+            "type": "number",
+            "format": "double",
+            "description": "Y-axis calibration offset in millimeters",
+            "default": 0
+          },
+          "rememberSettings": {
+            "type": "boolean",
+            "description": "Whether to save printer and template selection for next use",
+            "default": true
+          }
+        }
+      },
+      "PrintResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the print operation was successful"
+          },
+          "message": {
+            "type": "string",
+            "description": "Descriptive message about the print operation result"
+          },
+          "itemsPrinted": {
+            "type": "integer",
+            "description": "Number of items successfully printed"
+          },
+          "totalCopies": {
+            "type": "integer",
+            "description": "Total number of labels printed (items × copies)"
+          },
+          "printerUsed": {
+            "type": "string",
+            "description": "Name of the printer that was used"
+          },
+          "templateUsed": {
+            "type": "string",
+            "description": "Name of the template that was used"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "error",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "string",
+            "description": "Error code or type"
+          },
+          "message": {
+            "type": "string",
+            "description": "Detailed error message"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details"
+          }
+        }
+      }
+    }
+  }
+}

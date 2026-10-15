@@ -1,0 +1,808 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Add Inventory API",
+    "description": "API endpoints for the Add Inventory application - Inventory Item Management",
+    "termsOfService": "https://example.com/terms",
+    "contact": {
+      "name": "Add Inventory Support",
+      "url": "https://example.com/support",
+      "email": "support@example.com"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://example.com/license"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Add Inventory Application Documentation",
+    "url": "https://example.com/docs"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+      "description": "Production server",
+      "variables": {
+        "basePath": {
+          "default": "/v1",
+          "description": "API base path"
+        }
+      }
+    },
+    {
+      "url": "https://staging-api.example.com/v1",
+      "description": "Staging server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Inventory Items",
+      "description": "Inventory item validation and management operations",
+      "externalDocs": {
+        "description": "Inventory Items API documentation",
+        "url": "https://example.com/docs/inventory-items"
+      }
+    }
+  ],
+  "paths": {
+    "/inventory-items/{rowIndex}/validate-cell-edit": {
+      "summary": "Validate Inventory Item Cell Edit",
+      "description": "Validates and processes cell edits in the inventory items grid. Handles validation for quantity, barcode, serial number, reason code, owner/department, and warehouse/building columns. Enforces business rules including PO limit validation, non-barcoded item removal logic, and quantity constraints.",
+      "patch": {
+        "tags": [
+          "Inventory Items"
+        ],
+        "summary": "Validate Inventory Item Cell Edit",
+        "description": "Processes and validates cell edits for inventory items in the import grid. Supports editing of multiple column types with specific business logic for each: Quantity (enforces PO limits), Barcode/Serial (enforces quantity of 1), Reason Code (manages non-barcoded item removal), Owner/Department (validates warehouse changes), and Warehouse/Building (validates owner changes). Returns validation status, corrected values, and any error messages.",
+        "operationId": "validateInventoryItemCellEdit[AddInventory-main.Add Inventory.Forms.frmAddInventory.frmAddInventory.dgvItemsForImport_CellEndEdit.2.Object.DataGridViewCellEventArgs]",
+        "parameters": [
+          {
+            "name": "rowIndex",
+            "in": "path",
+            "description": "The zero-based row index of the cell being edited in the inventory items grid",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0,
+              "example": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Cell edit details including column index, new value, and current row data for validation",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "columnIndex": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "The zero-based column index being edited. Supported columns: 0=Quantity, 1=Barcode, 2=SerialNo, 3=Reason, 4=Owner, 5=Warehouse",
+                    "minimum": 0,
+                    "example": 0
+                  },
+                  "newValue": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "The new value entered in the cell. Type depends on column type.",
+                    "example": "5"
+                  },
+                  "rowData": {
+                    "type": "object",
+                    "description": "Current row data containing all inventory item fields for context during validation",
+                    "properties": {
+                      "partNumber": {
+                        "type": "string",
+                        "description": "Part number of the inventory item",
+                        "example": "PART-001"
+                      },
+                      "partDescription": {
+                        "type": "string",
+                        "description": "Description of the part",
+                        "example": "Widget Assembly"
+                      },
+                      "quantity": {
+                        "type": "integer",
+                        "description": "Current quantity in the row",
+                        "example": 5
+                      },
+                      "barcode": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Barcode value if this is a barcoded item",
+                        "example": "BC-12345"
+                      },
+                      "serialNumber": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Serial number if applicable",
+                        "example": "SN-98765"
+                      },
+                      "reasonCode": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Reason code for adding inventory (e.g., 'NONTOBAR')",
+                        "example": "NONTOBAR"
+                      },
+                      "owner": {
+                        "type": "string",
+                        "description": "Department or owner code",
+                        "example": "DEPT-A"
+                      },
+                      "warehouse": {
+                        "type": "string",
+                        "description": "Warehouse or building code",
+                        "example": "WH-01"
+                      },
+                      "purchaseOrderNumber": {
+                        "type": "string",
+                        "description": "Purchase order number for PO limit validation",
+                        "example": "PO-2024-001"
+                      },
+                      "removeNonCoded": {
+                        "type": "boolean",
+                        "description": "Flag indicating whether to remove related non-barcoded items",
+                        "example": false
+                      },
+                      "onHand": {
+                        "type": "integer",
+                        "description": "Current on-hand quantity",
+                        "example": 10
+                      }
+                    },
+                    "required": [
+                      "partNumber",
+                      "quantity",
+                      "owner",
+                      "warehouse"
+                    ]
+                  }
+                },
+                "required": [
+                  "columnIndex",
+                  "newValue",
+                  "rowData"
+                ]
+              },
+              "example": {
+                "columnIndex": 0,
+                "newValue": "5",
+                "rowData": {
+                  "partNumber": "PART-001",
+                  "partDescription": "Widget Assembly",
+                  "quantity": 5,
+                  "barcode": null,
+                  "serialNumber": null,
+                  "reasonCode": null,
+                  "owner": "DEPT-A",
+                  "warehouse": "WH-01",
+                  "purchaseOrderNumber": "PO-2024-001",
+                  "removeNonCoded": false,
+                  "onHand": 10
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cell edit validated successfully. Returns validation result with corrected values if applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "isValid": {
+                      "type": "boolean",
+                      "description": "Indicates whether the cell edit passed validation",
+                      "example": true
+                    },
+                    "correctedValue": {
+                      "type": [
+                        "string",
+                        "integer",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "The corrected value if validation failed and a correction was applied. Null if no correction needed.",
+                      "example": null
+                    },
+                    "message": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Validation message or error description",
+                      "example": null
+                    },
+                    "validationErrors": {
+                      "type": "array",
+                      "description": "List of validation errors if any occurred",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "description": "The field that failed validation",
+                            "example": "quantity"
+                          },
+                          "error": {
+                            "type": "string",
+                            "description": "Description of the validation error",
+                            "example": "Quantity exceeds PO limit"
+                          }
+                        }
+                      }
+                    },
+                    "relatedActions": {
+                      "type": "object",
+                      "description": "Related actions triggered by the cell edit (e.g., non-barcoded item removal)",
+                      "properties": {
+                        "removeNonCodedTriggered": {
+                          "type": "boolean",
+                          "description": "Whether non-barcoded item removal was triggered",
+                          "example": false
+                        },
+                        "removeNonCodedConfirmationNeeded": {
+                          "type": "boolean",
+                          "description": "Whether user confirmation is needed for non-barcoded item removal",
+                          "example": false
+                        },
+                        "confirmationMessage": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Message to display for user confirmation",
+                          "example": null
+                        }
+                      }
+                    },
+                    "updatedRowData": {
+                      "type": "object",
+                      "description": "Updated row data after validation and any corrections",
+                      "properties": {
+                        "partNumber": {
+                          "type": "string",
+                          "example": "PART-001"
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "barcode": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": null
+                        },
+                        "reasonCode": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": null
+                        },
+                        "owner": {
+                          "type": "string",
+                          "example": "DEPT-A"
+                        },
+                        "warehouse": {
+                          "type": "string",
+                          "example": "WH-01"
+                        },
+                        "removeNonCoded": {
+                          "type": "boolean",
+                          "example": false
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "isValid"
+                  ]
+                },
+                "example": {
+                  "isValid": true,
+                  "correctedValue": null,
+                  "message": null,
+                  "validationErrors": [],
+                  "relatedActions": {
+                    "removeNonCodedTriggered": false,
+                    "removeNonCodedConfirmationNeeded": false,
+                    "confirmationMessage": null
+                  },
+                  "updatedRowData": {
+                    "partNumber": "PART-001",
+                    "quantity": 5,
+                    "barcode": null,
+                    "reasonCode": null,
+                    "owner": "DEPT-A",
+                    "warehouse": "WH-01",
+                    "removeNonCoded": false
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid parameters, malformed request, or validation failed with correction applied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "validationErrors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order.",
+                  "statusCode": 400,
+                  "validationErrors": [
+                    {
+                      "field": "quantity",
+                      "message": "Quantity 15 exceeds PO limit of 10"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - User does not have permission to edit inventory items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 403
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Row index does not exist in the inventory items grid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message indicating row not found"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Validation failed with business rule violation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message describing the business rule violation"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 422
+                    },
+                    "validationErrors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "businessRule": {
+                            "type": "string",
+                            "description": "The business rule that was violated"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Only quantities of 1 can be entered for barcoded items.",
+                  "statusCode": 422,
+                  "validationErrors": [
+                    {
+                      "field": "quantity",
+                      "message": "Quantity must be 1 for barcoded items",
+                      "businessRule": "BARCODED_ITEM_QTY_CONSTRAINT"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Database connection failure, query execution error, or unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message describing the server error"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 500
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "Additional error details for debugging"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CellEditRequest": {
+        "type": "object",
+        "description": "Request body for cell edit validation",
+        "properties": {
+          "columnIndex": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The zero-based column index being edited",
+            "minimum": 0
+          },
+          "newValue": {
+            "type": [
+              "string",
+              "integer",
+              "boolean",
+              "null"
+            ],
+            "description": "The new value entered in the cell"
+          },
+          "rowData": {
+            "type": "object",
+            "description": "Current row data for validation context",
+            "properties": {
+              "partNumber": {
+                "type": "string"
+              },
+              "partDescription": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "integer"
+              },
+              "barcode": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "serialNumber": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reasonCode": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "owner": {
+                "type": "string"
+              },
+              "warehouse": {
+                "type": "string"
+              },
+              "purchaseOrderNumber": {
+                "type": "string"
+              },
+              "removeNonCoded": {
+                "type": "boolean"
+              },
+              "onHand": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "partNumber",
+              "quantity",
+              "owner",
+              "warehouse"
+            ]
+          }
+        },
+        "required": [
+          "columnIndex",
+          "newValue",
+          "rowData"
+        ]
+      },
+      "CellEditResponse": {
+        "type": "object",
+        "description": "Response from cell edit validation",
+        "properties": {
+          "isValid": {
+            "type": "boolean",
+            "description": "Validation result"
+          },
+          "correctedValue": {
+            "type": [
+              "string",
+              "integer",
+              "boolean",
+              "null"
+            ],
+            "description": "Corrected value if applicable"
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Validation message"
+          },
+          "validationErrors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          },
+          "relatedActions": {
+            "$ref": "#/components/schemas/RelatedActions"
+          },
+          "updatedRowData": {
+            "type": "object",
+            "description": "Updated row data after validation"
+          }
+        },
+        "required": [
+          "isValid"
+        ]
+      },
+      "ValidationError": {
+        "type": "object",
+        "description": "Validation error details",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Field that failed validation"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error description"
+          },
+          "businessRule": {
+            "type": "string",
+            "description": "Business rule that was violated"
+          }
+        }
+      },
+      "RelatedActions": {
+        "type": "object",
+        "description": "Related actions triggered by cell edit",
+        "properties": {
+          "removeNonCodedTriggered": {
+            "type": "boolean",
+            "description": "Whether non-barcoded item removal was triggered"
+          },
+          "removeNonCodedConfirmationNeeded": {
+            "type": "boolean",
+            "description": "Whether user confirmation is needed"
+          },
+          "confirmationMessage": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Confirmation message for user"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error response object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code"
+          },
+          "details": {
+            "type": "string",
+            "description": "Additional error details"
+          },
+          "validationErrors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        },
+        "required": [
+          "error",
+          "statusCode"
+        ]
+      }
+    },
+    "responses": {
+      "CellEditValidationSuccess": {
+        "description": "Cell edit validated successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CellEditResponse"
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Bad request - Invalid parameters or validation failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Unauthorized - Authentication required",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "ForbiddenError": {
+        "description": "Forbidden - User does not have permission",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Not Found - Resource does not exist",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "UnprocessableEntity": {
+        "description": "Unprocessable Entity - Business rule violation",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token authentication"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

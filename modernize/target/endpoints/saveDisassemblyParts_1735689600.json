@@ -1,0 +1,530 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Add Inventory - Disassembly Parts API",
+    "description": "API for managing disassembly parts in the Add Inventory system. This API handles saving, updating, and deleting disassembly parts associated with main parts.",
+    "termsOfService": "https://example.com/terms",
+    "contact": {
+      "name": "API Support",
+      "url": "https://example.com/support",
+      "email": "support@example.com"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://example.com/license"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find more information about the Add Inventory system",
+    "url": "https://example.com/docs"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+      "description": "Production server",
+      "variables": {
+        "environment": {
+          "enum": [
+            "production",
+            "staging",
+            "development"
+          ],
+          "default": "production",
+          "description": "Environment selection"
+        }
+      }
+    },
+    {
+      "url": "https://staging-api.example.com/v1",
+      "description": "Staging server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Disassembly Parts",
+      "description": "Operations related to disassembly parts management",
+      "externalDocs": {
+        "description": "Learn more about disassembly parts",
+        "url": "https://example.com/docs/disassembly-parts"
+      }
+    }
+  ],
+  "paths": {
+    "/disassembly-parts/save": {
+      "summary": "Save disassembly parts for a main part",
+      "description": "Saves, updates, or deletes disassembly parts associated with a main part number. This endpoint performs bulk operations on disassembly parts with support for insert, update, and delete operations.",
+      "post": {
+        "tags": [
+          "Disassembly Parts"
+        ],
+        "summary": "Save disassembly parts",
+        "description": "Saves disassembly parts data to the database. Validates the main part number, performs bulk insert/update/delete operations on disassembly parts, and commits the changes. After successful save, retrieves and returns the updated part description.",
+        "operationId": "saveDisassemblyParts[AddInventory-main.Add Inventory.Forms.frmMainPartMaintenance.frmMainPartMaintenance.BtnSave_Click.2.Object.EventArgs]",
+        "requestBody": {
+          "description": "Disassembly parts data to be saved",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "mainPartNumber",
+                  "disassemblyParts"
+                ],
+                "properties": {
+                  "mainPartNumber": {
+                    "type": "string",
+                    "description": "The main part number. This field cannot be empty.",
+                    "minLength": 1,
+                    "maxLength": 50,
+                    "example": "PART-001"
+                  },
+                  "disassemblyParts": {
+                    "type": "array",
+                    "description": "Array of disassembly parts to be saved",
+                    "minItems": 0,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "childPartNo",
+                        "quantity"
+                      ],
+                      "properties": {
+                        "parentPartNo": {
+                          "type": "string",
+                          "description": "Parent part number (typically same as mainPartNumber)",
+                          "maxLength": 50,
+                          "example": "PART-001"
+                        },
+                        "childPartNo": {
+                          "type": "string",
+                          "description": "Child part number",
+                          "minLength": 1,
+                          "maxLength": 50,
+                          "example": "CHILD-001"
+                        },
+                        "childPartDescription": {
+                          "type": "string",
+                          "description": "Description of the child part (read-only, calculated by database)",
+                          "maxLength": 255,
+                          "readOnly": true,
+                          "example": "Child Part Description"
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "description": "Quantity of the child part in the disassembly",
+                          "minimum": 1,
+                          "example": 1
+                        },
+                        "isInsert": {
+                          "type": "boolean",
+                          "description": "Flag indicating if this is a new record to be inserted",
+                          "default": false,
+                          "example": true
+                        },
+                        "isUpdate": {
+                          "type": "boolean",
+                          "description": "Flag indicating if this is an existing record to be updated",
+                          "default": false,
+                          "example": false
+                        },
+                        "isDelete": {
+                          "type": "boolean",
+                          "description": "Flag indicating if this record should be deleted",
+                          "default": false,
+                          "example": false
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "parentPartNo": "PART-001",
+                        "childPartNo": "CHILD-001",
+                        "childPartDescription": "Child Part 1",
+                        "quantity": 2,
+                        "isInsert": true,
+                        "isUpdate": false,
+                        "isDelete": false
+                      },
+                      {
+                        "parentPartNo": "PART-001",
+                        "childPartNo": "CHILD-002",
+                        "childPartDescription": "Child Part 2",
+                        "quantity": 1,
+                        "isInsert": false,
+                        "isUpdate": true,
+                        "isDelete": false
+                      }
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "mainPartNumber": "PART-001",
+                "disassemblyParts": [
+                  {
+                    "parentPartNo": "PART-001",
+                    "childPartNo": "CHILD-001",
+                    "childPartDescription": "Child Part 1",
+                    "quantity": 2,
+                    "isInsert": true,
+                    "isUpdate": false,
+                    "isDelete": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Disassembly parts saved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Indicates if the operation was successful",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Success message",
+                      "example": "Changes Saved Successfully!"
+                    },
+                    "partDescription": {
+                      "type": "string",
+                      "description": "Description of the main part retrieved after save",
+                      "example": "Main Part Description"
+                    },
+                    "savedRecordCount": {
+                      "type": "integer",
+                      "description": "Number of records saved (inserted, updated, or deleted)",
+                      "example": 2
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Changes Saved Successfully!",
+                  "partDescription": "Main Part Description",
+                  "savedRecordCount": 2
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Indicates if the operation was successful",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Error message",
+                      "example": "You must specify the Main part; this field cannot be empty!"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "description": "List of validation errors",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "Main part number is required",
+                        "At least one disassembly part must be provided"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message"
+                  ]
+                },
+                "example": {
+                  "success": false,
+                  "message": "You must specify the Main part; this field cannot be empty!",
+                  "errors": [
+                    "Main part number is required"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized access"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Insufficient permissions to save disassembly parts"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "An error occurred while saving disassembly parts"
+                    },
+                    "errorDetails": {
+                      "type": "string",
+                      "description": "Detailed error information (only in development)",
+                      "example": "Database connection failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DisassemblyPart": {
+        "type": "object",
+        "description": "Represents a single disassembly part",
+        "required": [
+          "childPartNo",
+          "quantity"
+        ],
+        "properties": {
+          "parentPartNo": {
+            "type": "string",
+            "description": "Parent part number",
+            "maxLength": 50
+          },
+          "childPartNo": {
+            "type": "string",
+            "description": "Child part number",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "childPartDescription": {
+            "type": "string",
+            "description": "Description of the child part",
+            "maxLength": 255,
+            "readOnly": true
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Quantity of the child part",
+            "minimum": 1
+          },
+          "isInsert": {
+            "type": "boolean",
+            "description": "Insert flag",
+            "default": false
+          },
+          "isUpdate": {
+            "type": "boolean",
+            "description": "Update flag",
+            "default": false
+          },
+          "isDelete": {
+            "type": "boolean",
+            "description": "Delete flag",
+            "default": false
+          }
+        }
+      },
+      "SaveDisassemblyPartsRequest": {
+        "type": "object",
+        "description": "Request body for saving disassembly parts",
+        "required": [
+          "mainPartNumber",
+          "disassemblyParts"
+        ],
+        "properties": {
+          "mainPartNumber": {
+            "type": "string",
+            "description": "Main part number",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "disassemblyParts": {
+            "type": "array",
+            "description": "Array of disassembly parts",
+            "items": {
+              "$ref": "#/components/schemas/DisassemblyPart"
+            }
+          }
+        }
+      },
+      "SaveDisassemblyPartsResponse": {
+        "type": "object",
+        "description": "Response from saving disassembly parts",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Operation success status"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message"
+          },
+          "partDescription": {
+            "type": "string",
+            "description": "Main part description"
+          },
+          "savedRecordCount": {
+            "type": "integer",
+            "description": "Number of records affected"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Error response",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "SuccessResponse": {
+        "description": "Successful operation",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SaveDisassemblyPartsResponse"
+            }
+          }
+        }
+      },
+      "BadRequestResponse": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "UnauthorizedResponse": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "ForbiddenResponse": {
+        "description": "Forbidden",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "InternalServerErrorResponse": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token for authentication"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

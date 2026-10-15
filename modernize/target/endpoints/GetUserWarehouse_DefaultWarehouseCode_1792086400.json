@@ -1,0 +1,324 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Add Inventory API",
+    "description": "API endpoints for the Add Inventory application - Warehouse Management",
+    "termsOfService": "https://example.com/terms",
+    "contact": {
+      "name": "Add Inventory Support",
+      "url": "https://example.com/support",
+      "email": "support@example.com"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://example.com/license"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Add Inventory Application Documentation",
+    "url": "https://example.com/docs"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+      "description": "Production server",
+      "variables": {
+        "basePath": {
+          "default": "/v1",
+          "description": "API base path"
+        }
+      }
+    },
+    {
+      "url": "https://staging-api.example.com/v1",
+      "description": "Staging server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Warehouses",
+      "description": "Warehouse management operations",
+      "externalDocs": {
+        "description": "Warehouse API documentation",
+        "url": "https://example.com/docs/warehouses"
+      }
+    }
+  ],
+  "paths": {
+    "/warehouses/default-warehouse-code": {
+      "summary": "Get Default Warehouse Code",
+      "description": "Retrieves the default warehouse code for the current user from the warehouses table",
+      "get": {
+        "tags": [
+          "Warehouses"
+        ],
+        "summary": "Get Default Warehouse Code",
+        "description": "Fetches the warehouse code marked as default (is_default = 1) from the warehouses table. This endpoint is used to determine the user's default warehouse for inventory operations.",
+        "operationId": "GetUserWarehouse(Add Inventory.Forms.frmAddInventory.frmAddInventory.GetUserWarehouse.0)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the default warehouse code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "warehouseCode": {
+                      "type": "string",
+                      "description": "The warehouse code of the default warehouse",
+                      "example": "WH001"
+                    },
+                    "isDefault": {
+                      "type": "boolean",
+                      "description": "Indicates this is the default warehouse",
+                      "example": true
+                    }
+                  },
+                  "required": [
+                    "warehouseCode"
+                  ]
+                },
+                "example": {
+                  "warehouseCode": "WH001",
+                  "isDefault": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid parameters or malformed request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - User does not have permission to access this resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 403
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - No default warehouse found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message indicating no default warehouse exists"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 404
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Database connection failure or query execution error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message describing the database or server error"
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 500
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "Additional error details for debugging"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "WarehouseCode": {
+        "type": "object",
+        "description": "Warehouse code response object",
+        "properties": {
+          "warehouseCode": {
+            "type": "string",
+            "description": "The warehouse code identifier",
+            "example": "WH001"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Indicates if this is the default warehouse",
+            "example": true
+          }
+        },
+        "required": [
+          "warehouseCode"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error response object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code"
+          },
+          "details": {
+            "type": "string",
+            "description": "Additional error details"
+          }
+        },
+        "required": [
+          "error",
+          "statusCode"
+        ]
+      }
+    },
+    "responses": {
+      "WarehouseCodeResponse": {
+        "description": "Successfully retrieved warehouse code",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/WarehouseCode"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "description": "Error response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Unauthorized - Authentication required",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "ForbiddenError": {
+        "description": "Forbidden - User does not have permission",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Not Found - Resource does not exist",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token authentication"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

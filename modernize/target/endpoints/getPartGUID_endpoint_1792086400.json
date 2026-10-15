@@ -1,0 +1,422 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Add Inventory API",
+    "description": "API for managing inventory operations including part GUID retrieval",
+    "termsOfService": "https://example.com/terms",
+    "contact": {
+      "name": "API Support",
+      "url": "https://example.com/support",
+      "email": "support@example.com"
+    },
+    "license": {
+      "name": "MIT License",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find more information about the Add Inventory system",
+    "url": "https://example.com/docs"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+      "description": "Production server",
+      "variables": {
+        "basePath": {
+          "default": "/inventory",
+          "description": "Base path for inventory operations"
+        }
+      }
+    },
+    {
+      "url": "https://staging-api.example.com/v1",
+      "description": "Staging server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Parts",
+      "description": "Operations related to parts and inventory items",
+      "externalDocs": {
+        "description": "Learn more about parts management",
+        "url": "https://example.com/docs/parts"
+      }
+    }
+  ],
+  "paths": {
+    "/parts/{partno}/guid": {
+      "summary": "Retrieve part GUID",
+      "description": "Retrieves the unique identifier (GUID) for a specific part number from the inventory database",
+      "get": {
+        "tags": [
+          "Parts"
+        ],
+        "summary": "Get Part GUID",
+        "description": "Retrieves the GUID (Globally Unique Identifier) for a given part number. The GUID is used for file storage and part identification purposes. Returns an empty string if the part number is not found or is invalid.",
+        "externalDocs": {
+          "description": "Additional documentation for part GUID retrieval",
+          "url": "https://example.com/docs/parts/guid"
+        },
+        "operationId": "getPartGUID [Add Inventory.Forms.frmAddInventory.frmAddInventory.getPartGUID.1.String]",
+        "parameters": [
+          {
+            "name": "partno",
+            "in": "path",
+            "description": "The part number to retrieve the GUID for. This is a unique identifier for the part in the inventory system.",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "style": "simple",
+            "explode": false,
+            "allowReserved": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255,
+              "pattern": "^[a-zA-Z0-9\\-_]+$",
+              "nullable": false,
+              "example": "PART-001"
+            },
+            "example": "PART-001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the part GUID",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Unique request identifier for tracking",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Cache-Control": {
+                "description": "Cache control directive",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "partno": {
+                      "type": "string",
+                      "description": "The part number that was queried",
+                      "example": "PART-001"
+                    },
+                    "guid": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "The unique identifier (GUID) for the part. Returns empty string if part not found.",
+                      "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "found": {
+                      "type": "boolean",
+                      "description": "Indicates whether the part was found in the database",
+                      "example": true
+                    }
+                  },
+                  "required": [
+                    "partno",
+                    "guid",
+                    "found"
+                  ]
+                },
+                "example": {
+                  "partno": "PART-001",
+                  "guid": "550e8400-e29b-41d4-a716-446655440000",
+                  "found": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid part number format or missing required parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message describing the validation failure",
+                      "example": "Invalid part number format"
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code for programmatic handling",
+                      "example": "INVALID_PART_NUMBER"
+                    },
+                    "details": {
+                      "type": "object",
+                      "description": "Additional error details",
+                      "example": {
+                        "field": "partno",
+                        "reason": "Part number cannot be empty"
+                      }
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ]
+                },
+                "example": {
+                  "error": "Invalid part number format",
+                  "code": "INVALID_PART_NUMBER",
+                  "details": {
+                    "field": "partno",
+                    "reason": "Part number cannot be empty"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Part not found - The specified part number does not exist in the inventory database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "partno": {
+                      "type": "string",
+                      "description": "The part number that was not found",
+                      "example": "NONEXISTENT-PART"
+                    },
+                    "guid": {
+                      "type": "string",
+                      "description": "Empty string indicating part was not found",
+                      "example": ""
+                    },
+                    "found": {
+                      "type": "boolean",
+                      "description": "Indicates whether the part was found",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Descriptive message about the not found status",
+                      "example": "Part number not found in inventory database"
+                    }
+                  },
+                  "required": [
+                    "partno",
+                    "guid",
+                    "found"
+                  ]
+                },
+                "example": {
+                  "partno": "NONEXISTENT-PART",
+                  "guid": "",
+                  "found": false,
+                  "message": "Part number not found in inventory database"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - Database connection or query execution failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message",
+                      "example": "Error Getting File Storage GUID"
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code for programmatic handling",
+                      "example": "DATABASE_ERROR"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "Failed to retrieve GUID from database"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Timestamp when the error occurred",
+                      "example": "2024-01-15T10:30:00Z"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ]
+                },
+                "example": {
+                  "error": "Error Getting File Storage GUID",
+                  "code": "DATABASE_ERROR",
+                  "message": "Failed to retrieve GUID from database",
+                  "timestamp": "2024-01-15T10:30:00Z"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "deprecated": false,
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PartGUIDResponse": {
+        "type": "object",
+        "description": "Response object containing part GUID information",
+        "properties": {
+          "partno": {
+            "type": "string",
+            "description": "The part number",
+            "example": "PART-001"
+          },
+          "guid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The unique identifier for the part",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "found": {
+            "type": "boolean",
+            "description": "Whether the part was found",
+            "example": true
+          }
+        },
+        "required": [
+          "partno",
+          "guid",
+          "found"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error response object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Invalid request"
+          },
+          "code": {
+            "type": "string",
+            "description": "Error code",
+            "example": "INVALID_REQUEST"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "error",
+          "code"
+        ]
+      }
+    },
+    "responses": {
+      "PartGUIDSuccessResponse": {
+        "description": "Successfully retrieved part GUID",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartGUIDResponse"
+            }
+          }
+        }
+      },
+      "BadRequestResponse": {
+        "description": "Bad request error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotFoundResponse": {
+        "description": "Part not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "partno": {
+                  "type": "string"
+                },
+                "guid": {
+                  "type": "string"
+                },
+                "found": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "InternalServerErrorResponse": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "PartNumber": {
+        "name": "partno",
+        "in": "path",
+        "description": "The part number to retrieve the GUID for",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "examples": {
+      "SuccessExample": {
+        "summary": "Successful GUID retrieval",
+        "description": "Example of a successful response when part is found",
+        "value": {
+          "partno": "PART-001",
+          "guid": "550e8400-e29b-41d4-a716-446655440000",
+          "found": true
+        }
+      },
+      "NotFoundExample": {
+        "summary": "Part not found",
+        "description": "Example response when part number does not exist",
+        "value": {
+          "partno": "NONEXISTENT-PART",
+          "guid": "",
+          "found": false
+        }
+      }
+    },
+    "requestBodies": {},
+    "headers": {},
+    "securitySchemes": {},
+    "links": {},
+    "callbacks": {}
+  },
+  "security": []
+}

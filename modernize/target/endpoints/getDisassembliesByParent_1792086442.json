@@ -1,0 +1,599 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Add Inventory API",
+    "description": "API for managing inventory operations including part disassembly retrieval",
+    "termsOfService": "https://example.com/terms",
+    "contact": {
+      "name": "API Support",
+      "url": "https://example.com/support",
+      "email": "support@example.com"
+    },
+    "license": {
+      "name": "MIT License",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find more information about the Add Inventory system",
+    "url": "https://example.com/docs"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+      "description": "Production server",
+      "variables": {
+        "basePath": {
+          "default": "/inventory",
+          "description": "Base path for inventory operations"
+        }
+      }
+    },
+    {
+      "url": "https://staging-api.example.com/v1",
+      "description": "Staging server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Parts",
+      "description": "Operations related to parts and inventory items",
+      "externalDocs": {
+        "description": "Learn more about parts management",
+        "url": "https://example.com/docs/parts"
+      }
+    }
+  ],
+  "paths": {
+    "/parts/{partno}/disassemblies": {
+      "summary": "Retrieve disassembly parts for a parent part",
+      "description": "Retrieves all disassembly parts (child parts) associated with a given parent part number from the inventory database",
+      "get": {
+        "tags": [
+          "Parts"
+        ],
+        "summary": "Get Disassemblies by Parent Part Number",
+        "description": "Retrieves a list of disassembly parts (child parts) for a specified parent part number. This endpoint queries the IFS.get_disassemblies_by_parent stored procedure to return all child parts that make up the parent part, including quantity, price percentage, and descriptions.",
+        "externalDocs": {
+          "description": "Additional documentation for disassembly retrieval",
+          "url": "https://example.com/docs/parts/disassemblies"
+        },
+        "operationId": "getDisassembliesByParent [AddInventory-main.Add Inventory.Forms.frmMainPartMaintenance.frmMainPartMaintenance.txtPartNo_Changed.2.Object.EventArgs]",
+        "parameters": [
+          {
+            "name": "partno",
+            "in": "path",
+            "description": "The parent part number to retrieve disassembly information for. This is a unique identifier for the part in the inventory system.",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "style": "simple",
+            "explode": false,
+            "allowReserved": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255,
+              "pattern": "^[a-zA-Z0-9\\-_]+$",
+              "nullable": false,
+              "example": "PART-001"
+            },
+            "example": "PART-001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the disassembly parts for the parent part number",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Unique request identifier for tracking",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Cache-Control": {
+                "description": "Cache control directive",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "partno": {
+                      "type": "string",
+                      "description": "The parent part number that was queried",
+                      "example": "PART-001"
+                    },
+                    "disassemblyParts": {
+                      "type": "array",
+                      "description": "Array of disassembly parts (child parts) for the parent part",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "parentPartNo": {
+                            "type": "string",
+                            "description": "The parent part number",
+                            "example": "PART-001",
+                            "nullable": true
+                          },
+                          "childPartNo": {
+                            "type": "string",
+                            "description": "The child part number that is part of the parent",
+                            "example": "SUBPART-001",
+                            "nullable": true
+                          },
+                          "quantity": {
+                            "type": "string",
+                            "description": "The quantity of this child part in the parent assembly",
+                            "example": "2",
+                            "nullable": true
+                          },
+                          "pricePercentage": {
+                            "type": "string",
+                            "description": "The price percentage for this child part relative to the parent",
+                            "example": "25.50",
+                            "nullable": true
+                          },
+                          "childPartDescription": {
+                            "type": "string",
+                            "description": "The description of the child part (read-only)",
+                            "example": "Sub-assembly component",
+                            "nullable": true
+                          },
+                          "oldChildPartNo": {
+                            "type": "string",
+                            "description": "The previous child part number if it was changed",
+                            "example": "OLDSUBPART-001",
+                            "nullable": true
+                          }
+                        },
+                        "required": []
+                      },
+                      "example": [
+                        {
+                          "parentPartNo": "PART-001",
+                          "childPartNo": "SUBPART-001",
+                          "quantity": "2",
+                          "pricePercentage": "25.50",
+                          "childPartDescription": "Sub-assembly component",
+                          "oldChildPartNo": null
+                        },
+                        {
+                          "parentPartNo": "PART-001",
+                          "childPartNo": "SUBPART-002",
+                          "quantity": "1",
+                          "pricePercentage": "50.00",
+                          "childPartDescription": "Main component",
+                          "oldChildPartNo": null
+                        }
+                      ]
+                    },
+                    "found": {
+                      "type": "boolean",
+                      "description": "Indicates whether disassembly data was found for the parent part",
+                      "example": true
+                    },
+                    "recordCount": {
+                      "type": "integer",
+                      "description": "The number of disassembly parts returned",
+                      "example": 2
+                    }
+                  },
+                  "required": [
+                    "partno",
+                    "disassemblyParts",
+                    "found",
+                    "recordCount"
+                  ]
+                },
+                "example": {
+                  "partno": "PART-001",
+                  "disassemblyParts": [
+                    {
+                      "parentPartNo": "PART-001",
+                      "childPartNo": "SUBPART-001",
+                      "quantity": "2",
+                      "pricePercentage": "25.50",
+                      "childPartDescription": "Sub-assembly component",
+                      "oldChildPartNo": null
+                    },
+                    {
+                      "parentPartNo": "PART-001",
+                      "childPartNo": "SUBPART-002",
+                      "quantity": "1",
+                      "pricePercentage": "50.00",
+                      "childPartDescription": "Main component",
+                      "oldChildPartNo": null
+                    }
+                  ],
+                  "found": true,
+                  "recordCount": 2
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid part number format or missing required parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message describing the validation failure",
+                      "example": "Invalid part number format"
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code for programmatic handling",
+                      "example": "INVALID_PART_NUMBER"
+                    },
+                    "details": {
+                      "type": "object",
+                      "description": "Additional error details",
+                      "example": {
+                        "field": "partno",
+                        "reason": "Part number cannot be empty"
+                      }
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ]
+                },
+                "example": {
+                  "error": "Invalid part number format",
+                  "code": "INVALID_PART_NUMBER",
+                  "details": {
+                    "field": "partno",
+                    "reason": "Part number cannot be empty"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Part not found - The specified part number does not exist in the inventory database or has no disassembly information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "partno": {
+                      "type": "string",
+                      "description": "The part number that was not found",
+                      "example": "NONEXISTENT-PART"
+                    },
+                    "disassemblyParts": {
+                      "type": "array",
+                      "description": "Empty array indicating no disassembly parts were found",
+                      "items": {
+                        "type": "object"
+                      },
+                      "example": []
+                    },
+                    "found": {
+                      "type": "boolean",
+                      "description": "Indicates whether disassembly data was found",
+                      "example": false
+                    },
+                    "recordCount": {
+                      "type": "integer",
+                      "description": "The number of disassembly parts returned",
+                      "example": 0
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Descriptive message about the not found status",
+                      "example": "Part number not found in inventory database or has no disassembly information"
+                    }
+                  },
+                  "required": [
+                    "partno",
+                    "disassemblyParts",
+                    "found",
+                    "recordCount"
+                  ]
+                },
+                "example": {
+                  "partno": "NONEXISTENT-PART",
+                  "disassemblyParts": [],
+                  "found": false,
+                  "recordCount": 0,
+                  "message": "Part number not found in inventory database or has no disassembly information"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - Database connection or query execution failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message",
+                      "example": "Error retrieving disassembly parts"
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code for programmatic handling",
+                      "example": "DATABASE_ERROR"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "Failed to execute stored procedure IFS.get_disassemblies_by_parent"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Timestamp when the error occurred",
+                      "example": "2024-01-15T10:30:00Z"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ]
+                },
+                "example": {
+                  "error": "Error retrieving disassembly parts",
+                  "code": "DATABASE_ERROR",
+                  "message": "Failed to execute stored procedure IFS.get_disassemblies_by_parent",
+                  "timestamp": "2024-01-15T10:30:00Z"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "deprecated": false,
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DisassemblyPart": {
+        "type": "object",
+        "description": "Represents a child part in a disassembly relationship",
+        "properties": {
+          "parentPartNo": {
+            "type": "string",
+            "description": "The parent part number",
+            "example": "PART-001",
+            "nullable": true
+          },
+          "childPartNo": {
+            "type": "string",
+            "description": "The child part number",
+            "example": "SUBPART-001",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "string",
+            "description": "The quantity of this child part",
+            "example": "2",
+            "nullable": true
+          },
+          "pricePercentage": {
+            "type": "string",
+            "description": "The price percentage",
+            "example": "25.50",
+            "nullable": true
+          },
+          "childPartDescription": {
+            "type": "string",
+            "description": "The description of the child part",
+            "example": "Sub-assembly component",
+            "nullable": true
+          },
+          "oldChildPartNo": {
+            "type": "string",
+            "description": "The previous child part number",
+            "example": "OLDSUBPART-001",
+            "nullable": true
+          }
+        }
+      },
+      "DisassembliesResponse": {
+        "type": "object",
+        "description": "Response object containing disassembly parts information",
+        "properties": {
+          "partno": {
+            "type": "string",
+            "description": "The parent part number",
+            "example": "PART-001"
+          },
+          "disassemblyParts": {
+            "type": "array",
+            "description": "Array of disassembly parts",
+            "items": {
+              "$ref": "#/components/schemas/DisassemblyPart"
+            }
+          },
+          "found": {
+            "type": "boolean",
+            "description": "Whether disassembly data was found",
+            "example": true
+          },
+          "recordCount": {
+            "type": "integer",
+            "description": "The number of records returned",
+            "example": 2
+          }
+        },
+        "required": [
+          "partno",
+          "disassemblyParts",
+          "found",
+          "recordCount"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error response object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Invalid request"
+          },
+          "code": {
+            "type": "string",
+            "description": "Error code",
+            "example": "INVALID_REQUEST"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "error",
+          "code"
+        ]
+      }
+    },
+    "responses": {
+      "DisassembliesSuccessResponse": {
+        "description": "Successfully retrieved disassembly parts",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/DisassembliesResponse"
+            }
+          }
+        }
+      },
+      "BadRequestResponse": {
+        "description": "Bad request error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotFoundResponse": {
+        "description": "Part not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "partno": {
+                  "type": "string"
+                },
+                "disassemblyParts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "found": {
+                  "type": "boolean"
+                },
+                "recordCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "InternalServerErrorResponse": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "PartNumber": {
+        "name": "partno",
+        "in": "path",
+        "description": "The parent part number to retrieve disassembly information for",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "examples": {
+      "SuccessExample": {
+        "summary": "Successful disassembly retrieval",
+        "description": "Example of a successful response when disassembly parts are found",
+        "value": {
+          "partno": "PART-001",
+          "disassemblyParts": [
+            {
+              "parentPartNo": "PART-001",
+              "childPartNo": "SUBPART-001",
+              "quantity": "2",
+              "pricePercentage": "25.50",
+              "childPartDescription": "Sub-assembly component",
+              "oldChildPartNo": null
+            },
+            {
+              "parentPartNo": "PART-001",
+              "childPartNo": "SUBPART-002",
+              "quantity": "1",
+              "pricePercentage": "50.00",
+              "childPartDescription": "Main component",
+              "oldChildPartNo": null
+            }
+          ],
+          "found": true,
+          "recordCount": 2
+        }
+      },
+      "NotFoundExample": {
+        "summary": "Part not found",
+        "description": "Example response when part number does not exist or has no disassembly information",
+        "value": {
+          "partno": "NONEXISTENT-PART",
+          "disassemblyParts": [],
+          "found": false,
+          "recordCount": 0,
+          "message": "Part number not found in inventory database or has no disassembly information"
+        }
+      },
+      "EmptyDisassemblyExample": {
+        "summary": "Part found but no disassembly parts",
+        "description": "Example response when part exists but has no child parts",
+        "value": {
+          "partno": "SIMPLE-PART",
+          "disassemblyParts": [],
+          "found": true,
+          "recordCount": 0
+        }
+      }
+    },
+    "requestBodies": {},
+    "headers": {},
+    "securitySchemes": {},
+    "links": {},
+    "callbacks": {}
+  },
+  "security": []
+}

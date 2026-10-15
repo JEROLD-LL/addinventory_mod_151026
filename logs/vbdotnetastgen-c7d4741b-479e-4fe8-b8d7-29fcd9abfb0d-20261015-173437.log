@@ -1,0 +1,11 @@
+2026-10-15 17:34:37.552 +00:00 [INF] Logging initialized. Log file: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/logs/vbdotnetastgen-c7d4741b-479e-4fe8-b8d7-29fcd9abfb0d-20261015-173437.log
+2026-10-15 17:34:37.598 +00:00 [INF] VB.NET Parser version 1.0.0.0
+2026-10-15 17:34:37.599 +00:00 [INF] Scanning VB.NET project at: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code
+2026-10-15 17:34:37.599 +00:00 [INF] Output will be written to: /tmp/tmpxrvj0td1
+2026-10-15 17:34:37.599 +00:00 [INF] Using project ID: c7d4741b-479e-4fe8-b8d7-29fcd9abfb0d
+2026-10-15 17:34:37.623 +00:00 [INF] Found 14 VB files under /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/legacy_code
+2026-10-15 17:34:40.310 +00:00 [INF] Extraction complete: 14 processed, 0 skipped, 0 failed, 0 parse diagnostics, 22 classes, 0 interfaces, 1 enums, 4 packages across 14 files
+2026-10-15 17:34:40.596 +00:00 [INF] ASG written to: /tmp/tmpxrvj0td1/vbdotnetastgen-linux.json
+2026-10-15 17:34:40.908 +00:00 [INF] Graph data written to: /tmp/tmpxrvj0td1/graph_data.json (458 nodes, 573 edges)
+2026-10-15 17:34:40.908 +00:00 [INF] Parser run completed successfully. Log file: /home/jerold/workspacevm/main/vbdotnet/addinventorycg_18c90c/Add Inventory CG_18c90c/logs/vbdotnetastgen-c7d4741b-479e-4fe8-b8d7-29fcd9abfb0d-20261015-173437.log
+2026-10-15 17:34:40.909 +00:00 [INF] Shutting down logger

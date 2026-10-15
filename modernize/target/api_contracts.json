@@ -1,0 +1,1256 @@
+[
+  {
+    "path": "/utilization/launch",
+    "method": "POST",
+    "operation_id": "launchUtilization[AddInventory-main.Add Inventory.Forms.frmAddInventory.frmAddInventory.UtilizationToolStripMenuItem_Click.2.Object.EventArgs]",
+    "path_params": null,
+    "query_params": {
+      "partNumber": {
+        "type": "string",
+        "required": false,
+        "nullable": true,
+        "minLength": 0,
+        "maxLength": 50,
+        "description": "The part number to analyze in the utilization tool. If not provided or empty, the tool will launch without part-specific parameters.",
+        "example": "PART-12345"
+      }
+    },
+    "header_params": null,
+    "request_body": null,
+    "responses": {
+      "200": {
+        "description": "Utilization tool process launched successfully",
+        "content_type": "application/json",
+        "schema": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "already_running"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "processId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "warehouseCode": {
+            "type": "string"
+          },
+          "partNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "commandArguments": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": {
+          "status": "success",
+          "message": "Utilization tool launched successfully",
+          "processId": 12345,
+          "warehouseCode": "WH001",
+          "partNumber": "PART-12345",
+          "commandArguments": "bld=WH001 partno=PART-12345",
+          "timestamp": "2024-01-15T10:30:00Z"
+        }
+      },
+      "400": {
+        "description": "Bad request - invalid parameters or validation error",
+        "content_type": "application/json",
+        "schema": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object",
+            "nullable": true
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized - authentication required",
+        "content_type": "application/json",
+        "schema": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string"
+          }
+        }
+      },
+      "403": {
+        "description": "Forbidden - user does not have permission to launch utilization tool",
+        "content_type": "application/json",
+        "schema": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string"
+          }
+        }
+      },
+      "500": {
+        "description": "Internal server error - database connection failure, process launch failure, or other server error",
+        "content_type": "application/json",
+        "schema": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object",
+            "nullable": true
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "/inventory-items/{rowIndex}/validate-cell-edit",
+    "method": "PATCH",
+    "operation_id": "validateInventoryItemCellEdit[AddInventory-main.Add Inventory.Forms.frmAddInventory.frmAddInventory.dgvItemsForImport_CellEndEdit.2.Object.DataGridViewCellEventArgs]",
+    "path_params": {
+      "rowIndex": {
+        "type": "integer",
+        "format": "int32",
+        "required": true,
+        "description": "The zero-based row index of the cell being edited in the inventory items grid",
+        "minimum": 0
+      }
+    },
+    "query_params": null,
+    "header_params": null,
+    "request_body": {
+      "required": true,
+      "content_type": "application/json",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "columnIndex": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The zero-based column index being edited. Supported columns: 0=Quantity, 1=Barcode, 2=SerialNo, 3=Reason, 4=Owner, 5=Warehouse",
+            "minimum": 0
+          },
+          "newValue": {
+            "type": [
+              "string",
+              "integer",
+              "boolean",
+              "null"
+            ],
+            "description": "The new value entered in the cell. Type depends on column type."
+          },
+          "rowData": {
+            "type": "object",
+            "description": "Current row data containing all inventory item fields for context during validation",
+            "properties": {
+              "partNumber": {
+                "type": "string",
+                "description": "Part number of the inventory item"
+              },
+              "partDescription": {
+                "type": "string",
+                "description": "Description of the part"
+              },
+              "quantity": {
+                "type": "integer",
+                "description": "Current quantity in the row"
+              },
+              "barcode": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Barcode value if this is a barcoded item"
+              },
+              "serialNumber": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Serial number if applicable"
+              },
+              "reasonCode": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reason code for adding inventory (e.g., 'NONTOBAR')"
+              },
+              "owner": {
+                "type": "string",
+                "description": "Department or owner code"
+              },
+              "warehouse": {
+                "type": "string",
+                "description": "Warehouse or building code"
+              },
+              "purchaseOrderNumber": {
+                "type": "string",
+                "description": "Purchase order number for PO limit validation"
+              },
+              "removeNonCoded": {
+                "type": "boolean",
+                "description": "Flag indicating whether to remove related non-barcoded items"
+              },
+              "onHand": {
+                "type": "integer",
+                "description": "Current on-hand quantity"
+              }
+            },
+            "required": [
+              "partNumber",
+              "quantity",
+              "owner",
+              "warehouse"
+            ]
+          }
+        },
+        "required": [
+          "columnIndex",
+          "newValue",
+          "rowData"
+        ]
+      },
+      "example": {
+        "columnIndex": 0,
+        "newValue": "5",
+        "rowData": {
+          "partNumber": "PART-001",
+          "partDescription": "Widget Assembly",
+          "quantity": 5,
+          "barcode": null,
+          "serialNumber": null,
+          "reasonCode": null,
+          "owner": "DEPT-A",
+          "warehouse": "WH-01",
+          "purchaseOrderNumber": "PO-2024-001",
+          "removeNonCoded": false,
+          "onHand": 10
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Cell edit validated successfully. Returns validation result with corrected values if applicable.",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "isValid": {
+              "type": "boolean",
+              "description": "Indicates whether the cell edit passed validation"
+            },
+            "correctedValue": {
+              "type": [
+                "string",
+                "integer",
+                "boolean",
+                "null"
+              ],
+              "description": "The corrected value if validation failed and a correction was applied. Null if no correction needed."
+            },
+            "message": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Validation message or error description"
+            },
+            "validationErrors": {
+              "type": "array",
+              "description": "List of validation errors if any occurred",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "field": {
+                    "type": "string",
+                    "description": "The field that failed validation"
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Description of the validation error"
+                  }
+                }
+              }
+            },
+            "relatedActions": {
+              "type": "object",
+              "description": "Related actions triggered by the cell edit (e.g., non-barcoded item removal)",
+              "properties": {
+                "removeNonCodedTriggered": {
+                  "type": "boolean",
+                  "description": "Whether non-barcoded item removal was triggered"
+                },
+                "removeNonCodedConfirmationNeeded": {
+                  "type": "boolean",
+                  "description": "Whether user confirmation is needed for non-barcoded item removal"
+                },
+                "confirmationMessage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Message to display for user confirmation"
+                }
+              }
+            },
+            "updatedRowData": {
+              "type": "object",
+              "description": "Updated row data after validation and any corrections"
+            }
+          },
+          "required": [
+            "isValid"
+          ]
+        },
+        "example": {
+          "isValid": true,
+          "correctedValue": null,
+          "message": null,
+          "validationErrors": [],
+          "relatedActions": {
+            "removeNonCodedTriggered": false,
+            "removeNonCodedConfirmationNeeded": false,
+            "confirmationMessage": null
+          },
+          "updatedRowData": {
+            "partNumber": "PART-001",
+            "quantity": 5,
+            "barcode": null,
+            "reasonCode": null,
+            "owner": "DEPT-A",
+            "warehouse": "WH-01",
+            "removeNonCoded": false
+          }
+        }
+      },
+      "400": {
+        "description": "Bad request - Invalid parameters, malformed request, or validation failed with correction applied",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            },
+            "statusCode": {
+              "type": "integer"
+            },
+            "validationErrors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "field": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "error": "Overstocking inventory is not allowed. The quantity added to the inventory cannot exceed the quantity specified in the Purchase Order.",
+          "statusCode": 400,
+          "validationErrors": [
+            {
+              "field": "quantity",
+              "message": "Quantity 15 exceeds PO limit of 10"
+            }
+          ]
+        }
+      },
+      "401": {
+        "description": "Unauthorized - Authentication required",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            },
+            "statusCode": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "Forbidden - User does not have permission to edit inventory items",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            },
+            "statusCode": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Not Found - Row index does not exist in the inventory items grid",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            },
+            "statusCode": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "422": {
+        "description": "Unprocessable Entity - Validation failed with business rule violation",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            },
+            "statusCode": {
+              "type": "integer"
+            },
+            "validationErrors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "field": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "businessRule": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "error": "Only quantities of 1 can be entered for barcoded items.",
+          "statusCode": 422,
+          "validationErrors": [
+            {
+              "field": "quantity",
+              "message": "Quantity must be 1 for barcoded items",
+              "businessRule": "BARCODED_ITEM_QTY_CONSTRAINT"
+            }
+          ]
+        }
+      },
+      "500": {
+        "description": "Internal Server Error - Database connection failure, query execution error, or unexpected server error",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            },
+            "statusCode": {
+              "type": "integer"
+            },
+            "details": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "/disassembly-parts/save",
+    "method": "POST",
+    "operation_id": "saveDisassemblyParts[AddInventory-main.Add Inventory.Forms.frmMainPartMaintenance.frmMainPartMaintenance.BtnSave_Click.2.Object.EventArgs]",
+    "path_params": null,
+    "query_params": null,
+    "header_params": null,
+    "request_body": {
+      "required": true,
+      "content_type": "application/json",
+      "schema": {
+        "type": "object",
+        "required": [
+          "mainPartNumber",
+          "disassemblyParts"
+        ],
+        "properties": {
+          "mainPartNumber": {
+            "type": "string",
+            "description": "The main part number. This field cannot be empty.",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "disassemblyParts": {
+            "type": "array",
+            "description": "Array of disassembly parts to be saved",
+            "minItems": 0,
+            "items": {
+              "type": "object",
+              "required": [
+                "childPartNo",
+                "quantity"
+              ],
+              "properties": {
+                "parentPartNo": {
+                  "type": "string",
+                  "description": "Parent part number",
+                  "maxLength": 50
+                },
+                "childPartNo": {
+                  "type": "string",
+                  "description": "Child part number",
+                  "minLength": 1,
+                  "maxLength": 50
+                },
+                "childPartDescription": {
+                  "type": "string",
+                  "description": "Description of the child part (read-only)",
+                  "maxLength": 255,
+                  "readOnly": true
+                },
+                "quantity": {
+                  "type": "integer",
+                  "description": "Quantity of the child part",
+                  "minimum": 1
+                },
+                "isInsert": {
+                  "type": "boolean",
+                  "description": "Flag indicating if this is a new record",
+                  "default": false
+                },
+                "isUpdate": {
+                  "type": "boolean",
+                  "description": "Flag indicating if this is an update",
+                  "default": false
+                },
+                "isDelete": {
+                  "type": "boolean",
+                  "description": "Flag indicating if this record should be deleted",
+                  "default": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "example": {
+        "mainPartNumber": "PART-001",
+        "disassemblyParts": [
+          {
+            "parentPartNo": "PART-001",
+            "childPartNo": "CHILD-001",
+            "childPartDescription": "Child Part 1",
+            "quantity": 2,
+            "isInsert": true,
+            "isUpdate": false,
+            "isDelete": false
+          }
+        ]
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Disassembly parts saved successfully",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "description": "Indicates if the operation was successful"
+            },
+            "message": {
+              "type": "string",
+              "description": "Success message"
+            },
+            "partDescription": {
+              "type": "string",
+              "description": "Description of the main part retrieved after save"
+            },
+            "savedRecordCount": {
+              "type": "integer",
+              "description": "Number of records saved"
+            }
+          },
+          "required": [
+            "success",
+            "message"
+          ]
+        },
+        "example": {
+          "success": true,
+          "message": "Changes Saved Successfully!",
+          "partDescription": "Main Part Description",
+          "savedRecordCount": 2
+        }
+      },
+      "400": {
+        "description": "Bad request - validation error",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean"
+            },
+            "message": {
+              "type": "string"
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "example": {
+          "success": false,
+          "message": "You must specify the Main part; this field cannot be empty!",
+          "errors": [
+            "Main part number is required"
+          ]
+        }
+      },
+      "401": {
+        "description": "Unauthorized - authentication required",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "Forbidden - insufficient permissions",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal server error",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean"
+            },
+            "message": {
+              "type": "string"
+            },
+            "errorDetails": {
+              "type": "string",
+              "description": "Detailed error information"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "/parts/search",
+    "method": "GET",
+    "operation_id": "SearchPartCatalog(AddInventory-main.Add Inventory.Forms.frmMainPartMaintenance.frmMainPartMaintenance.SearchPartCatalog.0)",
+    "path_params": null,
+    "query_params": {
+      "partno": {
+        "type": "string",
+        "required": true,
+        "description": "The part number to search for in the catalog",
+        "minLength": 1,
+        "maxLength": 255,
+        "example": "PART-12345"
+      }
+    },
+    "header_params": null,
+    "request_body": null,
+    "responses": {
+      "200": {
+        "description": "Successfully retrieved the part description from the catalog",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "partNumber": {
+              "type": "string",
+              "description": "The part number that was searched"
+            },
+            "partDescription": {
+              "type": "string",
+              "description": "The description of the part retrieved from the catalog"
+            },
+            "found": {
+              "type": "boolean",
+              "description": "Indicates whether the part was found in the catalog"
+            }
+          },
+          "required": [
+            "partNumber",
+            "found"
+          ]
+        },
+        "example": {
+          "partNumber": "PART-12345",
+          "partDescription": "Industrial Grade Widget Assembly",
+          "found": true
+        }
+      },
+      "400": {
+        "description": "Bad request - Invalid or missing part number parameter",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message describing the validation failure"
+            },
+            "statusCode": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized - Authentication required",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            },
+            "statusCode": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "Forbidden - User does not have permission to access this resource",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            },
+            "statusCode": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Not Found - Part number not found in the catalog",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "partNumber": {
+              "type": "string"
+            },
+            "found": {
+              "type": "boolean"
+            },
+            "error": {
+              "type": "string"
+            },
+            "statusCode": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal Server Error - Database connection failure or query execution error",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message describing the database or server error"
+            },
+            "statusCode": {
+              "type": "integer"
+            },
+            "details": {
+              "type": "string",
+              "description": "Additional error details for debugging"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "/parts/{partno}/description",
+    "method": "GET",
+    "operation_id": "searchPartCatalog [AddInventory-main.Add Inventory.Forms.frmMainPartMaintenance.frmMainPartMaintenance.txtPartNo_KeyDown.2.Object.KeyEventArgs]",
+    "path_params": {
+      "partno": {
+        "type": "string",
+        "required": true,
+        "description": "The part number to search for in the catalog. This is a unique identifier for the part in the inventory system.",
+        "minLength": 1,
+        "maxLength": 255,
+        "pattern": "^[a-zA-Z0-9\\-_]+$",
+        "example": "PART-001"
+      }
+    },
+    "query_params": null,
+    "header_params": null,
+    "request_body": null,
+    "responses": {
+      "200": {
+        "description": "Successfully retrieved the part description from the catalog",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "partno": {
+              "type": "string",
+              "description": "The part number that was searched",
+              "example": "PART-001"
+            },
+            "partdesc": {
+              "type": "string",
+              "description": "The description of the part from the catalog",
+              "example": "Industrial Grade Bearing Assembly"
+            },
+            "found": {
+              "type": "boolean",
+              "description": "Indicates whether the part was found in the catalog",
+              "example": true
+            }
+          },
+          "required": [
+            "partno",
+            "partdesc",
+            "found"
+          ]
+        },
+        "example": {
+          "partno": "PART-001",
+          "partdesc": "Industrial Grade Bearing Assembly",
+          "found": true
+        }
+      },
+      "400": {
+        "description": "Bad request - Invalid part number format or missing required parameter",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message describing the validation failure",
+              "example": "Invalid part number format"
+            },
+            "code": {
+              "type": "string",
+              "description": "Error code for programmatic handling",
+              "example": "INVALID_PART_NUMBER"
+            },
+            "details": {
+              "type": "object",
+              "description": "Additional error details",
+              "example": {
+                "field": "partno",
+                "reason": "Part number cannot be empty"
+              }
+            }
+          },
+          "required": [
+            "error",
+            "code"
+          ]
+        },
+        "example": {
+          "error": "Invalid part number format",
+          "code": "INVALID_PART_NUMBER",
+          "details": {
+            "field": "partno",
+            "reason": "Part number cannot be empty"
+          }
+        }
+      },
+      "404": {
+        "description": "Part not found - The specified part number does not exist in the inventory catalog",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "partno": {
+              "type": "string",
+              "description": "The part number that was not found",
+              "example": "NONEXISTENT-PART"
+            },
+            "partdesc": {
+              "type": "string",
+              "description": "Empty string indicating part was not found",
+              "example": ""
+            },
+            "found": {
+              "type": "boolean",
+              "description": "Indicates whether the part was found",
+              "example": false
+            },
+            "message": {
+              "type": "string",
+              "description": "Descriptive message about the not found status",
+              "example": "Part number not found in inventory catalog"
+            }
+          },
+          "required": [
+            "partno",
+            "partdesc",
+            "found"
+          ]
+        },
+        "example": {
+          "partno": "NONEXISTENT-PART",
+          "partdesc": "",
+          "found": false,
+          "message": "Part number not found in inventory catalog"
+        }
+      },
+      "500": {
+        "description": "Internal server error - Database connection or query execution failed",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message",
+              "example": "Error searching part catalog"
+            },
+            "code": {
+              "type": "string",
+              "description": "Error code for programmatic handling",
+              "example": "DATABASE_ERROR"
+            },
+            "message": {
+              "type": "string",
+              "description": "Detailed error message",
+              "example": "Failed to retrieve part description from database"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when the error occurred",
+              "example": "2024-01-15T10:30:00Z"
+            }
+          },
+          "required": [
+            "error",
+            "code"
+          ]
+        },
+        "example": {
+          "error": "Error searching part catalog",
+          "code": "DATABASE_ERROR",
+          "message": "Failed to retrieve part description from database",
+          "timestamp": "2024-01-15T10:30:00Z"
+        }
+      }
+    }
+  },
+  {
+    "path": "/parts/{partno}/disassemblies",
+    "method": "GET",
+    "operation_id": "getDisassembliesByParent [AddInventory-main.Add Inventory.Forms.frmMainPartMaintenance.frmMainPartMaintenance.txtPartNo_Changed.2.Object.EventArgs]",
+    "path_params": {
+      "partno": {
+        "type": "string",
+        "required": true,
+        "description": "The parent part number to retrieve disassembly information for",
+        "minLength": 1,
+        "maxLength": 255,
+        "example": "PART-001"
+      }
+    },
+    "query_params": null,
+    "header_params": null,
+    "request_body": null,
+    "responses": {
+      "200": {
+        "description": "Successfully retrieved the disassembly parts for the parent part number",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "partno": {
+              "type": "string",
+              "description": "The parent part number that was queried"
+            },
+            "disassemblyParts": {
+              "type": "array",
+              "description": "Array of disassembly parts (child parts) for the parent part",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "parentPartNo": {
+                    "type": "string",
+                    "description": "The parent part number",
+                    "nullable": true
+                  },
+                  "childPartNo": {
+                    "type": "string",
+                    "description": "The child part number that is part of the parent",
+                    "nullable": true
+                  },
+                  "quantity": {
+                    "type": "string",
+                    "description": "The quantity of this child part in the parent assembly",
+                    "nullable": true
+                  },
+                  "pricePercentage": {
+                    "type": "string",
+                    "description": "The price percentage for this child part relative to the parent",
+                    "nullable": true
+                  },
+                  "childPartDescription": {
+                    "type": "string",
+                    "description": "The description of the child part (read-only)",
+                    "nullable": true
+                  },
+                  "oldChildPartNo": {
+                    "type": "string",
+                    "description": "The previous child part number if it was changed",
+                    "nullable": true
+                  }
+                }
+              }
+            },
+            "found": {
+              "type": "boolean",
+              "description": "Indicates whether disassembly data was found for the parent part"
+            },
+            "recordCount": {
+              "type": "integer",
+              "description": "The number of disassembly parts returned"
+            }
+          },
+          "required": [
+            "partno",
+            "disassemblyParts",
+            "found",
+            "recordCount"
+          ]
+        },
+        "example": {
+          "partno": "PART-001",
+          "disassemblyParts": [
+            {
+              "parentPartNo": "PART-001",
+              "childPartNo": "SUBPART-001",
+              "quantity": "2",
+              "pricePercentage": "25.50",
+              "childPartDescription": "Sub-assembly component",
+              "oldChildPartNo": null
+            },
+            {
+              "parentPartNo": "PART-001",
+              "childPartNo": "SUBPART-002",
+              "quantity": "1",
+              "pricePercentage": "50.00",
+              "childPartDescription": "Main component",
+              "oldChildPartNo": null
+            }
+          ],
+          "found": true,
+          "recordCount": 2
+        }
+      },
+      "400": {
+        "description": "Bad request - Invalid part number format or missing required parameter",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message describing the validation failure"
+            },
+            "code": {
+              "type": "string",
+              "description": "Error code for programmatic handling"
+            },
+            "details": {
+              "type": "object",
+              "description": "Additional error details"
+            }
+          },
+          "required": [
+            "error",
+            "code"
+          ]
+        },
+        "example": {
+          "error": "Invalid part number format",
+          "code": "INVALID_PART_NUMBER",
+          "details": {
+            "field": "partno",
+            "reason": "Part number cannot be empty"
+          }
+        }
+      },
+      "404": {
+        "description": "Part not found - The specified part number does not exist in the inventory database or has no disassembly information",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "partno": {
+              "type": "string",
+              "description": "The part number that was not found"
+            },
+            "disassemblyParts": {
+              "type": "array",
+              "description": "Empty array indicating no disassembly parts were found",
+              "items": {
+                "type": "object"
+              }
+            },
+            "found": {
+              "type": "boolean",
+              "description": "Indicates whether disassembly data was found"
+            },
+            "recordCount": {
+              "type": "integer",
+              "description": "The number of disassembly parts returned"
+            },
+            "message": {
+              "type": "string",
+              "description": "Descriptive message about the not found status"
+            }
+          },
+          "required": [
+            "partno",
+            "disassemblyParts",
+            "found",
+            "recordCount"
+          ]
+        },
+        "example": {
+          "partno": "NONEXISTENT-PART",
+          "disassemblyParts": [],
+          "found": false,
+          "recordCount": 0,
+          "message": "Part number not found in inventory database or has no disassembly information"
+        }
+      },
+      "500": {
+        "description": "Internal server error - Database connection or query execution failed",
+        "content_type": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            },
+            "code": {
+              "type": "string",
+              "description": "Error code for programmatic handling"
+            },
+            "message": {
+              "type": "string",
+              "description": "Detailed error message"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when the error occurred"
+            }
+          },
+          "required": [
+            "error",
+            "code"
+          ]
+        },
+        "example": {
+          "error": "Error retrieving disassembly parts",
+          "code": "DATABASE_ERROR",
+          "message": "Failed to execute stored procedure IFS.get_disassemblies_by_parent",
+          "timestamp": "2024-01-15T10:30:00Z"
+        }
+      }
+    }
+  }
+]

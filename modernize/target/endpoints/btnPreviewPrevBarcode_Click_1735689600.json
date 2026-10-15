@@ -1,0 +1,458 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Add Inventory - Barcode Preview API",
+    "description": "API for managing barcode preview generation and navigation in the Add Inventory application. This endpoint handles navigation through barcode items and generates preview images using the Labelary API.",
+    "termsOfService": "https://example.com/terms",
+    "contact": {
+      "name": "IT Support",
+      "url": "https://example.com/support",
+      "email": "support@example.com"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://example.com/license"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Labelary API Documentation for barcode preview generation",
+    "url": "http://api.labelary.com/docs"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Development server",
+      "variables": {
+        "port": {
+          "default": "5000",
+          "description": "The port number for the API server"
+        }
+      }
+    },
+    {
+      "url": "https://api.example.com",
+      "description": "Production server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Barcode Preview",
+      "description": "Operations for barcode preview generation and navigation",
+      "externalDocs": {
+        "description": "Barcode preview operations documentation",
+        "url": "https://example.com/docs/barcode-preview"
+      }
+    }
+  ],
+  "paths": {
+    "/barcode-preview/navigate-previous": {
+      "summary": "Navigate to previous barcode and generate preview",
+      "description": "Navigates to the previous barcode in the list (with wraparound to last item if at the beginning) and generates a preview image of the barcode using the Labelary API. This operation corresponds to the btnPreviewPrevBarcode_Click event handler in the legacy VB.NET application.",
+      "post": {
+        "tags": [
+          "Barcode Preview"
+        ],
+        "summary": "Navigate to previous barcode and display preview",
+        "description": "Moves the selection to the previous barcode item in the list. If the current selection is at index 0, it wraps around to the last item. Then generates a preview image of the newly selected barcode by calling the Labelary API with the barcode data and template information.",
+        "operationId": "previewPreviousBarcode[Add Inventory.Forms.frmPrintZPLDialog.frmPrintZPLDialog.btnPreviewPrevBarcode_Click.2.Object.EventArgs]",
+        "requestBody": {
+          "description": "Request payload containing barcode data, current selection index, and barcode template information required to navigate and generate preview",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "barcodeItems",
+                  "currentBarcodeIndex",
+                  "barcodeTemplate"
+                ],
+                "properties": {
+                  "barcodeItems": {
+                    "type": "array",
+                    "description": "Array of barcode items available for printing. Each item contains barcode and serial number information.",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "barcode",
+                        "serialNumber"
+                      ],
+                      "properties": {
+                        "barcode": {
+                          "type": "string",
+                          "description": "The barcode value/identifier for the item",
+                          "example": "BC123456789"
+                        },
+                        "serialNumber": {
+                          "type": "string",
+                          "description": "The serial number associated with the barcode item",
+                          "example": "SN-2024-001"
+                        }
+                      }
+                    }
+                  },
+                  "currentBarcodeIndex": {
+                    "type": "integer",
+                    "description": "The current index of the selected barcode in the barcodeItems array (0-based)",
+                    "minimum": 0,
+                    "example": 2
+                  },
+                  "barcodeTemplate": {
+                    "type": "object",
+                    "description": "The barcode template configuration used to generate ZPL data",
+                    "required": [
+                      "name",
+                      "path",
+                      "xOffset",
+                      "yOffset"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name/identifier of the barcode template",
+                        "example": "Standard 1x0.5 Label"
+                      },
+                      "path": {
+                        "type": "string",
+                        "description": "The file path to the barcode template file",
+                        "example": "/templates/barcode_1x05.zpl"
+                      },
+                      "xOffset": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "X-axis calibration offset in millimeters",
+                        "example": 0.0
+                      },
+                      "yOffset": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Y-axis calibration offset in millimeters",
+                        "example": 0.0
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "barcodeItems": [
+                  {
+                    "barcode": "BC001",
+                    "serialNumber": "SN-2024-001"
+                  },
+                  {
+                    "barcode": "BC002",
+                    "serialNumber": "SN-2024-002"
+                  },
+                  {
+                    "barcode": "BC003",
+                    "serialNumber": "SN-2024-003"
+                  }
+                ],
+                "currentBarcodeIndex": 2,
+                "barcodeTemplate": {
+                  "name": "Standard 1x0.5 Label",
+                  "path": "/templates/barcode_1x05.zpl",
+                  "xOffset": 0.0,
+                  "yOffset": 0.0
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully navigated to previous barcode and generated preview image",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "selectedBarcodeIndex",
+                    "selectedBarcode",
+                    "previewImage"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Indicates whether the operation was successful",
+                      "example": true
+                    },
+                    "selectedBarcodeIndex": {
+                      "type": "integer",
+                      "description": "The index of the newly selected barcode after navigation",
+                      "example": 1
+                    },
+                    "selectedBarcode": {
+                      "type": "string",
+                      "description": "The barcode value of the newly selected item",
+                      "example": "BC002"
+                    },
+                    "selectedSerialNumber": {
+                      "type": "string",
+                      "description": "The serial number of the newly selected item",
+                      "example": "SN-2024-002"
+                    },
+                    "previewImage": {
+                      "type": "string",
+                      "format": "byte",
+                      "description": "The barcode preview image encoded as base64 PNG data",
+                      "example": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Success message describing the operation result",
+                      "example": "Successfully navigated to previous barcode and generated preview"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "selectedBarcodeIndex": 1,
+                  "selectedBarcode": "BC002",
+                  "selectedSerialNumber": "SN-2024-002",
+                  "previewImage": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+                  "message": "Successfully navigated to previous barcode and generated preview"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid input parameters or missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Indicates the operation failed",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Error code or type",
+                      "example": "INVALID_INPUT"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "barcodeItems array cannot be empty"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "INVALID_INPUT",
+                  "message": "barcodeItems array cannot be empty"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Template file not found or barcode template data is missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Indicates the operation failed",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Error code",
+                      "example": "TEMPLATE_NOT_FOUND"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "This barcode type has no template file or data. Select another barcode type and contact IT for help. Expected template file: /templates/barcode_1x05.zpl"
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "TEMPLATE_NOT_FOUND",
+                  "message": "This barcode type has no template file or data. Select another barcode type and contact IT for help. Expected template file: /templates/barcode_1x05.zpl"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - failed to generate preview image via Labelary API or other server-side error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Indicates the operation failed",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Error code",
+                      "example": "PREVIEW_GENERATION_FAILED"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "Failed to get preview. Error: The remote server returned an error: (400) Bad Request."
+                    }
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "PREVIEW_GENERATION_FAILED",
+                  "message": "Failed to get preview. Error: The remote server returned an error: (400) Bad Request."
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BarcodeItem": {
+        "type": "object",
+        "description": "Represents a single barcode item with its associated data",
+        "required": [
+          "barcode",
+          "serialNumber"
+        ],
+        "properties": {
+          "barcode": {
+            "type": "string",
+            "description": "The barcode value/identifier",
+            "example": "BC123456789"
+          },
+          "serialNumber": {
+            "type": "string",
+            "description": "The serial number associated with the barcode",
+            "example": "SN-2024-001"
+          }
+        }
+      },
+      "BarcodeTemplate": {
+        "type": "object",
+        "description": "Configuration for barcode template used in ZPL data generation",
+        "required": [
+          "name",
+          "path",
+          "xOffset",
+          "yOffset"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Template name/identifier",
+            "example": "Standard 1x0.5 Label"
+          },
+          "path": {
+            "type": "string",
+            "description": "File path to the template",
+            "example": "/templates/barcode_1x05.zpl"
+          },
+          "xOffset": {
+            "type": "number",
+            "format": "float",
+            "description": "X-axis calibration offset",
+            "example": 0.0
+          },
+          "yOffset": {
+            "type": "number",
+            "format": "float",
+            "description": "Y-axis calibration offset",
+            "example": 0.0
+          }
+        }
+      },
+      "PreviewResponse": {
+        "type": "object",
+        "description": "Successful response containing preview image and navigation information",
+        "required": [
+          "success",
+          "selectedBarcodeIndex",
+          "selectedBarcode",
+          "previewImage"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "selectedBarcodeIndex": {
+            "type": "integer",
+            "example": 1
+          },
+          "selectedBarcode": {
+            "type": "string",
+            "example": "BC002"
+          },
+          "selectedSerialNumber": {
+            "type": "string",
+            "example": "SN-2024-002"
+          },
+          "previewImage": {
+            "type": "string",
+            "format": "byte",
+            "example": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully navigated to previous barcode and generated preview"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Error response with error details",
+        "required": [
+          "success",
+          "error",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "string",
+            "example": "INVALID_INPUT"
+          },
+          "message": {
+            "type": "string",
+            "example": "Error description"
+          }
+        }
+      }
+    }
+  },
+  "security": []
+}

@@ -1,0 +1,420 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Add Inventory Part Catalog Search API",
+    "description": "API for searching and retrieving part descriptions from the inventory catalog. This endpoint allows users to search for part information by part number and retrieve detailed part descriptions.",
+    "termsOfService": "https://example.com/terms",
+    "contact": {
+      "name": "API Support",
+      "url": "https://example.com/support",
+      "email": "support@example.com"
+    },
+    "license": {
+      "name": "MIT License",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find more information about the Add Inventory system",
+    "url": "https://example.com/docs"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+      "description": "Production server",
+      "variables": {
+        "basePath": {
+          "default": "/inventory",
+          "description": "Base path for inventory operations"
+        }
+      }
+    },
+    {
+      "url": "https://staging-api.example.com/v1",
+      "description": "Staging server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Parts",
+      "description": "Operations related to parts and inventory items",
+      "externalDocs": {
+        "description": "Learn more about parts management",
+        "url": "https://example.com/docs/parts"
+      }
+    }
+  ],
+  "paths": {
+    "/parts/{partno}/description": {
+      "summary": "Search part catalog by part number",
+      "description": "Searches the part catalog and retrieves the description for a specific part number. This operation queries the IFS.search_part_description_by_partno stored procedure to fetch part information from the inventory database.",
+      "get": {
+        "tags": [
+          "Parts"
+        ],
+        "summary": "Get part description by part number",
+        "description": "Retrieves the part description for a given part number from the inventory catalog. The search is performed against the IFS part catalog database. Returns the part description if found, or an empty result if the part number does not exist in the catalog.",
+        "externalDocs": {
+          "description": "Additional documentation for part catalog search",
+          "url": "https://example.com/docs/parts/search"
+        },
+        "operationId": "searchPartCatalog [AddInventory-main.Add Inventory.Forms.frmMainPartMaintenance.frmMainPartMaintenance.txtPartNo_KeyDown.2.Object.KeyEventArgs]",
+        "parameters": [
+          {
+            "name": "partno",
+            "in": "path",
+            "description": "The part number to search for in the catalog. This is a unique identifier for the part in the inventory system.",
+            "required": true,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "style": "simple",
+            "explode": false,
+            "allowReserved": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255,
+              "pattern": "^[a-zA-Z0-9\\-_]+$",
+              "nullable": false,
+              "example": "PART-001"
+            },
+            "example": "PART-001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the part description from the catalog",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Unique request identifier for tracking",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Cache-Control": {
+                "description": "Cache control directive",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "partno": {
+                      "type": "string",
+                      "description": "The part number that was searched",
+                      "example": "PART-001"
+                    },
+                    "partdesc": {
+                      "type": "string",
+                      "description": "The description of the part from the catalog",
+                      "example": "Industrial Grade Bearing Assembly"
+                    },
+                    "found": {
+                      "type": "boolean",
+                      "description": "Indicates whether the part was found in the catalog",
+                      "example": true
+                    }
+                  },
+                  "required": [
+                    "partno",
+                    "partdesc",
+                    "found"
+                  ]
+                },
+                "example": {
+                  "partno": "PART-001",
+                  "partdesc": "Industrial Grade Bearing Assembly",
+                  "found": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid part number format or missing required parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message describing the validation failure",
+                      "example": "Invalid part number format"
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code for programmatic handling",
+                      "example": "INVALID_PART_NUMBER"
+                    },
+                    "details": {
+                      "type": "object",
+                      "description": "Additional error details",
+                      "example": {
+                        "field": "partno",
+                        "reason": "Part number cannot be empty"
+                      }
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ]
+                },
+                "example": {
+                  "error": "Invalid part number format",
+                  "code": "INVALID_PART_NUMBER",
+                  "details": {
+                    "field": "partno",
+                    "reason": "Part number cannot be empty"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Part not found - The specified part number does not exist in the inventory catalog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "partno": {
+                      "type": "string",
+                      "description": "The part number that was not found",
+                      "example": "NONEXISTENT-PART"
+                    },
+                    "partdesc": {
+                      "type": "string",
+                      "description": "Empty string indicating part was not found",
+                      "example": ""
+                    },
+                    "found": {
+                      "type": "boolean",
+                      "description": "Indicates whether the part was found",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Descriptive message about the not found status",
+                      "example": "Part number not found in inventory catalog"
+                    }
+                  },
+                  "required": [
+                    "partno",
+                    "partdesc",
+                    "found"
+                  ]
+                },
+                "example": {
+                  "partno": "NONEXISTENT-PART",
+                  "partdesc": "",
+                  "found": false,
+                  "message": "Part number not found in inventory catalog"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - Database connection or query execution failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message",
+                      "example": "Error searching part catalog"
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code for programmatic handling",
+                      "example": "DATABASE_ERROR"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Detailed error message",
+                      "example": "Failed to retrieve part description from database"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Timestamp when the error occurred",
+                      "example": "2024-01-15T10:30:00Z"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "code"
+                  ]
+                },
+                "example": {
+                  "error": "Error searching part catalog",
+                  "code": "DATABASE_ERROR",
+                  "message": "Failed to retrieve part description from database",
+                  "timestamp": "2024-01-15T10:30:00Z"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {},
+        "deprecated": false,
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PartDescriptionResponse": {
+        "type": "object",
+        "description": "Response object containing part description information from the catalog",
+        "properties": {
+          "partno": {
+            "type": "string",
+            "description": "The part number",
+            "example": "PART-001"
+          },
+          "partdesc": {
+            "type": "string",
+            "description": "The description of the part",
+            "example": "Industrial Grade Bearing Assembly"
+          },
+          "found": {
+            "type": "boolean",
+            "description": "Whether the part was found in the catalog",
+            "example": true
+          }
+        },
+        "required": [
+          "partno",
+          "partdesc",
+          "found"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error response object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Invalid request"
+          },
+          "code": {
+            "type": "string",
+            "description": "Error code",
+            "example": "INVALID_REQUEST"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "error",
+          "code"
+        ]
+      }
+    },
+    "responses": {
+      "PartDescriptionSuccessResponse": {
+        "description": "Successfully retrieved part description",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PartDescriptionResponse"
+            }
+          }
+        }
+      },
+      "BadRequestResponse": {
+        "description": "Bad request error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotFoundResponse": {
+        "description": "Part not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "partno": {
+                  "type": "string"
+                },
+                "partdesc": {
+                  "type": "string"
+                },
+                "found": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "InternalServerErrorResponse": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "PartNumber": {
+        "name": "partno",
+        "in": "path",
+        "description": "The part number to search for in the catalog",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "examples": {
+      "SuccessExample": {
+        "summary": "Successful part description retrieval",
+        "description": "Example of a successful response when part is found in the catalog",
+        "value": {
+          "partno": "PART-001",
+          "partdesc": "Industrial Grade Bearing Assembly",
+          "found": true
+        }
+      },
+      "NotFoundExample": {
+        "summary": "Part not found",
+        "description": "Example response when part number does not exist in the catalog",
+        "value": {
+          "partno": "NONEXISTENT-PART",
+          "partdesc": "",
+          "found": false
+        }
+      }
+    },
+    "requestBodies": {},
+    "headers": {},
+    "securitySchemes": {},
+    "links": {},
+    "callbacks": {}
+  },
+  "security": []
+}
